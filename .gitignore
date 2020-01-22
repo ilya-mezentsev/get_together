@@ -18,3 +18,7 @@ test_report
 # static files
 dist
 static
+
+# env
+.env
+.idea
