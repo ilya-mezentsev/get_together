@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "node"
+    ]
+  },
+  "files": [
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "enableIvy": true
+  }
+}
