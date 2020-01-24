@@ -2,11 +2,11 @@ package models
 
 type (
   Rating struct {
-    Value float64
+    Value float64 `db:"current_value"`
   }
 
   Info struct {
-    Name string `db:"name"`
+    Name string `db:"user_name"`
     Gender string `db:"gender"`
     Age uint `db:"age"`
     AvatarUrl string `db:"avatar_url"`
