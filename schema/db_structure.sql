@@ -1,47 +1,49 @@
 -- noinspection SqlNoDataSourceInspectionForFile
 
-CREATE TYPE GENDER AS ENUM('male', 'female')
+CREATE TYPE GENDER AS ENUM('male', 'female');
 
 CREATE TABLE IF NOT EXISTS users(
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(32) NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS info(
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  user_name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  nickname VARCHAR(255) NOT NULL,
   gender GENDER DEFAULT NULL,
   age INTEGER DEFAULT NULL,
   avatar_url VARCHAR DEFAULT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS rating(
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   current_value FLOAT NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS meetings(
   id SERIAL PRIMARY KEY,
   admin_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  max_users INTEGER DEFAULT NULL,
-  tags VARCHAR(100)[] DEFAULT NULL,
   user_ids INTEGER[] DEFAULT NULL,
-  date_time TIMESTAMP NOT NULL,
-  description TEXT DEFAULT '',
-)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS meetings_settings(
   id SERIAL PRIMARY KEY,
   meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  max_users INTEGER DEFAULT NULL,
+  tags VARCHAR(100)[] DEFAULT NULL,
+  date_time TIMESTAMP NOT NULL,
+  description TEXT DEFAULT '',
   duration INTEGER DEFAULT NULL,
   min_age INTEGER DEFAULT NULL,
   gender GENDER DEFAULT NULL,
   request_description_required BOOLEAN DEFAULT FALSE
-)
+);
 
 CREATE TABLE IF NOT EXISTS meetings_places(
   id SERIAL PRIMARY KEY,
@@ -49,7 +51,7 @@ CREATE TABLE IF NOT EXISTS meetings_places(
   label VARCHAR(511) NOT NULL,
   latitude FLOAT NOT NULL,
   longitude FLOAT NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS meetings_messages(
   id SERIAL PRIMARY KEY,
@@ -57,7 +59,7 @@ CREATE TABLE IF NOT EXISTS meetings_messages(
   sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   text TEXT NOT NULL,
   sending_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 CREATE TABLE IF NOT EXISTS meetings_request_messages(
   id SERIAL PRIMARY KEY,
@@ -65,4 +67,4 @@ CREATE TABLE IF NOT EXISTS meetings_request_messages(
   sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   text TEXT NOT NULL,
   sending_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);

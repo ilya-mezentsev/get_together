@@ -6,7 +6,8 @@ type (
   }
 
   Info struct {
-    Name string `db:"user_name"`
+    Name string `db:"name"`
+    Nickname string `db:"nickname"`
     Gender string `db:"gender"`
     Age uint `db:"age"`
     AvatarUrl string `db:"avatar_url"`
