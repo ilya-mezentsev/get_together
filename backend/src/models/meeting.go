@@ -9,29 +9,61 @@ type (
 )
 
 type (
-  Place struct {
-    Label string `db:"label"`
+  PublicPlace struct {
     Latitude `db:"latitude"`
     Longitude `db:"longitude"`
   }
 
-  Settings struct {
-    Duration uint `db:"duration"`
-    MinAge uint `db:"min_age"`
-    Gender string `db:"gender"`
+  LabeledPlace struct {
+    Label string `db:"label"`
+    PublicPlace
+  }
+
+  // for unauthorized users
+  PublicSettings struct {
+    Title string `db:"title"`
+    Description string `db:"description"`
+    Tags []Tag `db:"tags"`
+  }
+
+  // for authorized users
+  ExtendedSettings struct {
+    PublicSettings
+    DateTime time.Time `db:"date_time"`
     RequestDescriptionRequired bool `db:"request_description_required"`
   }
 
-  Meeting struct {
+  AllSettings struct {
+    ExtendedSettings
+    Duration uint `db:"duration"`
+    MinAge uint `db:"min_age"`
+    Gender string `db:"gender"`
+    MaxUsers uint `db:"max_users"`
+  }
+
+  DefaultMeeting struct {
     ID uint `db:"id"`
     AdminId uint `db:"admin_id"`
-    Title string `db:"title"`
-    MaxUsers uint `db:"max_users"`
-    Tags []Tag `db:"tags"`
-    UserIds []uint `db:"user_ids"`
-    DateTime time.Time `db:"date_time"`
-    Description string `db:"description"`
-    Place
-    Settings
+    CreatedAt time.Time `db:"created_at"`
+  }
+
+  PublicMeeting struct {
+    DefaultMeeting
+    PublicSettings
+    PublicPlace
+  }
+
+  ExtendedMeeting struct {
+    DefaultMeeting
+    ExtendedSettings
+    PublicPlace
+    CurrentUserStatus string
+  }
+
+  // for invited users
+  PrivateMeeting struct {
+    DefaultMeeting
+    LabeledPlace
+    AllSettings
   }
 )
