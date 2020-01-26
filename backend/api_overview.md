@@ -189,6 +189,16 @@
 ```
 #### Response - default
 
+### POST /api/meeting/invite-vip
+#### Body:
+```json5
+{
+  "user_id": 1,
+  "meeting_id": 1
+}
+```
+#### Response - default
+
 ### DELETE /api/meeting/user - kick user out of meeting
 #### Body:
 ```json5
