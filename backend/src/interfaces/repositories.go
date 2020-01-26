@@ -14,10 +14,13 @@ type (
     KickUserFromMeeting(meetingId, userId uint)
   }
 
+  CredentialsRepository interface {
+    CreateUser(user models.UserCredentials) error
+    GetUserIdByCredentials(user models.UserCredentials) (uint, error)
+  }
+
   UsersRepository interface {
-    CreateUser(user models.AuthUser) error
     GetUserInfo(userId uint) (models.FullUserInfo, error)
-    GetUserIdByCredentials(user models.AuthUser) (uint, error)
     UpdateUserInfo(userId uint, info models.Info) error
     UpdateUserPassword(userId uint, password string) error
   }

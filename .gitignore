@@ -22,3 +22,7 @@ static
 # env
 .env
 .idea
+
+# golang libs and built
+pkg
+github.com
