@@ -189,7 +189,7 @@
 ```
 #### Response - default
 
-### POST /api/meeting/invite-vip
+### POST /api/meeting/invite-user
 #### Body:
 ```json5
 {
