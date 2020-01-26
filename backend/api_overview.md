@@ -126,7 +126,7 @@
 }
 ```
 
-### POST /api/meeting - create meeting
+### POST /api/meeting - creates meeting
 #### Body:
 ```json5
 {
@@ -252,6 +252,34 @@
   "settings": {
     "password": "new_password"
   }
+}
+```
+#### Response - default
+
+## Chatting
+### POST /api/chat/meeting - creates chat for meeting
+#### Body:
+```json5
+{
+  "meeting_id": 1
+}
+```
+#### Response - default
+
+### POST /api/chat/meeting/request - creates chat with meeting admin
+#### Body:
+```json5
+{
+  "meeting_id": 1
+}
+```
+#### Response - default
+
+### PATCH /api/chat/meeting - closes chat
+#### Body:
+```json5
+{
+  "chat_id": 1
 }
 ```
 #### Response - default
