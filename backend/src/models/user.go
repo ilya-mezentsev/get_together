@@ -2,7 +2,8 @@ package models
 
 type (
   Rating struct {
-    Value float64 `db:"current_value"`
+    Tag Tag `db:"tag"`
+    Value float64 `db:"value"`
   }
 
   Info struct {
@@ -13,10 +14,13 @@ type (
     AvatarUrl string `db:"avatar_url"`
   }
 
-  User struct {
-    ID uint `db:"id"`
+  AuthUser struct {
     Email string `db:"email"`
     Password string `db:"password"`
+  }
+
+  FullUserInfo struct {
+    ID uint `db:"id"`
     Info
     Rating
   }

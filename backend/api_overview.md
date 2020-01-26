@@ -64,14 +64,14 @@
 
 ## Meetings
 
-### GET /api/meetings returns - get all meetings
+### GET /api/meetings - returns all meetings
 #### Public response:
 ```json5
 {
   "status": "ok",
   "data": [
     {
-      "meeting_id": 1,
+      "id": 1,
       "admin_id": 1,
       "title": "meeting title",
       "description": "some meeting description",
@@ -80,7 +80,7 @@
       "longitude": 52.0
     },
     {
-      "meeting_id": 2,
+      "id": 2,
       "admin_id": 2,
       "title": "hello world",
       "tags": ["tag3"],
@@ -90,16 +90,22 @@
   ]
 }
 ```
-#### Response for registered user:
+#### For registered user:
+#### Body:
+```json5
+{
+  "user_id": 3
+}
+```
 ```json5
 {
   "status": "ok",
   "data": [
     {
-      "meeting_id": 1,
+      "id": 1,
       "admin_id": 1,
       "current_user_status": "invited", // added this field
-      "meeting_date_time": "2020-01-24T10:41:21.381Z", // added this field
+      "date_time": "2020-01-24T10:41:21.381Z", // added this field
       "title": "meeting title",
       "description": "some meeting description",
       "tags": ["tag1", "tag2"],
@@ -107,10 +113,10 @@
       "longitude": 52.0
     },
     {
-      "meeting_id": 2,
+      "id": 2,
       "admin_id": 2,
       "current_user_status": "not-invited", // added this field
-      "meeting_date_time": "2020-01-24T10:41:21.381Z", // added this field
+      "date_time": "2020-01-24T10:41:21.381Z", // added this field
       "title": "hello world",
       "tags": ["tag3"],
       "latitude": 54.0,
@@ -120,7 +126,7 @@
 }
 ```
 
-### POST /api/meeting/create - create meeting
+### POST /api/meeting - create meeting
 #### Body:
 ```json5
 {
@@ -208,8 +214,8 @@
 {
   "status": "ok",
   "data": {
-    "user_id": 1,
-    "user_name": "User Name",
+    "id": 1,
+    "name": "User Name",
     "nickname": "user_nickname",
     "gender": "male", // or "female",
     "age": 16,
@@ -228,7 +234,7 @@
 {
   "user_id": 1,
   "settings": {
-    "user_name": "User Name",
+    "name": "User Name",
     "nickname": "user_nickname",
     "gender": "male", // or "female",
     "age": 16,
