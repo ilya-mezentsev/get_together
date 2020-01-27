@@ -14,7 +14,7 @@ type (
     AvatarUrl string `db:"avatar_url"`
   }
 
-  AuthUser struct {
+  UserCredentials struct {
     Email string `db:"email"`
     Password string `db:"password"`
   }
