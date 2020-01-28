@@ -1,9 +1,19 @@
 package utils
 
-import "fmt"
+import (
+  "fmt"
+  "os"
+)
 
 type Expectation struct {
   Expected, Got interface{}
+}
+
+func SkipInShortMode() {
+  if os.Getenv("SHORT_MODE") == "1" {
+    fmt.Println("skipping DB tests in short mode")
+    os.Exit(0)
+  }
 }
 
 func Assert(condition bool, onFalseFn func()) {

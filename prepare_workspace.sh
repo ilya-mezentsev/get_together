@@ -5,6 +5,7 @@ function prepareFolders() {
 }
 
 function prepareFiles() {
+  rm $1/.env 2>/dev/null
   touch $1/.env
 }
 
@@ -18,18 +19,25 @@ if [[ ${rootFolder} = '' ]]; then
   exit 1
 fi
 
-envVars=(
-  "ENV_VARS_WERE_SET=1"
-  "PROJECT_ROOT=${rootFolder}"
-  "REPORT_FOLDER=${rootFolder}/backend/test_report"
-  "GOPATH=${rootFolder}/backend"
-  "FRONTEND_DIR=${rootFolder}/frontend"
+declare -A env=(
+  ['DB_USER']="gt_admin"
+  ['DB_PASSWORD']="root"
+  ['DB_NAME']="gt_db"
+  ['ENV_VARS_WERE_SET']="1"
+  ['PROJECT_ROOT']="${rootFolder}"
+  ['REPORT_FOLDER']="${rootFolder}/backend/test_report"
+  ['GOPATH']="${rootFolder}/backend"
+  ['FRONTEND_DIR']="${rootFolder}/frontend"
+  ['CONN_STR']="\"host=localhost port=5432 user=gt_admin password=root dbname=gt_db sslmode=disable\""
+  ['CODER_KEY']="123456789012345678901234"
+  ['SHORT_MODE']="1"
 )
 
 prepareFolders ${rootFolder}
 prepareFiles ${rootFolder}
 installAngularDeps ${rootFolder}
 
-for envVar in ${envVars[@]}; do
-  echo ${envVar} >> ${rootFolder}/.env
+for envKey in "${!env[@]}"
+do
+  echo "${envKey}=${env[$envKey]}" >> ${rootFolder}/.env
 done

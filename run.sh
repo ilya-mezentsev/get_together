@@ -9,9 +9,7 @@ declare -A scriptsDescriptions=(
   ['go_tests']='run go tests'
   ['push_all']='push all files to repository'
   ['create_test_data']='make requests for creating testing: group, users and tasks'
-  ['dev']='run docker with development configuration of containers'
-  ['prod']='run docker with production configuration of containers'
-  ['server']='run go server'
+  ['integration_tests']='run go tests inside container'
 )
 
 function run() {
@@ -33,6 +31,11 @@ function showHelp {
   echo 'available commands:'
   echo -e '\t-h, -help, help - ' ${scriptsDescriptions['help']}
   for scriptName in ${SCRIPTS_FOLDER}/*.sh; do
+    # private scripts
+    if [[ $(basename ${scriptName}) == _* ]]; then
+      continue
+    fi
+
     scriptName=$(basename ${scriptName} | sed 's/\.sh$//1')
     scriptDescription=${scriptsDescriptions[$scriptName]}
     if [[ ${scriptDescription} = '' ]]; then
