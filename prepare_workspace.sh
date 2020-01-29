@@ -9,6 +9,10 @@ function prepareFiles() {
   touch $1/.env
 }
 
+function installGolangDeps() {
+  cd $1/backend && go get -v -t -d ./...
+}
+
 function installAngularDeps() {
   cd $1/frontend && npm install
 }
@@ -35,6 +39,7 @@ declare -A env=(
 
 prepareFolders ${rootFolder}
 prepareFiles ${rootFolder}
+installGolangDeps ${rootFolder}
 installAngularDeps ${rootFolder}
 
 for envKey in "${!env[@]}"
