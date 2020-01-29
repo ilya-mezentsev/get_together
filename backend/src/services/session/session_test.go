@@ -4,7 +4,7 @@ import (
   "fmt"
   "io/ioutil"
   "log"
-  "mock"
+  mock "mock/services"
   "net/http"
   "os"
   "testing"

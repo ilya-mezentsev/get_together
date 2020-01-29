@@ -17,12 +17,13 @@ type (
   CredentialsRepository interface {
     CreateUser(user models.UserCredentials) error
     GetUserIdByCredentials(user models.UserCredentials) (uint, error)
+    UpdateUserPassword(user models.UserCredentials) error
+    GetUserEmail(userId uint) (string, error)
   }
 
-  UsersRepository interface {
-    GetUserInfo(userId uint) (models.FullUserInfo, error)
-    UpdateUserInfo(userId uint, info models.Info) error
-    UpdateUserPassword(userId uint, password string) error
+  UsersSettingsRepository interface {
+    GetUserSettings(userId uint) (models.FullUserInfo, error)
+    UpdateUserSettings(userId uint, info models.UserSettings) error
   }
 
   ChatRepository interface {
