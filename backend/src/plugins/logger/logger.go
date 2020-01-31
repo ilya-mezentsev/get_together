@@ -1,30 +1,32 @@
 package logger
 
 import (
+  "encoding/json"
   "fmt"
   "log"
 )
 
-var buffer string
+type Fields struct {
+  MessageTemplate string
+  Args []interface{}
+  Optional map[string]interface{}
+}
 
-func getMsgWithBuffer(msg string) string {
-  if buffer == "" {
-    return msg
-  } else {
-    res := buffer + " " + msg
-    buffer = ""
-    return res
-  }
+func WithFields(fields Fields, logFn func(interface{})) {
+  optionalArgs, _ := json.Marshal(fields.Optional)
+  message := fmt.Sprintf(fields.MessageTemplate, fields.Args...)
+
+  logFn(fmt.Sprintf("%s\n\t%s", message, "[CONTEXT]: " + string(optionalArgs)))
 }
 
 func Info(msg interface{}) {
   log.Println(
-    "[INFO]: " + getMsgWithBuffer(fmt.Sprintf("%v", msg)))
+    "[INFO]: " + fmt.Sprintf("%v", msg))
 }
 
 func Warning(msg interface{}) {
   log.Println(
-    "[WARNING]: " + getMsgWithBuffer(fmt.Sprintf("%v", msg)))
+    "[WARNING]: " + fmt.Sprintf("%v", msg))
 }
 
 func WarningF(template string, a ...interface{}) {
@@ -33,9 +35,5 @@ func WarningF(template string, a ...interface{}) {
 
 func Error(msg interface{}) {
   log.Println(
-    "[ERROR]: " + getMsgWithBuffer(fmt.Sprintf("%v", msg)))
-}
-
-func ErrorF(template string, a ...interface{}) {
-  Error(fmt.Sprintf(template, a...))
+    "[ERROR]: " + fmt.Sprintf("%v", msg))
 }
