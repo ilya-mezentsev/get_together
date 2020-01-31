@@ -2,7 +2,7 @@ package code
 
 import (
   "fmt"
-  "mock"
+  "mock/services"
   "os"
   "testing"
   "utils"
@@ -29,10 +29,10 @@ func TestCoder_Encrypt(t *testing.T) {
     t.Log(exp)
     t.Fail()
   })
-  utils.Assert(mock.TestToken == encrypted, func() {
+  utils.Assert(services.TestToken == encrypted, func() {
     t.Log(
       utils.GetExpectationString(
-        utils.Expectation{Expected: mock.TestToken, Got: encrypted}))
+        utils.Expectation{Expected: services.TestToken, Got: encrypted}))
     t.Fail()
   })
 }
@@ -41,7 +41,7 @@ func TestCoder_Decrypt(t *testing.T) {
   expected := map[string]interface{}{
     "id": 1,
   }
-  decrypted, err := coder.Decrypt(mock.TestToken)
+  decrypted, err := coder.Decrypt(services.TestToken)
 
   utils.AssertIsNil(err, func(exp string) {
     t.Log(exp)

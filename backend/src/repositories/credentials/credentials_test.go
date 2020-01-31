@@ -33,7 +33,16 @@ func init() {
   }
 
   repository = New(db)
-  mock.InitUsers(db)
+}
+
+// we need this function to avoiding DB errors due parallel queries
+func TestMain(t *testing.M) {
+  res := t.Run()
+  if err := db.Close(); err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+  os.Exit(res)
 }
 
 func TestRepository_GetUserIdByCredentialsSuccess(t *testing.T) {
@@ -108,11 +117,82 @@ func TestRepository_CreateUserEmailExistsError(t *testing.T) {
   })
 }
 
-func TestRepository_CreateUserIncorrectPasswordError(t *testing.T) {
+func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
   mock.InitUsers(db)
   defer mock.DropUsers(db)
 
-  err := repository.CreateUser(mock.IncorrectPasswordUser)
+  user := mock.Users[0]
+  user.Password = "new_pass"
+  err := repository.UpdateUserPassword(user)
+  utils.AssertIsNil(err, func(exp string) {
+    t.Log(exp)
+    t.Fail()
+  })
+
+  id, _ := repository.GetUserIdByCredentials(user)
+  utils.Assert(1 == id, func() {
+    t.Log(
+      utils.GetExpectationString(
+        utils.Expectation{Expected: 1, Got: id}))
+    t.Fail()
+  })
+}
+
+func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
+  mock.InitUsers(db)
+  defer mock.DropUsers(db)
+
+  err := repository.UpdateUserPassword(mock.NotExistsUser)
+  utils.AssertErrorsEqual(internal_errors.UnableToChangePasswordUserNotFound, err, func(exp string) {
+    t.Log(exp)
+    t.Fail()
+  })
+}
+
+func TestRepository_UpdateUserPasswordErrorNoTable(t *testing.T) {
+  mock.DropUsers(db)
+
+  err := repository.UpdateUserPassword(mock.Users[0])
+  utils.Assert(nil != err, func() {
+    t.Log(
+      utils.GetExpectationString(
+        utils.Expectation{Expected: "some error", Got: err}))
+    t.Fail()
+  })
+}
+
+func TestRepository_GetUserEmailSuccess(t *testing.T) {
+  mock.InitUsers(db)
+  defer mock.DropUsers(db)
+
+  email, err := repository.GetUserEmail(1)
+  utils.AssertIsNil(err, func(exp string) {
+    t.Log(exp)
+    t.Fail()
+  })
+  utils.Assert(mock.Users[0].Email == email, func() {
+    t.Log(
+      utils.GetExpectationString(
+        utils.Expectation{Expected: mock.Users[0].Email, Got: email}))
+    t.Fail()
+  })
+}
+
+func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
+  mock.InitUsers(db)
+  defer mock.DropUsers(db)
+
+  _, err := repository.GetUserEmail(11)
+  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
+    t.Log(exp)
+    t.Fail()
+  })
+}
+
+func TestRepository_GetUserEmailErrorNoTable(t *testing.T) {
+  mock.DropUsers(db)
+
+  _, err := repository.GetUserEmail(1)
   utils.Assert(nil != err, func() {
     t.Log(
       utils.GetExpectationString(

@@ -59,6 +59,16 @@
 }
 ```
 
+### PATCH /api/session/user/password - change user password
+#### Body:
+```json5
+{
+  "user_id": 1,
+  "password": "new_password"
+}
+```
+#### Response - default
+
 ### POST /api/session/logout - Logout user from system
 #### Response - default
 
@@ -212,7 +222,7 @@
 
 ## Users
 
-### GET /api/user - returns user's info
+### GET /api/user/settings - returns user's settings
 #### Body:
 ```json5
 {
@@ -224,7 +234,6 @@
 {
   "status": "ok",
   "data": {
-    "id": 1,
     "name": "User Name",
     "nickname": "user_nickname",
     "gender": "male", // or "female",
@@ -238,7 +247,7 @@
 }
 ```
 
-### PATCH /api/user/settings - change info
+### PATCH /api/user/settings - change settings
 #### Body:
 ```json5
 {
@@ -249,18 +258,6 @@
     "gender": "male", // or "female",
     "age": 16,
     "avatar_url": "https://domain.com/avatar.png",
-  }
-}
-```
-#### Response - default
-
-### PATCH /api/user/password - update password
-#### Body:
-```json5
-{
-  "user_id": 1,
-  "settings": {
-    "password": "new_password"
   }
 }
 ```

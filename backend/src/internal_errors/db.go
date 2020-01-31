@@ -5,4 +5,6 @@ import "errors"
 var (
   UnableToRegisterUserEmailExists = errors.New("unable to register user: email already exists")
   UnableToLoginUserNotFound = errors.New("unable to login user: not found by credentials")
+  UnableToChangePasswordUserNotFound = errors.New("unable to change user password: not found by email")
+  UnableToFindUserById = errors.New("unable to find user by id")
 )

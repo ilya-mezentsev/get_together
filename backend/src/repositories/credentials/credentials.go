@@ -9,6 +9,8 @@ import (
 const (
   AddUserQuery = `INSERT INTO users(email, password) VALUES(:email, :password)`
   UserIdByCredentialsQuery = `SELECT id FROM users WHERE email = :email AND password = :password`
+  UserEmailByIdQuery = `SELECT email FROM users WHERE id = $1`
+  UpdateUserPasswordQuery = `UPDATE users SET password = :password WHERE email = :email`
 )
 
 var (
@@ -47,4 +49,35 @@ func (r Repository) GetUserIdByCredentials(user models.UserCredentials) (uint, e
   }
 
   return id, err
+}
+
+func (r Repository) UpdateUserPassword(user models.UserCredentials) error {
+  res, err := r.db.NamedExec(UpdateUserPasswordQuery, user)
+  if err != nil {
+    return err
+  }
+
+  affectedRows, err := res.RowsAffected()
+  if err != nil {
+    return err
+  } else if affectedRows == 0 {
+    return internal_errors.UnableToChangePasswordUserNotFound
+  }
+
+  return nil
+}
+
+func (r Repository) GetUserEmail(userId uint) (string, error) {
+  var email string
+  rows, err := r.db.Query(UserEmailByIdQuery, userId)
+  if err != nil {
+    return "", err
+  }
+
+  if rows.Next() {
+    err = rows.Scan(&email)
+    return email, err
+  } else {
+    return "", internal_errors.UnableToFindUserById
+  }
 }

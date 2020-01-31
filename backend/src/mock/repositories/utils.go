@@ -5,8 +5,8 @@ import "github.com/jmoiron/sqlx"
 const (
   DropTablesQuery = `
   DROP TABLE IF EXISTS users CASCADE;
-  DROP TABLE IF EXISTS info;
-  DROP TABLE IF EXISTS rating;
+  DROP TABLE IF EXISTS users_info;
+  DROP TABLE IF EXISTS users_rating;
   DROP TABLE IF EXISTS meetings CASCADE;
   DROP TABLE IF EXISTS meetings_settings;
   DROP TABLE IF EXISTS meetings_places;
@@ -18,7 +18,7 @@ const (
   DROP TYPE IF EXISTS CHAT_TYPE;
   DROP TYPE IF EXISTS CHAT_STATUS;`
   CreateTablesQuery = `
-  CREATE TYPE GENDER AS ENUM('male', 'female');
+  CREATE TYPE GENDER AS ENUM('male', 'female', '');
   CREATE TYPE MEETING_STATUS AS ENUM('pending', 'archived');
   CREATE TYPE CHAT_TYPE AS ENUM('meeting', 'meeting_request');
   CREATE TYPE CHAT_STATUS AS ENUM('chatting', 'archived');
@@ -29,17 +29,17 @@ const (
     password VARCHAR(32) NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS info(
+  CREATE TABLE IF NOT EXISTS users_info(
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     nickname VARCHAR(255) NOT NULL,
-    gender GENDER DEFAULT NULL,
-    age INTEGER DEFAULT NULL,
-    avatar_url VARCHAR DEFAULT NULL
+    gender GENDER DEFAULT '',
+    age INTEGER DEFAULT 0,
+    avatar_url VARCHAR DEFAULT ''
   );
 
-  CREATE TABLE IF NOT EXISTS rating(
+  CREATE TABLE IF NOT EXISTS users_rating(
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     value FLOAT NOT NULL,

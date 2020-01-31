@@ -11,12 +11,12 @@ for dir in "${folders[@]}"
 do
   TESTING_COMMAND="${TESTING_COMMAND} $(echo ${dir} | sed 's/\.\///g')/... "
 done
-TESTING_COMMAND="${TESTING_COMMAND} -cover"
+TESTING_COMMAND="${TESTING_COMMAND} -cover -p 1"
 
 cd ${PROJECT_ROOT}
 
 export TESTING_COMMAND=${TESTING_COMMAND}
-docker-compose -f docker/docker-compose.test.yaml up -d
+docker-compose -f docker/docker-compose.test.yaml up -d --build
 
 docker wait docker_go_api_1
 docker logs docker_go_api_1

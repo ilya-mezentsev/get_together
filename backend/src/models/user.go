@@ -6,7 +6,7 @@ type (
     Value float64 `db:"value"`
   }
 
-  Info struct {
+  UserSettings struct {
     Name string `db:"name"`
     Nickname string `db:"nickname"`
     Gender string `db:"gender"`
@@ -20,8 +20,7 @@ type (
   }
 
   FullUserInfo struct {
-    ID uint `db:"id"`
-    Info
-    Rating
+    UserSettings
+    Rating []Rating
   }
 )
