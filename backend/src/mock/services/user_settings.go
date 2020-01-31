@@ -63,7 +63,7 @@ func (u *UsersSettingsRepositoryMock) UpdateUserSettings(userId uint, info model
 
   u.Settings[userId] = models.FullUserInfo{
     UserSettings: info,
-    Rating:       nil,
+    Rating: nil,
   }
   return nil
 }

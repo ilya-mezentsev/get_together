@@ -10,6 +10,9 @@ type (
     CreateMeeting(adminId uint, settings models.AllSettings) error
     DeleteMeeting(meetingId uint) error
     UpdatedSettings(meetingId uint, settings models.AllSettings) error
+  }
+
+  MeetingUsersRepository interface {
     AddUserToMeeting(meetingId, userId uint) error
     KickUserFromMeeting(meetingId, userId uint)
   }
