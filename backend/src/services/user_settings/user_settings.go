@@ -23,10 +23,21 @@ func (u UsersSettingsService) GetUserSettings(userId uint) (models.FullUserInfo,
   case nil:
     return info, nil
   case internal_errors.UnableToFindUserById:
-    logger.Warning(err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: err.Error(),
+      Optional: map[string]interface{}{
+        "user_id": userId,
+      },
+    }, logger.Warning)
     return models.FullUserInfo{}, services.UserIdNotFound
   default:
-    logger.ErrorF("unable to get user info: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to get user info: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "user_id": userId,
+      },
+    }, logger.Error)
     return models.FullUserInfo{}, services.InternalError
   }
 }
@@ -36,10 +47,23 @@ func (u UsersSettingsService) UpdateUserSettings(userId uint, info models.UserSe
   case nil:
     return nil
   case internal_errors.UnableToFindUserById:
-    logger.Warning(err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: err.Error(),
+      Optional: map[string]interface{}{
+        "user_id": userId,
+        "info": info,
+      },
+    }, logger.Warning)
     return services.UserIdNotFound
   default:
-    logger.ErrorF("unable to update user info: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to update user info: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "user_id": userId,
+        "info": info,
+      },
+    }, logger.Error)
     return services.InternalError
   }
 }

@@ -24,10 +24,21 @@ func (s AuthService) RegisterUser(credentials models.UserCredentials) error {
   case nil:
     return nil
   case internal_errors.UnableToRegisterUserEmailExists:
-    logger.Warning(err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: err.Error(),
+      Optional: map[string]interface{}{
+        "credentials": credentials,
+      },
+    }, logger.Warning)
     return EmailExists
   default:
-    logger.ErrorF("unable to register user: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to register user: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "credentials": credentials,
+      },
+    }, logger.Error)
     return services.InternalError
   }
 }
@@ -44,10 +55,21 @@ func (s AuthService) Login(credentials models.UserCredentials) (uint, error) {
   case nil:
     return userId, nil
   case internal_errors.UnableToLoginUserNotFound:
-    logger.Warning(err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: err.Error(),
+      Optional: map[string]interface{}{
+        "credentials": credentials,
+      },
+    }, logger.Warning)
     return 0, CredentialsNotFound
   default:
-    logger.ErrorF("unable to login user: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to login user: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "credentials": credentials,
+      },
+    }, logger.Error)
     return 0, services.InternalError
   }
 }
@@ -64,7 +86,13 @@ func (s AuthService) ChangePassword(userId uint, password string) error {
   case nil:
     return nil
   default:
-    logger.ErrorF("unable to change user password: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to change user password: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "user_id": userId,
+      },
+    }, logger.Error)
     return services.InternalError
   }
 }
@@ -76,10 +104,21 @@ func (s AuthService) getUserEmail(userId uint) (string, error) {
   case nil:
     return email, nil
   case internal_errors.UnableToFindUserById:
-    logger.Warning(err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: err.Error(),
+      Optional: map[string]interface{}{
+        "user_id": userId,
+      },
+    }, logger.Warning)
     return "", services.UserIdNotFound
   default:
-    logger.ErrorF("unable to get user email: %v", err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to get user email: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "user_id": userId,
+      },
+    }, logger.Error)
     return "", services.InternalError
   }
 }

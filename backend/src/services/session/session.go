@@ -27,7 +27,13 @@ func (c Controller) GetSession(r *http.Request) (map[string]interface{}, error) 
 
   decoded, err := c.coder.Decrypt(cookie.Value)
   if err != nil {
-    logger.WarningF("unable to decode cookie '%s', error: %v", cookie.Value, err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to decrypt session: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "session": cookie.Value,
+      },
+    }, logger.Warning)
     return nil, InvalidAuthCookie
   }
 
@@ -37,7 +43,13 @@ func (c Controller) GetSession(r *http.Request) (map[string]interface{}, error) 
 func (c Controller) SetSession(r *http.Request, session map[string]interface{}) error {
   token, err := c.coder.Encrypt(session)
   if err != nil {
-    logger.WarningF("unable to encrypt session %v, error: %v", session, err)
+    logger.WithFields(logger.Fields{
+      MessageTemplate: "unable to encrypt session: %v",
+      Args: []interface{}{err},
+      Optional: map[string]interface{}{
+        "session": session,
+      },
+    }, logger.Warning)
     return services.InternalError
   }
 
