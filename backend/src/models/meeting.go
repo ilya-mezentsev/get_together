@@ -35,6 +35,7 @@ type (
 
   AllSettings struct {
     ExtendedSettings
+    LabeledPlace
     Duration uint `db:"duration"`
     MinAge uint `db:"min_age"`
     Gender string `db:"gender"`
