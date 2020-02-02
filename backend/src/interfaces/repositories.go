@@ -6,7 +6,7 @@ type (
   MeetingsRepository interface {
     GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error)
     GetPublicMeetings() ([]models.PublicMeeting, error)
-    GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error)
+    GetExtendedMeetings(userStatusesData models.UserMeetingStatusesData) ([]models.ExtendedMeeting, error)
     CreateMeeting(adminId uint, settings models.AllSettings) error
     DeleteMeeting(meetingId uint) error
     UpdatedSettings(meetingId uint, settings models.AllSettings) error

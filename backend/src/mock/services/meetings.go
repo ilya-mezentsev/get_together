@@ -30,7 +30,7 @@ var (
           PublicSettings: models.PublicSettings{
             Title: "Deduction party",
             Description: "Fuck you, Moriarty",
-            Tags: []models.Tag{"logic", "smoking pipe"},
+            Tags: []string{"logic", "smoking pipe"},
           },
           DateTime: time.Unix(0, 1),
           RequestDescriptionRequired: false,
@@ -46,7 +46,7 @@ var (
       PublicSettings: models.PublicSettings{
         Title: "Winx top!",
         Description: "Who likes winx come!",
-        Tags: []models.Tag{"winx", "my_love"},
+        Tags: []string{"winx", "my_love"},
       },
       DateTime: time.Unix(0, 0),
       RequestDescriptionRequired: false,
@@ -103,7 +103,9 @@ func (m *MeetingsRepositoryMock) GetPublicMeetings() ([]models.PublicMeeting, er
   return meetings, nil
 }
 
-func (m *MeetingsRepositoryMock) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
+func (m *MeetingsRepositoryMock) GetExtendedMeetings(
+  data models.UserMeetingStatusesData) ([]models.ExtendedMeeting, error) {
+  userId := data.UserId
   if userId == BadUserId {
     return nil, someInternalError
   } else if userId == NotExistsUserId {

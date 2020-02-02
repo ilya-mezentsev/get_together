@@ -3,7 +3,6 @@ package models
 import "time"
 
 type (
-  Tag string
   Latitude float64
   Longitude float64
 )
@@ -23,7 +22,7 @@ type (
   PublicSettings struct {
     Title string `db:"title"`
     Description string `db:"description"`
-    Tags []Tag `db:"tags"`
+    Tags []string `db:"tags"`
   }
 
   // for authorized users
@@ -58,7 +57,7 @@ type (
     DefaultMeeting
     ExtendedSettings
     PublicPlace
-    CurrentUserStatus string
+    CurrentUserStatus string `db:"current_user_status"`
   }
 
   // for invited users
@@ -66,5 +65,13 @@ type (
     DefaultMeeting
     LabeledPlace
     AllSettings
+  }
+)
+
+type (
+  UserMeetingStatusesData struct {
+    UserId uint `db:"user_id"`
+    Invited string `db:"invited"`
+    NotInvited string `db:"not_invited"`
   }
 )

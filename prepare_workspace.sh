@@ -10,7 +10,7 @@ function prepareFiles() {
 }
 
 function installGolangDeps() {
-  cd $1/backend && go get -v -t -d ./...
+  cd $1/backend && go get -v -d ./...
 }
 
 function installAngularDeps() {

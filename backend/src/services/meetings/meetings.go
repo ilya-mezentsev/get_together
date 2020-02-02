@@ -9,6 +9,11 @@ import (
   "services"
 )
 
+const (
+  invitedStatus = "invited"
+  notInvitedStatus = "not-invited"
+)
+
 type Service struct {
   repository interfaces.MeetingsRepository
 }
@@ -59,7 +64,11 @@ func (s Service) GetPublicMeetings() ([]models.PublicMeeting, error) {
 }
 
 func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
-  meetings, err := s.repository.GetExtendedMeetings(userId)
+  meetings, err := s.repository.GetExtendedMeetings(models.UserMeetingStatusesData{
+    UserId: userId,
+    Invited: invitedStatus,
+    NotInvited: notInvitedStatus,
+  })
   meetings = coords.Shake(meetings)
 
   switch err {
