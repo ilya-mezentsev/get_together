@@ -7,5 +7,5 @@ var (
   UnableToLoginUserNotFound = errors.New("unable to login user: not found by credentials")
   UnableToChangePasswordUserNotFound = errors.New("unable to change user password: not found by email")
   UnableToFindUserById = errors.New("unable to find user by id")
-  UnableToFindByMeetingId = errors.New("unable to fine meeting by id")
+  UnableToFindByMeetingId = errors.New("unable to find meeting by id")
 )

@@ -1,22 +1,10 @@
 package repositories
 
 import (
-  "github.com/jmoiron/sqlx"
   "models"
 )
 
 var (
-  UsersInfoQueries = []string{
-    "INSERT INTO users_info(user_id, name, nickname, gender, age) VALUES(1, 'J. Smith', 'mather_fucker', 'male', 12)",
-    `INSERT INTO users_info(user_id, name, nickname, age, avatar_url) VALUES(2, 'Mr. Anderson', 'LoL228', 8, 'http://123.png')`,
-  }
-  UsersRatingQueries = []string{
-    "INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag1', 85)",
-    "INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag2', 75)",
-    "INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag1', 95)",
-    "INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag3', 65)",
-  }
-
   FirstUserSettings = models.FullUserInfo{
     UserSettings: models.UserSettings{
       Name: "J. Smith", Nickname: "mather_fucker", Gender: "male", Age: 12,
@@ -48,20 +36,4 @@ func SettingsEqual(s1, s2 models.FullUserInfo) bool {
   }
 
   return true
-}
-
-func InitUsersSettings(db *sqlx.DB) {
-  dropTables(db)
-  initTables(db)
-
-  for _, q := range append(UsersQueries, append(UsersInfoQueries, UsersRatingQueries...)...) {
-    _, err := db.Exec(q)
-    if err != nil {
-      panic(err)
-    }
-  }
-}
-
-func DropUsersSettings(db *sqlx.DB) {
-  dropTables(db)
 }

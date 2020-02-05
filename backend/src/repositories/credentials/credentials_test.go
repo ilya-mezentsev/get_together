@@ -38,16 +38,13 @@ func init() {
 // we need this function to avoiding DB errors due parallel queries
 func TestMain(t *testing.M) {
   res := t.Run()
-  if err := db.Close(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+  mock.DropTables(db)
   os.Exit(res)
 }
 
 func TestRepository_GetUserIdByCredentialsSuccess(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   id, err := repository.GetUserIdByCredentials(mock.Users[0])
 
@@ -64,8 +61,8 @@ func TestRepository_GetUserIdByCredentialsSuccess(t *testing.T) {
 }
 
 func TestRepository_GetUserIdByCredentialsErrorUserNotExists(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   _, err := repository.GetUserIdByCredentials(mock.NotExistsUser)
 
@@ -76,7 +73,7 @@ func TestRepository_GetUserIdByCredentialsErrorUserNotExists(t *testing.T) {
 }
 
 func TestRepository_GetUserIdByCredentialsErrorNoTable(t *testing.T) {
-  mock.DropUsers(db)
+  mock.DropTables(db)
 
   _, err := repository.GetUserIdByCredentials(mock.Users[0])
   utils.Assert(nil != err, func() {
@@ -88,8 +85,8 @@ func TestRepository_GetUserIdByCredentialsErrorNoTable(t *testing.T) {
 }
 
 func TestRepository_CreateUserSuccess(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   err := repository.CreateUser(mock.NewUser)
   utils.AssertIsNil(err, func(exp string) {
@@ -107,8 +104,8 @@ func TestRepository_CreateUserSuccess(t *testing.T) {
 }
 
 func TestRepository_CreateUserEmailExistsError(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   err := repository.CreateUser(mock.Users[0])
   utils.AssertErrorsEqual(internal_errors.UnableToRegisterUserEmailExists, err, func(exp string) {
@@ -118,8 +115,8 @@ func TestRepository_CreateUserEmailExistsError(t *testing.T) {
 }
 
 func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   user := mock.Users[0]
   user.Password = "new_pass"
@@ -139,8 +136,8 @@ func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
 }
 
 func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   err := repository.UpdateUserPassword(mock.NotExistsUser)
   utils.AssertErrorsEqual(internal_errors.UnableToChangePasswordUserNotFound, err, func(exp string) {
@@ -150,7 +147,7 @@ func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
 }
 
 func TestRepository_UpdateUserPasswordErrorNoTable(t *testing.T) {
-  mock.DropUsers(db)
+  mock.DropTables(db)
 
   err := repository.UpdateUserPassword(mock.Users[0])
   utils.Assert(nil != err, func() {
@@ -162,8 +159,8 @@ func TestRepository_UpdateUserPasswordErrorNoTable(t *testing.T) {
 }
 
 func TestRepository_GetUserEmailSuccess(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   email, err := repository.GetUserEmail(1)
   utils.AssertIsNil(err, func(exp string) {
@@ -179,8 +176,8 @@ func TestRepository_GetUserEmailSuccess(t *testing.T) {
 }
 
 func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
-  mock.InitUsers(db)
-  defer mock.DropUsers(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   _, err := repository.GetUserEmail(11)
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
@@ -190,7 +187,7 @@ func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
 }
 
 func TestRepository_GetUserEmailErrorNoTable(t *testing.T) {
-  mock.DropUsers(db)
+  mock.DropTables(db)
 
   _, err := repository.GetUserEmail(1)
   utils.Assert(nil != err, func() {

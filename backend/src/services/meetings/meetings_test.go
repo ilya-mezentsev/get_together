@@ -4,6 +4,7 @@ import (
   "io/ioutil"
   "log"
   mock "mock/services"
+  "models"
   "os"
   "services"
   "testing"
@@ -53,7 +54,11 @@ func TestService_GetExtendedMeetingsSuccess(t *testing.T) {
     t.Log(exp)
     t.Fail()
   })
-  expectedMeetings, _ := mock.MeetingsMockRepository.GetExtendedMeetings(1)
+  expectedMeetings, _ := mock.MeetingsMockRepository.GetExtendedMeetings(models.UserMeetingStatusesData{
+    UserId: 1,
+    Invited: "",
+    NotInvited: "",
+  })
   utils.Assert(expectedMeetings[0].PublicPlace == meetings[0].PublicPlace, func() {
     t.Log(
       utils.GetExpectationString(

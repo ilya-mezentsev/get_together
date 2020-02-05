@@ -2,7 +2,7 @@ package models
 
 type (
   Rating struct {
-    Tag Tag `db:"tag"`
+    Tag string `db:"tag"`
     Value float64 `db:"value"`
   }
 

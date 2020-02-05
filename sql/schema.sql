@@ -41,13 +41,13 @@ CREATE TABLE IF NOT EXISTS meetings_settings(
   id SERIAL PRIMARY KEY,
   meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
-  max_users INTEGER DEFAULT NULL,
+  max_users INTEGER DEFAULT 0,
   tags VARCHAR(100)[] DEFAULT NULL,
   date_time TIMESTAMP NOT NULL,
   description TEXT DEFAULT '',
-  duration INTEGER DEFAULT NULL,
-  min_age INTEGER DEFAULT NULL,
-  gender GENDER DEFAULT NULL,
+  duration INTEGER DEFAULT 0,
+  min_age INTEGER DEFAULT 0,
+  gender GENDER DEFAULT '',
   request_description_required BOOLEAN DEFAULT FALSE
 );
 

@@ -38,16 +38,13 @@ func init() {
 // we need this function to avoiding DB errors due parallel queries
 func TestMain(t *testing.M) {
   res := t.Run()
-  if err := db.Close(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+  mock.DropTables(db)
   os.Exit(res)
 }
 
 func TestRepository_GetUserInfoSuccess(t *testing.T) {
-  mock.InitUsersSettings(db)
-  defer mock.DropUsersSettings(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   userSettings, err := repository.GetUserSettings(1)
   utils.AssertIsNil(err, func(exp string) {
@@ -63,8 +60,8 @@ func TestRepository_GetUserInfoSuccess(t *testing.T) {
 }
 
 func TestRepository_GetUserInfoUserNoFoundError(t *testing.T) {
-  mock.InitUsersSettings(db)
-  defer mock.DropUsersSettings(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   _, err := repository.GetUserSettings(11)
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
@@ -74,7 +71,7 @@ func TestRepository_GetUserInfoUserNoFoundError(t *testing.T) {
 }
 
 func TestRepository_GetUserInfoErrorNoTable(t *testing.T) {
-  mock.DropUsersSettings(db)
+  mock.DropTables(db)
 
   _, err := repository.GetUserSettings(11)
   utils.Assert(nil != err, func() {
@@ -86,8 +83,8 @@ func TestRepository_GetUserInfoErrorNoTable(t *testing.T) {
 }
 
 func TestRepository_UpdateUserInfoSuccess(t *testing.T) {
-  mock.InitUsersSettings(db)
-  defer mock.DropUsersSettings(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   err := repository.UpdateUserSettings(1, mock.TestInfo)
   utils.AssertIsNil(err, func(exp string) {
@@ -105,8 +102,8 @@ func TestRepository_UpdateUserInfoSuccess(t *testing.T) {
 }
 
 func TestRepository_UpdateUserInfoUserNoFoundError(t *testing.T) {
-  mock.InitUsersSettings(db)
-  defer mock.DropUsersSettings(db)
+  mock.InitTables(db)
+  defer mock.DropTables(db)
 
   err := repository.UpdateUserSettings(11, mock.TestInfo)
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
@@ -116,7 +113,7 @@ func TestRepository_UpdateUserInfoUserNoFoundError(t *testing.T) {
 }
 
 func TestRepository_UpdateUserInfoErrorNoTable(t *testing.T) {
-  mock.DropUsersSettings(db)
+  mock.DropTables(db)
 
   err := repository.UpdateUserSettings(1, mock.TestInfo)
   utils.Assert(nil != err, func() {

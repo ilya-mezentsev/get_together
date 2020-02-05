@@ -4,6 +4,6 @@ RUN apk add git
 
 WORKDIR ${GOPATH}
 COPY . .
-RUN go get -v -t -d ./...
+RUN go get -v -d ./...
 
 EXPOSE 8080
