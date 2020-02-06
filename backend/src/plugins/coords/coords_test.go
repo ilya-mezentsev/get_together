@@ -19,29 +19,14 @@ func sortedByCoords(meetings []models.ExtendedMeeting) bool {
 
 func TestShake_Sorting(t *testing.T) {
   meetings := Shake(mock.SortTest)
-  utils.Assert(sortedByCoords(meetings), func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "sorted by coords meetings", Got: meetings}))
-    t.Fail()
-  })
+  utils.AssertTrue(sortedByCoords(meetings), t)
 }
 
 func TestShake_Shaking(t *testing.T) {
   meetings := Shake(mock.ShakingTest)
 
   for _, meeting := range meetings[:10] {
-    utils.Assert(7.7 == meeting.Latitude, func() {
-      t.Log(
-        utils.GetExpectationString(
-          utils.Expectation{Expected: 7.7, Got: meeting.Latitude}))
-      t.Fail()
-    })
-    utils.Assert(10.2 == meeting.Longitude, func() {
-      t.Log(
-        utils.GetExpectationString(
-          utils.Expectation{Expected: 10.2, Got: meeting.Longitude}))
-      t.Fail()
-    })
+    utils.AssertEqual(7.7, float64(meeting.Latitude), t)
+    utils.AssertEqual(10.2,  float64(meeting.Longitude), t)
   }
 }

@@ -25,16 +25,8 @@ func TestCoder_Encrypt(t *testing.T) {
     "id": 1,
   })
 
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(services.TestToken == encrypted, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: services.TestToken, Got: encrypted}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(services.TestToken, encrypted, t)
 }
 
 func TestCoder_Decrypt(t *testing.T) {
@@ -43,38 +35,19 @@ func TestCoder_Decrypt(t *testing.T) {
   }
   decrypted, err := coder.Decrypt(services.TestToken)
 
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(fmt.Sprintf("%v", decrypted["id"]) == fmt.Sprintf("%v", expected["id"]), func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: expected["user_id"], Got: decrypted["user_id"]}))
-    t.Fail()
-  })
-  utils.Assert(decrypted["role"] == expected["role"], func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: expected["role"], Got: decrypted["role"]}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(fmt.Sprintf("%v", decrypted["id"]), fmt.Sprintf("%v", expected["id"]), t)
+  utils.AssertEqual(decrypted["role"], expected["role"], t)
 }
 
 func TestCoder_DecryptErrorEmpty(t *testing.T) {
   _, err := coder.Decrypt("")
 
-  utils.Assert(err != nil, func() {
-    t.Log("should be error")
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestCoder_DecryptErrorIncorrectFormat(t *testing.T) {
   _, err := coder.Decrypt("etJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJyb2xlIjoiYWRtaW4iLCJ1c2VyX2lkIjoxfQ.")
 
-  utils.Assert(err != nil, func() {
-    t.Log("should be error")
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }

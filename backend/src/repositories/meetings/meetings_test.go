@@ -50,16 +50,8 @@ func TestRepository_GetFullMeetingInfoSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   info, err := repository.GetFullMeetingInfo(1)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(mock.FirstLabeledPlace == info.LabeledPlace, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock.FirstLabeledPlace, Got: info.LabeledPlace}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(mock.FirstLabeledPlace, info.LabeledPlace, t)
 }
 
 func TestRepository_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
@@ -67,22 +59,14 @@ func TestRepository_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   _, err := repository.GetFullMeetingInfo(11)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_GetFullMeetingInfoNoTableError(t *testing.T) {
   mock.DropTables(db)
 
   _, err := repository.GetFullMeetingInfo(11)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_GetPublicMeetingsSuccess(t *testing.T) {
@@ -90,17 +74,9 @@ func TestRepository_GetPublicMeetingsSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   meetings, err := repository.GetPublicMeetings()
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
   for idx, meeting := range meetings {
-    utils.Assert(mock.PublicPlaces[idx] == meeting.PublicPlace, func() {
-      t.Log(
-        utils.GetExpectationString(
-          utils.Expectation{Expected: mock.PublicPlaces[idx], Got: meeting.PublicPlace}))
-      t.Fail()
-    })
+    utils.AssertEqual(mock.PublicPlaces[idx], meeting.PublicPlace, t)
   }
 }
 
@@ -108,12 +84,7 @@ func TestRepository_GetPublicMeetingsNoTableError(t *testing.T) {
   mock.DropTables(db)
 
   _, err := repository.GetPublicMeetings()
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_GetExtendedMeetingsSuccess(t *testing.T) {
@@ -125,17 +96,9 @@ func TestRepository_GetExtendedMeetingsSuccess(t *testing.T) {
     Invited: "invited",
     NotInvited: "not-invited",
   })
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
   for idx, meeting := range meetings {
-    utils.Assert(mock.FirstUserStatuses[idx] == meeting.CurrentUserStatus, func() {
-      t.Log(
-        utils.GetExpectationString(
-          utils.Expectation{Expected: mock.FirstUserStatuses[idx], Got: meeting.CurrentUserStatus}))
-      t.Fail()
-    })
+    utils.AssertEqual(mock.FirstUserStatuses[idx], meeting.CurrentUserStatus, t)
   }
 }
 
@@ -147,12 +110,7 @@ func TestRepository_GetExtendedMeetingsNoTableError(t *testing.T) {
     Invited: "invited",
     NotInvited: "not-invited",
   })
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_CreateMeetingSuccess(t *testing.T) {
@@ -160,17 +118,9 @@ func TestRepository_CreateMeetingSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.CreateMeeting(1, mock2.NewMeetingSettings)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
   meeting, _ := repository.GetFullMeetingInfo(3)
-  utils.Assert(mock2.NewMeetingSettings.LabeledPlace == meeting.LabeledPlace, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock2.NewMeetingSettings.LabeledPlace, Got: meeting.LabeledPlace}))
-    t.Fail()
-  })
+  utils.AssertEqual(mock2.NewMeetingSettings.LabeledPlace, meeting.LabeledPlace, t)
 }
 
 func TestRepository_CreateMeetingAdminNotFoundError(t *testing.T) {
@@ -178,22 +128,14 @@ func TestRepository_CreateMeetingAdminNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.CreateMeeting(11, mock2.NewMeetingSettings)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_CreateMeetingNoTableError(t *testing.T) {
   mock.DropTables(db)
 
   err := repository.CreateMeeting(11, mock2.NewMeetingSettings)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_DeleteMeetingSuccess(t *testing.T) {
@@ -201,15 +143,9 @@ func TestRepository_DeleteMeetingSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.DeleteMeeting(1)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
   _, err = repository.GetFullMeetingInfo(1)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_DeleteMeetingMeetingNotFoundError(t *testing.T) {
@@ -217,22 +153,14 @@ func TestRepository_DeleteMeetingMeetingNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.DeleteMeeting(11)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_DeleteMeetingNoTableError(t *testing.T) {
   mock.DropTables(db)
 
   err := repository.DeleteMeeting(11)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_UpdatedSettingsSuccess(t *testing.T) {
@@ -240,17 +168,9 @@ func TestRepository_UpdatedSettingsSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.UpdatedSettings(2, mock2.NewMeetingSettings)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
   meeting, _ := repository.GetFullMeetingInfo(2)
-  utils.Assert(mock2.NewMeetingSettings.Title == meeting.Title, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock2.NewMeetingSettings, Got: meeting}))
-    t.Fail()
-  })
+  utils.AssertEqual(mock2.NewMeetingSettings.Title, meeting.Title, t)
 }
 
 func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
@@ -258,20 +178,12 @@ func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.UpdatedSettings(11, mock2.NewMeetingSettings)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_UpdatedSettingsNoTableError(t *testing.T) {
   mock.DropTables(db)
 
   err := repository.UpdatedSettings(11, mock2.NewMeetingSettings)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }

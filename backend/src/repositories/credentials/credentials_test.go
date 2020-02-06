@@ -48,16 +48,8 @@ func TestRepository_GetUserIdByCredentialsSuccess(t *testing.T) {
 
   id, err := repository.GetUserIdByCredentials(mock.Users[0])
 
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(1 == id, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: 1, Got: id}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(1, int(id), t)
 }
 
 func TestRepository_GetUserIdByCredentialsErrorUserNotExists(t *testing.T) {
@@ -66,22 +58,14 @@ func TestRepository_GetUserIdByCredentialsErrorUserNotExists(t *testing.T) {
 
   _, err := repository.GetUserIdByCredentials(mock.NotExistsUser)
 
-  utils.AssertErrorsEqual(internal_errors.UnableToLoginUserNotFound, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToLoginUserNotFound, err, t)
 }
 
 func TestRepository_GetUserIdByCredentialsErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
   _, err := repository.GetUserIdByCredentials(mock.Users[0])
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "some error", Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_CreateUserSuccess(t *testing.T) {
@@ -89,18 +73,10 @@ func TestRepository_CreateUserSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.CreateUser(mock.NewUser)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
 
   id, _ := repository.GetUserIdByCredentials(mock.NewUser)
-  utils.Assert(3 == id, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: 3, Got: id}))
-    t.Fail()
-  })
+  utils.AssertEqual(3, int(id), t)
 }
 
 func TestRepository_CreateUserEmailExistsError(t *testing.T) {
@@ -108,10 +84,7 @@ func TestRepository_CreateUserEmailExistsError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.CreateUser(mock.Users[0])
-  utils.AssertErrorsEqual(internal_errors.UnableToRegisterUserEmailExists, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToRegisterUserEmailExists, err, t)
 }
 
 func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
@@ -121,18 +94,10 @@ func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
   user := mock.Users[0]
   user.Password = "new_pass"
   err := repository.UpdateUserPassword(user)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
 
   id, _ := repository.GetUserIdByCredentials(user)
-  utils.Assert(1 == id, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: 1, Got: id}))
-    t.Fail()
-  })
+  utils.AssertEqual(1, int(id), t)
 }
 
 func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
@@ -140,22 +105,14 @@ func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.UpdateUserPassword(mock.NotExistsUser)
-  utils.AssertErrorsEqual(internal_errors.UnableToChangePasswordUserNotFound, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToChangePasswordUserNotFound, err, t)
 }
 
 func TestRepository_UpdateUserPasswordErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
   err := repository.UpdateUserPassword(mock.Users[0])
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "some error", Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_GetUserEmailSuccess(t *testing.T) {
@@ -163,16 +120,8 @@ func TestRepository_GetUserEmailSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   email, err := repository.GetUserEmail(1)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(mock.Users[0].Email == email, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock.Users[0].Email, Got: email}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(mock.Users[0].Email, email, t)
 }
 
 func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
@@ -180,20 +129,12 @@ func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   _, err := repository.GetUserEmail(11)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_GetUserEmailErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
   _, err := repository.GetUserEmail(1)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "some error", Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
