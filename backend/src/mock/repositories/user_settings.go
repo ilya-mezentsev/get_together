@@ -10,8 +10,9 @@ var (
       Name: "J. Smith", Nickname: "mather_fucker", Gender: "male", Age: 12,
     },
     Rating: []models.Rating{
-      {Tag: "tag1", Value: 85},
-      {Tag: "tag2", Value: 75},
+      {Tag: "tag1", Value: 65},
+      {Tag: "tag2", Value: 55},
+      {Tag: "tag3", Value: 43},
     },
   }
   TestInfo = models.UserSettings{

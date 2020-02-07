@@ -12,6 +12,11 @@ type (
     UpdatedSettings(meetingId uint, settings models.AllSettings) error
   }
 
+  MeetingsSettingsRepository interface {
+    GetMeetingSettings(meetingId uint) (models.ParticipationMeetingSettings, error)
+    ExistsMeetingInCloseTime(data models.UserTimeCheckData) (bool, error)
+  }
+
   MeetingUsersRepository interface {
     AddUserToMeeting(meetingId, userId uint) error
     KickUserFromMeeting(meetingId, userId uint)

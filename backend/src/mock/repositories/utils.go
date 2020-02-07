@@ -110,10 +110,13 @@ const (
   INSERT INTO users_info(user_id, name, nickname, gender, age) VALUES(1, 'J. Smith', 'mather_fucker', 'male', 12);
   INSERT INTO users_info(user_id, name, nickname, age, avatar_url) VALUES(2, 'Mr. Anderson', 'LoL228', 8, 'http://123.png');
 
-  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag1', 85);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag2', 75);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag1', 95);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag3', 65);
+  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag1', 65);
+  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag2', 55);
+  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag3', 43);
+
+  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag1', 40);
+  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag2', 90);
+  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag3', 55);
 
   INSERT INTO meetings(admin_id, user_ids) VALUES(1, ARRAY[1]);
   INSERT INTO meetings(admin_id, user_ids) VALUES(2, ARRAY[2]);

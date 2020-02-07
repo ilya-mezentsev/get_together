@@ -23,6 +23,12 @@ func AssertTrue(actual bool, t *testing.T) {
   }
 }
 
+func AssertFalse(actual bool, t *testing.T) {
+  if actual {
+    logExpectationAndFail(false, actual, t)
+  }
+}
+
 func AssertEqual(expected, actual interface{}, t *testing.T) {
   if expected != actual {
     logExpectationAndFail(expected, actual, t)
