@@ -3,10 +3,11 @@ package utils
 import (
   "fmt"
   "os"
+  "testing"
 )
 
 type Expectation struct {
-  Expected, Got interface{}
+  Expected, Actual interface{}
 }
 
 func SkipInShortMode() {
@@ -16,29 +17,43 @@ func SkipInShortMode() {
   }
 }
 
-func Assert(condition bool, onFalseFn func()) {
-  if !condition {
-    onFalseFn()
+func AssertTrue(actual bool, t *testing.T) {
+  if !actual {
+    logExpectationAndFail(true, actual, t)
   }
 }
 
-func AssertIsNil(v interface{}, onFalseFn func(string)) {
+func AssertEqual(expected, actual interface{}, t *testing.T) {
+  if expected != actual {
+    logExpectationAndFail(expected, actual, t)
+  }
+}
+
+func AssertNil(v interface{}, t *testing.T) {
   if v != nil {
-    onFalseFn(
-      GetExpectationString(
-        Expectation{Got: v}))
+    logExpectationAndFail(nil, v, t)
   }
 }
 
-func AssertErrorsEqual(expectedErr, actualErr error, onFalseFn func(string)) {
-  Assert(
-    expectedErr != nil && actualErr != nil && expectedErr.Error() == actualErr.Error(),
-    func() {
-      onFalseFn(GetExpectationString(Expectation{Expected: expectedErr, Got: actualErr}))
-    },
-  )
+func AssertNotNil(v interface{}, t *testing.T) {
+  if v == nil {
+    logExpectationAndFail("not nil", v, t)
+  }
+}
+
+func AssertErrorsEqual(expectedErr, actualErr error, t *testing.T) {
+  if expectedErr != actualErr {
+    logExpectationAndFail(expectedErr, actualErr, t)
+  }
+}
+
+func logExpectationAndFail(expected, actual interface{}, t *testing.T) {
+  t.Log(
+    GetExpectationString(
+      Expectation{Expected: expected, Actual: actual}))
+  t.Fail()
 }
 
 func GetExpectationString(e Expectation) string {
-  return fmt.Sprintf("expected: %v, got: %v\n", e.Expected, e.Got)
+  return fmt.Sprintf("expected: %v, got: %v\n", e.Expected, e.Actual)
 }

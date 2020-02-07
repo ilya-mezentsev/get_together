@@ -21,75 +21,44 @@ func TestAuthService_RegisterUserSuccess(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.NewUser)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
 
   userId, err := authService.Login(mock.NewUser)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(int(userId) == len(mock.CredentialsRepo.Users), func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: len(mock.CredentialsRepo.Users), Got: userId}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(int(userId), len(mock.CredentialsRepo.Users), t)
 }
 
 func TestAuthService_RegisterUserEmailExistsError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.ExistingUserEmail)
-  utils.AssertErrorsEqual(EmailExists, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(EmailExists, err, t)
 }
 
 func TestAuthService_RegisterUserInternalError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.BadUser)
-  utils.AssertErrorsEqual(services.InternalError, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(services.InternalError, err, t)
 }
 
 func TestAuthService_LoginSuccess(t *testing.T) {
   userId, err := authService.Login(mock.Users[0])
 
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(1 == userId, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: 1, Got: userId}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(1, int(userId), t)
 }
 
 func TestAuthService_LoginCredentialsNotFoundError(t *testing.T) {
   _, err := authService.Login(mock.NewUser)
 
-  utils.AssertErrorsEqual(CredentialsNotFound, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(CredentialsNotFound, err, t)
 }
 
 func TestAuthService_LoginInternalError(t *testing.T) {
   _, err := authService.Login(mock.BadUser)
 
-  utils.AssertErrorsEqual(services.InternalError, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(services.InternalError, err, t)
 }
 
 func TestAuthService_ChangePasswordSuccess(t *testing.T) {
@@ -99,41 +68,24 @@ func TestAuthService_ChangePasswordSuccess(t *testing.T) {
   email, _ := mock.CredentialsRepo.GetUserEmail(1)
   expectedPassword := utils.GetHash(email + "new_password")
 
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(expectedPassword == mock.CredentialsRepo.Users[0].Password, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: expectedPassword, Got: mock.CredentialsRepo.Users[0].Password}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertEqual(expectedPassword, mock.CredentialsRepo.Users[0].Password, t)
 }
 
 func TestAuthService_ChangePasswordUserNotFoundError(t *testing.T) {
   err := authService.ChangePassword(11, "")
 
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
 }
 
 func TestAuthService_ChangePasswordInternalError_1(t *testing.T) {
   err := authService.ChangePassword(1, mock.BadUser.Password)
 
-  utils.AssertErrorsEqual(services.InternalError, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(services.InternalError, err, t)
 }
 
 func TestAuthService_ChangePasswordInternalError_2(t *testing.T) {
   err := authService.ChangePassword(mock.BadUserId, "")
 
-  utils.AssertErrorsEqual(services.InternalError, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(services.InternalError, err, t)
 }

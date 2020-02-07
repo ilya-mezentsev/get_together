@@ -47,16 +47,8 @@ func TestRepository_GetUserInfoSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   userSettings, err := repository.GetUserSettings(1)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
-  utils.Assert(mock.SettingsEqual(mock.FirstUserSettings, userSettings), func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock.FirstUserSettings, Got: userSettings}))
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
+  utils.AssertTrue(mock.SettingsEqual(mock.FirstUserSettings, userSettings), t)
 }
 
 func TestRepository_GetUserInfoUserNoFoundError(t *testing.T) {
@@ -64,22 +56,14 @@ func TestRepository_GetUserInfoUserNoFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   _, err := repository.GetUserSettings(11)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_GetUserInfoErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
   _, err := repository.GetUserSettings(11)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "not nil error", Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
 
 func TestRepository_UpdateUserInfoSuccess(t *testing.T) {
@@ -87,18 +71,10 @@ func TestRepository_UpdateUserInfoSuccess(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.UpdateUserSettings(1, mock.TestInfo)
-  utils.AssertIsNil(err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertNil(err, t)
 
   userSettings, _ := repository.GetUserSettings(1)
-  utils.Assert(mock.TestInfo == userSettings.UserSettings, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: mock.TestInfo, Got: userSettings.UserSettings}))
-    t.Fail()
-  })
+  utils.AssertEqual(mock.TestInfo, userSettings.UserSettings, t)
 }
 
 func TestRepository_UpdateUserInfoUserNoFoundError(t *testing.T) {
@@ -106,20 +82,12 @@ func TestRepository_UpdateUserInfoUserNoFoundError(t *testing.T) {
   defer mock.DropTables(db)
 
   err := repository.UpdateUserSettings(11, mock.TestInfo)
-  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, func(exp string) {
-    t.Log(exp)
-    t.Fail()
-  })
+  utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_UpdateUserInfoErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
   err := repository.UpdateUserSettings(1, mock.TestInfo)
-  utils.Assert(nil != err, func() {
-    t.Log(
-      utils.GetExpectationString(
-        utils.Expectation{Expected: "not nil error", Got: err}))
-    t.Fail()
-  })
+  utils.AssertNotNil(err, t)
 }
