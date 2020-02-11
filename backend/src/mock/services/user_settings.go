@@ -13,10 +13,15 @@ var (
   usersSettings = map[uint]models.FullUserInfo{
     1: {
       UserSettings: models.UserSettings{
+        Gender: "male",
         Name: "J. Smith",
-        Age: 15,
+        Age: 16,
       },
-      Rating: nil,
+      Rating: []models.Rating{
+        {Tag: "tag1", Value: 65},
+        {Tag: "tag2", Value: 55},
+        {Tag: "tag3", Value: 43},
+      },
     },
     2: {
       UserSettings:   models.UserSettings{
@@ -32,6 +37,7 @@ var (
     Age: 16,
     Gender: "male",
   }
+  TagsWithBadRating = []string{"tag2"}
 )
 
 func (u *UsersSettingsRepositoryMock) ResetState() {

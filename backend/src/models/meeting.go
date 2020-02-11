@@ -28,17 +28,32 @@ type (
   // for authorized users
   ExtendedSettings struct {
     PublicSettings
-    DateTime time.Time `db:"date_time"`
-    RequestDescriptionRequired bool `db:"request_description_required"`
+    MeetingParameters
   }
 
   AllSettings struct {
     ExtendedSettings
     LabeledPlace
+    MeetingLimitations
+  }
+
+  MeetingParameters struct {
+    DateTime time.Time `db:"date_time"`
+    RequestDescriptionRequired bool `db:"request_description_required"`
+  }
+
+  MeetingLimitations struct {
+    MaxUsers uint `db:"max_users"`
     Duration uint `db:"duration"`
     MinAge uint `db:"min_age"`
     Gender string `db:"gender"`
-    MaxUsers uint `db:"max_users"`
+  }
+
+  ParticipationMeetingSettings struct {
+    MeetingLimitations
+    MeetingParameters
+    Tags []string `db:"tags"`
+    UsersCount uint `db:"users_count"`
   }
 
   DefaultMeeting struct {

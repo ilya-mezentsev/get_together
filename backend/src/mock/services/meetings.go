@@ -32,12 +32,16 @@ var (
             Description: "Fuck you, Moriarty",
             Tags: []string{"logic", "smoking pipe"},
           },
-          DateTime: time.Unix(0, 1),
-          RequestDescriptionRequired: false,
+          MeetingParameters: models.MeetingParameters{
+            DateTime: time.Unix(0, 1),
+            RequestDescriptionRequired: false,
+          },
         },
-        Duration: 2,
-        MinAge: 16,
-        MaxUsers: 10,
+        MeetingLimitations: models.MeetingLimitations{
+          Duration: 2,
+          MinAge: 16,
+          MaxUsers: 10,
+        },
       },
     },
   }
@@ -48,8 +52,10 @@ var (
         Description: "Who likes winx come!",
         Tags: []string{"winx", "my_love"},
       },
-      DateTime: time.Unix(0, 0),
-      RequestDescriptionRequired: false,
+      MeetingParameters: models.MeetingParameters{
+        DateTime: time.Unix(0, 0),
+        RequestDescriptionRequired: false,
+      },
     },
     LabeledPlace: models.LabeledPlace{
       Label: "221b baker street",
@@ -58,10 +64,12 @@ var (
         Longitude: -0.1550,
       },
     },
-    Duration: 2,
-    MinAge: 12,
-    Gender: "female",
-    MaxUsers: 10,
+    MeetingLimitations: models.MeetingLimitations{
+      Duration: 2,
+      MinAge: 12,
+      Gender: "female",
+      MaxUsers: 10,
+    },
   }
   MeetingsMockRepository = MeetingsRepositoryMock{Meetings: meetings}
   BadMeetingId uint = 0
