@@ -119,7 +119,7 @@ func TestRepository_CreateMeetingSuccess(t *testing.T) {
 
   err := repository.CreateMeeting(1, mock2.NewMeetingSettings)
   utils.AssertNil(err, t)
-  meeting, _ := repository.GetFullMeetingInfo(3)
+  meeting, _ := repository.GetFullMeetingInfo(4)
   utils.AssertEqual(mock2.NewMeetingSettings.LabeledPlace, meeting.LabeledPlace, t)
 }
 

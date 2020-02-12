@@ -76,7 +76,7 @@ func TestRepository_CreateUserSuccess(t *testing.T) {
   utils.AssertNil(err, t)
 
   id, _ := repository.GetUserIdByCredentials(mock.NewUser)
-  utils.AssertEqual(3, int(id), t)
+  utils.AssertEqual(5, int(id), t)
 }
 
 func TestRepository_CreateUserEmailExistsError(t *testing.T) {
