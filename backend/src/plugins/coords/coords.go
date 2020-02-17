@@ -6,6 +6,7 @@ package coords
 //  3. Set for all meetings in block average coordinates
 
 import (
+  "interfaces"
   "math"
   "models"
 )
@@ -16,21 +17,58 @@ type Border struct {
   left, right int
 }
 
-func Shake(meetings []models.ExtendedMeeting) []models.ExtendedMeeting {
-  meetings = sortByCoords(meetings)
-  meetings = shakeCoords(meetings)
+func ShakeExtendedMeetings(meetings []models.ExtendedMeeting) []models.ExtendedMeeting {
+  shakenMeetings := shakeCoords(
+    sortByCoords(
+      getPlacesFromExtendedMeetings(
+        meetings)))
+
+  for idx := range shakenMeetings {
+    meetings[idx] = shakenMeetings[idx].(models.ExtendedMeeting)
+  }
 
   return meetings
 }
 
-func sortByCoords(meetings []models.ExtendedMeeting) []models.ExtendedMeeting {
+func getPlacesFromExtendedMeetings(meetings []models.ExtendedMeeting) []interfaces.Place {
+  var places []interfaces.Place
+  for _, meeting := range meetings {
+    places = append(places, meeting)
+  }
+
+  return places
+}
+
+func ShakePublicMeetings(meetings []models.PublicMeeting) []models.PublicMeeting {
+  shakenMeetings := shakeCoords(
+   sortByCoords(
+     getPlacesFromPublicMeetings(
+       meetings)))
+
+  for idx := range shakenMeetings {
+    meetings[idx] = shakenMeetings[idx].(models.PublicMeeting)
+  }
+
+  return meetings
+}
+
+func getPlacesFromPublicMeetings(meetings []models.PublicMeeting) []interfaces.Place {
+  var places []interfaces.Place
+  for _, meeting := range meetings {
+    places = append(places, meeting)
+  }
+
+  return places
+}
+
+func sortByCoords(meetings []interfaces.Place) []interfaces.Place {
   if len(meetings) < 2 {
     return meetings
   }
 
   var (
     middle = getVectorLength(meetings[0])
-    left, mid, right []models.ExtendedMeeting
+    left, mid, right []interfaces.Place
   )
 
   for _, meeting := range meetings {
@@ -50,12 +88,12 @@ func sortByCoords(meetings []models.ExtendedMeeting) []models.ExtendedMeeting {
   return append(left, append(mid, right...)...)
 }
 
-func getVectorLength(meeting models.ExtendedMeeting) float64 {
+func getVectorLength(meeting interfaces.Place) float64 {
   return math.Sqrt(
-    math.Pow(float64(meeting.PublicPlace.Latitude), 2) + math.Pow(float64(meeting.PublicPlace.Longitude), 2))
+    math.Pow(float64(meeting.GetLatitude()), 2) + math.Pow(float64(meeting.GetLongitude()), 2))
 }
 
-func shakeCoords(meetings []models.ExtendedMeeting) []models.ExtendedMeeting {
+func shakeCoords(meetings []interfaces.Place) []interfaces.Place {
   meetingsCount := len(meetings)
   for _, border := range getMeetingsBorders(meetingsCount) {
     meetingsBlock := meetings[border.left:border.right]
@@ -95,21 +133,21 @@ func getMeetingsBorders(meetingsCount int) []Border {
   return borders
 }
 
-func setCoordsToCenterMeetingsBlock(meetingsBlock []models.ExtendedMeeting) []models.ExtendedMeeting {
+func setCoordsToCenterMeetingsBlock(meetingsBlock []interfaces.Place) []interfaces.Place {
   meetingsCount := len(meetingsBlock)
   var (
     sumLatitude, sumLongitude, avgLatitude, avgLongitude float64
   )
   for _, meeting := range meetingsBlock {
-    sumLatitude += float64(meeting.Latitude)
-    sumLongitude += float64(meeting.Longitude)
+    sumLatitude += float64(meeting.GetLatitude())
+    sumLongitude += float64(meeting.GetLongitude())
   }
   avgLatitude = sumLatitude / float64(meetingsCount)
   avgLongitude = sumLongitude / float64(meetingsCount)
 
   for meetingIdx := range meetingsBlock {
-    meetingsBlock[meetingIdx].Latitude = models.Latitude(avgLatitude)
-    meetingsBlock[meetingIdx].Longitude = models.Longitude(avgLongitude)
+    meetingsBlock[meetingIdx].SetLatitude(models.Latitude(avgLatitude))
+    meetingsBlock[meetingIdx].SetLongitude(models.Longitude(avgLongitude))
   }
 
   return meetingsBlock

@@ -93,7 +93,9 @@ func (r Repository) GetPublicMeetings() ([]models.PublicMeeting, error) {
   }
 
   for rows.Next() {
-    var meeting models.PublicMeeting
+    var meeting = models.PublicMeeting{
+      PublicPlace: &models.PublicPlace{},
+    }
     err = rows.Scan(
       &meeting.ID, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
       &meeting.Title, &meeting.Description, pq.Array(&meeting.Tags))
@@ -116,7 +118,9 @@ func (r Repository) GetExtendedMeetings(
   }
 
   for rows.Next() {
-    var meeting models.ExtendedMeeting
+    var meeting = models.ExtendedMeeting{
+      PublicPlace: &models.PublicPlace{},
+    }
     err = rows.Scan(
       &meeting.ID, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
       &meeting.Title, &meeting.Description, pq.Array(&meeting.Tags), &meeting.DateTime,
