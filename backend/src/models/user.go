@@ -35,6 +35,5 @@ type (
   UserTimeCheckData struct {
     UserId uint `db:"user_id"`
     MeetingId uint `db:"meeting_id"`
-    HoursDelta uint `db:"time_delta"`
   }
 )

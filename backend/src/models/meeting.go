@@ -89,4 +89,8 @@ type (
     Invited string `db:"invited"`
     NotInvited string `db:"not_invited"`
   }
+  TimeMeetingParameters struct {
+    DateTime time.Time `db:"date_time"`
+    Duration uint `db:"duration"`
+  }
 )

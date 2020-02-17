@@ -112,7 +112,6 @@ func (s Service) hasNearMeeting(request models.ParticipationRequest) (bool, erro
     models.UserTimeCheckData{
       UserId: request.UserId,
       MeetingId: request.MeetingId,
-      HoursDelta: defaultHoursDelta,
     })
 
   switch err {
