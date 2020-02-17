@@ -53,7 +53,7 @@ func (s Service) GetPublicMeetings() ([]models.PublicMeeting, error) {
 
   switch err {
   case nil:
-    return meetings, nil
+    return coords.ShakePublicMeetings(meetings), nil
   default:
     logger.WithFields(logger.Fields{
       MessageTemplate: "unable to get public meetings: %v",
@@ -69,11 +69,10 @@ func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, err
     Invited: invitedStatus,
     NotInvited: notInvitedStatus,
   })
-  meetings = coords.Shake(meetings)
 
   switch err {
   case nil:
-    return meetings, nil
+    return coords.ShakeExtendedMeetings(meetings), nil
   case internal_errors.UnableToFindUserById:
     logger.WithFields(logger.Fields{
       MessageTemplate: err.Error(),

@@ -24,7 +24,8 @@ func TestService_GetPublicMeetingsSuccess(t *testing.T) {
   meetings, err := service.GetPublicMeetings()
   utils.AssertNil(err, t)
   expectedMeetings, _ := mock.MeetingsMockRepository.GetPublicMeetings()
-  utils.AssertEqual(expectedMeetings[0].PublicPlace, meetings[0].PublicPlace, t)
+  utils.AssertEqual(expectedMeetings[0].PublicPlace.Latitude, meetings[0].PublicPlace.Latitude, t)
+  utils.AssertEqual(expectedMeetings[0].PublicPlace.Longitude, meetings[0].PublicPlace.Longitude, t)
 }
 
 func TestService_GetPublicMeetingsInternalError(t *testing.T) {
@@ -45,7 +46,8 @@ func TestService_GetExtendedMeetingsSuccess(t *testing.T) {
     Invited: "",
     NotInvited: "",
   })
-  utils.AssertEqual(expectedMeetings[0].PublicPlace, meetings[0].PublicPlace, t)
+  utils.AssertEqual(expectedMeetings[0].PublicPlace.Latitude, meetings[0].PublicPlace.Latitude, t)
+  utils.AssertEqual(expectedMeetings[0].PublicPlace.Longitude, meetings[0].PublicPlace.Longitude, t)
 }
 
 func TestService_GetExtendedMeetingsUserNotFoundError(t *testing.T) {

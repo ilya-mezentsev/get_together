@@ -65,13 +65,13 @@ type (
   PublicMeeting struct {
     DefaultMeeting
     PublicSettings
-    PublicPlace
+    *PublicPlace
   }
 
   ExtendedMeeting struct {
     DefaultMeeting
     ExtendedSettings
-    PublicPlace
+    *PublicPlace
     CurrentUserStatus string `db:"current_user_status"`
   }
 
@@ -94,3 +94,19 @@ type (
     Duration uint `db:"duration"`
   }
 )
+
+func (p *PublicPlace) GetLatitude() Latitude {
+  return p.Latitude
+}
+
+func (p *PublicPlace) SetLatitude(l Latitude) {
+  p.Latitude = l
+}
+
+func (p *PublicPlace) GetLongitude() Longitude {
+  return p.Longitude
+}
+
+func (p *PublicPlace) SetLongitude(l Longitude) {
+  p.Longitude = l
+}

@@ -104,7 +104,7 @@ func (m *MeetingsRepositoryMock) GetPublicMeetings() ([]models.PublicMeeting, er
     meetings = append(meetings, models.PublicMeeting{
       DefaultMeeting: m.DefaultMeeting,
       PublicSettings: m.PublicSettings,
-      PublicPlace: m.PublicPlace,
+      PublicPlace: &m.PublicPlace,
     })
   }
 
@@ -125,7 +125,7 @@ func (m *MeetingsRepositoryMock) GetExtendedMeetings(
     meetings = append(meetings, models.ExtendedMeeting{
       DefaultMeeting: m.DefaultMeeting,
       ExtendedSettings: m.ExtendedSettings,
-      PublicPlace: m.PublicPlace,
+      PublicPlace: &m.PublicPlace,
       CurrentUserStatus: "",
     })
   }

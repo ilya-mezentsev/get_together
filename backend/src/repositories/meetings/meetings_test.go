@@ -76,7 +76,8 @@ func TestRepository_GetPublicMeetingsSuccess(t *testing.T) {
   meetings, err := repository.GetPublicMeetings()
   utils.AssertNil(err, t)
   for idx, meeting := range meetings {
-    utils.AssertEqual(mock.PublicPlaces[idx], meeting.PublicPlace, t)
+    utils.AssertEqual(mock.PublicPlaces[idx].Longitude, meeting.PublicPlace.Longitude, t)
+    utils.AssertEqual(mock.PublicPlaces[idx].Latitude, meeting.PublicPlace.Latitude, t)
   }
 }
 
