@@ -14,7 +14,7 @@ type (
 
   MeetingsSettingsRepository interface {
     GetMeetingSettings(meetingId uint) (models.ParticipationMeetingSettings, error)
-    ExistsMeetingInCloseTime(data models.UserTimeCheckData) (bool, error)
+    GetNearMeetings(data models.UserTimeCheckData) ([]models.TimeMeetingParameters, error)
   }
 
   MeetingUsersRepository interface {

@@ -20,7 +20,7 @@ var (
         Gender: "male",
       },
       MeetingParameters: models.MeetingParameters{
-        DateTime: time.Unix(1, 1),
+        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
         RequestDescriptionRequired: false,
       },
       Tags: []string{"tag1", "tag2"},
@@ -34,7 +34,7 @@ var (
         Gender: "female",
       },
       MeetingParameters: models.MeetingParameters{
-        DateTime: time.Unix(1, 1),
+        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
         RequestDescriptionRequired: false,
       },
       Tags: []string{"tag3"},
@@ -48,7 +48,7 @@ var (
         Gender: "male",
       },
       MeetingParameters: models.MeetingParameters{
-        DateTime: time.Unix(1, 1),
+        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
         RequestDescriptionRequired: false,
       },
       Tags: []string{"tag3"},
@@ -62,7 +62,7 @@ var (
         Gender: "female",
       },
       MeetingParameters: models.MeetingParameters{
-        DateTime: time.Unix(1, 1),
+        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
         RequestDescriptionRequired: false,
       },
       Tags: []string{"tag3"},
@@ -138,18 +138,25 @@ func (m *MeetingsSettingsRepositoryMock) GetMeetingSettings(meetingId uint) (mod
   return m.meetings[meetingId], nil
 }
 
-func (m *MeetingsSettingsRepositoryMock) ExistsMeetingInCloseTime(data models.UserTimeCheckData) (bool, error) {
+func (m *MeetingsSettingsRepositoryMock) GetNearMeetings(data models.UserTimeCheckData) ([]models.TimeMeetingParameters, error) {
   if data.MeetingId == BadMeetingId {
-    return false, someInternalError
+    return nil, someInternalError
   } else if data.MeetingId == NotExistsMeetingId {
-    return false, internal_errors.UnableToFindByMeetingId
-  } else if data.MeetingId == MeetingIdWithParticipation {
-    return true, nil
+    return nil, internal_errors.UnableToFindByMeetingId
   } else if data.UserId == NotExistsUserId {
-    return false, internal_errors.UnableToFindUserById
+    return nil, internal_errors.UnableToFindUserById
   }
 
-  return false, nil
+  var meetings []models.TimeMeetingParameters
+  for meetingId, meeting := range meetingsSettings {
+    if meetingId != data.MeetingId {
+      meetings = append(meetings, models.TimeMeetingParameters{
+        DateTime: meeting.DateTime,
+        Duration: meeting.Duration,
+      })
+    }
+  }
+  return meetings, nil
 }
 
 func TagsEqual(t1, t2 []string) bool {

@@ -4,9 +4,9 @@ import (
   "interfaces"
   "internal_errors"
   "models"
-  "plugins/coords"
   "plugins/logger"
   "services"
+  "services/meetings/plugins/coords"
 )
 
 const (

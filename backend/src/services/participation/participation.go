@@ -6,11 +6,11 @@ import (
   "internal_errors"
   "models"
   "plugins/logger"
+  "plugins/meetings_time"
   "services"
 )
 
 const (
-  defaultHoursDelta = 2
   bottomRatingValue = 60
   maxUsersCountReached = "max-users-count-reached"
   ageLessThanMin = "age-less-than-min"
@@ -38,7 +38,7 @@ func (s Service) HandleParticipationRequest(request models.ParticipationRequest)
     return models.RejectInfo{}, err
   }
 
-  hasNearMeeting, err := s.hasNearMeeting(request)
+  hasNearMeeting, err := s.hasNearMeeting(request, meetingSettings)
   if err != nil {
     return models.RejectInfo{}, err
   }
@@ -107,8 +107,11 @@ func (s Service) getUserAndMeetingSettings(
   return userSettings, meetingSettings, nil
 }
 
-func (s Service) hasNearMeeting(request models.ParticipationRequest) (bool, error) {
-  hasNearMeeting, err := s.meetingsSettingsRepository.ExistsMeetingInCloseTime(
+func (s Service) hasNearMeeting(
+  request models.ParticipationRequest,
+  meetingSettings models.ParticipationMeetingSettings,
+) (bool, error) {
+  meetings, err := s.meetingsSettingsRepository.GetNearMeetings(
     models.UserTimeCheckData{
       UserId: request.UserId,
       MeetingId: request.MeetingId,
@@ -116,7 +119,11 @@ func (s Service) hasNearMeeting(request models.ParticipationRequest) (bool, erro
 
   switch err {
   case nil:
-    return hasNearMeeting, nil
+    return meetings_time.MeetingsNearTo(
+      models.TimeMeetingParameters{
+        DateTime: meetingSettings.DateTime,
+        Duration: meetingSettings.Duration,
+      }, meetings), nil
   case internal_errors.UnableToFindUserById:
     logger.WithFields(logger.Fields{
       MessageTemplate: err.Error(),
