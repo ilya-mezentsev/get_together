@@ -46,7 +46,7 @@ func TestRepository_GetUserIdByCredentialsSuccess(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  id, err := repository.GetUserIdByCredentials(mock.Users[0])
+  id, err := repository.GetUserIdByCredentials(mock.GetFirstUser())
 
   utils.AssertNil(err, t)
   utils.AssertEqual(1, int(id), t)
@@ -64,7 +64,7 @@ func TestRepository_GetUserIdByCredentialsErrorUserNotExists(t *testing.T) {
 func TestRepository_GetUserIdByCredentialsErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
-  _, err := repository.GetUserIdByCredentials(mock.Users[0])
+  _, err := repository.GetUserIdByCredentials(mock.GetFirstUser())
   utils.AssertNotNil(err, t)
 }
 
@@ -76,14 +76,14 @@ func TestRepository_CreateUserSuccess(t *testing.T) {
   utils.AssertNil(err, t)
 
   id, _ := repository.GetUserIdByCredentials(mock.NewUser)
-  utils.AssertEqual(5, int(id), t)
+  utils.AssertEqual(mock.GetNextUserId(), id, t)
 }
 
 func TestRepository_CreateUserEmailExistsError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.CreateUser(mock.Users[0])
+  err := repository.CreateUser(mock.GetFirstUser())
   utils.AssertErrorsEqual(internal_errors.UnableToRegisterUserEmailExists, err, t)
 }
 
@@ -91,7 +91,7 @@ func TestRepository_UpdateUserPasswordSuccess(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  user := mock.Users[0]
+  user := mock.GetFirstUser()
   user.Password = "new_pass"
   err := repository.UpdateUserPassword(user)
   utils.AssertNil(err, t)
@@ -111,7 +111,7 @@ func TestRepository_UpdateUserPasswordUserNotFoundError(t *testing.T) {
 func TestRepository_UpdateUserPasswordErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
-  err := repository.UpdateUserPassword(mock.Users[0])
+  err := repository.UpdateUserPassword(mock.GetFirstUser())
   utils.AssertNotNil(err, t)
 }
 
@@ -121,14 +121,14 @@ func TestRepository_GetUserEmailSuccess(t *testing.T) {
 
   email, err := repository.GetUserEmail(1)
   utils.AssertNil(err, t)
-  utils.AssertEqual(mock.Users[0].Email, email, t)
+  utils.AssertEqual(mock.GetFirstUser().Email, email, t)
 }
 
 func TestRepository_GetUserEmailUserNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  _, err := repository.GetUserEmail(11)
+  _, err := repository.GetUserEmail(mock.GetNotExistsUserId())
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 

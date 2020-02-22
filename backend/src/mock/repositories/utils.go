@@ -1,6 +1,9 @@
 package repositories
 
-import "github.com/jmoiron/sqlx"
+import (
+  "github.com/jmoiron/sqlx"
+  "github.com/lib/pq"
+)
 
 const (
   DropTablesQuery = `
@@ -104,43 +107,82 @@ const (
     text TEXT NOT NULL,
     sending_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );`
-  CreateDataQuery = `
-  INSERT INTO users(email, password) VALUES('mail@ya.ru', '3dac4de4c9d5af7382da4c63f5555f2b');
-  INSERT INTO users(email, password) VALUES('me@gmail.com', '0c120226ef10689396a6eabbf733e54b');
-  INSERT INTO users(email, password) VALUES('hello.world@mail.ru', '3dac4de4c9d5af7382da4c63f5555f2b');
-  INSERT INTO users(email, password) VALUES('world@hello.ru', '3dac4de4c9d5af7382da4c63f5555f2b');
-
-  INSERT INTO users_info(user_id, name, nickname, gender, age) VALUES(1, 'J. Smith', 'mather_fucker', 'male', 12);
-  INSERT INTO users_info(user_id, name, nickname, age, avatar_url) VALUES(2, 'Mr. Anderson', 'LoL228', 8, 'http://123.png');
-  INSERT INTO users_info(user_id, name, nickname, age) VALUES(3, 'Alex', 'nagibator', 21);
-
-  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag1', 65);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag2', 55);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(1, 'tag3', 43);
-
-  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag1', 40);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag2', 90);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(2, 'tag3', 55);
-
-  INSERT INTO users_rating(user_id, tag, value) VALUES(3, 'tag1', 40);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(3, 'tag2', 90);
-  INSERT INTO users_rating(user_id, tag, value) VALUES(3, 'tag3', 55);
-
-  INSERT INTO meetings(admin_id, user_ids) VALUES(1, ARRAY[1]);
-  INSERT INTO meetings(admin_id, user_ids) VALUES(2, ARRAY[2, 4]);
-  INSERT INTO meetings(admin_id, user_ids) VALUES(3, ARRAY[3]);
-
+  CreateUserQuery = `INSERT INTO users(email, password) VALUES(:email, :password);`
+  CreateUserInfoQuery = `
+  INSERT INTO users_info(user_id, name, nickname, age, gender)
+  VALUES(:user_id, :name, :nickname, :age, :gender);`
+  CreateUserRatingQuery = `INSERT INTO users_rating(user_id, tag, value) VALUES(:user_id, :tag, :value);`
+  CreateMeetingQuery = `INSERT INTO meetings(admin_id, user_ids) VALUES(:admin_id, :user_ids);`
+  CreateMeetingSettingsQuery = `
   INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration)
-  VALUES(1, 'hello_world', '2020-03-02T14:00:00', ARRAY['tag1', 'tag2'], 4);
-  INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration)
-  VALUES(2, 'hello_world', '2020-03-02T16:00:00', ARRAY['tag3'], 4);
-  INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration)
-  VALUES(3, 'hello_world', '2020-03-02T20:00:00', ARRAY['tag1'], 4);
+  VALUES(:meeting_id, :title, :date_time, :tags, :duration);`
+  CreateMeetingPlaceQuery = `
+  INSERT INTO meetings_places(meeting_id, label, latitude, longitude)
+  VALUES(:meeting_id, :label, :latitude, :longitude);`
+)
 
-  INSERT INTO meetings_places(meeting_id, label, latitude, longitude) VALUES(1, '221b baker street', 51.5207, -0.1550);
-  INSERT INTO meetings_places(meeting_id, label, latitude, longitude) VALUES(2, 'hello-world', 0.0, 0.0);
-  INSERT INTO meetings_places(meeting_id, label, latitude, longitude) VALUES(3, '221b baker street', 51.5207, -0.1550);
-  `
+var (
+  UsersCredentials = []map[string]interface{}{
+    {"email": "mail@ya.ru", "password": "3dac4de4c9d5af7382da4c63f5555f2b"},
+    {"email": "me@gmail.com", "password": "0c120226ef10689396a6eabbf733e54b"},
+    {"email": "hello.world@mail.ru", "password": "3dac4de4c9d5af7382da4c63f5555f2b"},
+    {"email": "world@hello.ru", "password": "3dac4de4c9d5af7382da4c63f5555f2b"},
+  }
+  UsersInfo = []map[string]interface{}{
+    {"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
+    {"user_id": 2, "name": "Mr. Anderson", "nickname": "Lol228", "age": 8, "gender": "male"},
+    {"user_id": 3, "name": "Alex", "nickname": "nagibator", "age": 21, "gender": "female"},
+  }
+  UsersRating = []map[string]interface{}{
+    {"user_id": 1, "tag": "tag1", "value": 65},
+    {"user_id": 1, "tag": "tag2", "value": 55},
+    {"user_id": 1, "tag": "tag3", "value": 43},
+    {"user_id": 2, "tag": "tag1", "value": 40},
+    {"user_id": 2, "tag": "tag2", "value": 90},
+    {"user_id": 2, "tag": "tag3", "value": 55},
+    {"user_id": 3, "tag": "tag1", "value": 40},
+    {"user_id": 3, "tag": "tag2", "value": 90},
+    {"user_id": 3, "tag": "tag3", "value": 55},
+  }
+  Meetings = []map[string]interface{}{
+    {"admin_id": 1, "user_ids": pq.Array([]uint{1})},
+    {"admin_id": 2, "user_ids": pq.Array([]uint{2, 4})},
+    {"admin_id": 3, "user_ids": pq.Array([]uint{3})},
+  }
+  MeetingsSettings = []map[string]interface{}{
+    {
+      "meeting_id": 1,
+      "title": "hello_world",
+      "date_time": "2020-03-02T14:00:00",
+      "tags": pq.Array([]string{"tag1", "tag2"}),
+      "duration": 4,
+    },
+    {
+      "meeting_id": 2,
+      "title": "hello_world",
+      "date_time": "2020-03-02T16:00:00",
+      "tags": pq.Array([]string{"tag3"}),
+      "duration": 4,
+    },
+    {
+      "meeting_id": 3,
+      "title": "hello_world",
+      "date_time": "2020-03-02T20:00:00",
+      "tags": pq.Array([]string{"tag1"}),
+      "duration": 4,
+    },
+  }
+  MeetingsPlaces = []map[string]interface{}{
+    {"meeting_id": 1, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
+    {"meeting_id": 2, "label": "hello-world", "latitude": 0.0, "longitude": 0.0},
+    {"meeting_id": 3, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
+  }
+  QueryToSubData = map[string][]map[string]interface{}{
+    CreateUserInfoQuery: UsersInfo,
+    CreateUserRatingQuery: UsersRating,
+    CreateMeetingSettingsQuery: MeetingsSettings,
+    CreateMeetingPlaceQuery: MeetingsPlaces,
+  }
 )
 
 func DropTables(db *sqlx.DB) {
@@ -151,13 +193,38 @@ func DropTables(db *sqlx.DB) {
 }
 
 func InitTables(db *sqlx.DB) {
+  DropTables(db)
   _, err := db.Exec(CreateTablesQuery)
   if err != nil {
     panic(err)
   }
 
-  _, err = db.Exec(CreateDataQuery)
-  if err != nil {
+  insertData(db)
+}
+
+func insertData(db *sqlx.DB) {
+  tx := db.MustBegin()
+  addDataFromSource(tx, CreateUserQuery, UsersCredentials)
+  addDataFromSource(tx, CreateMeetingQuery, Meetings)
+  if err := tx.Commit(); err != nil {
     panic(err)
+  }
+
+  tx = db.MustBegin()
+  for query, data := range QueryToSubData {
+    addDataFromSource(tx, query, data)
+  }
+  if err := tx.Commit(); err != nil {
+    panic(err)
+  }
+}
+
+func addDataFromSource(tx *sqlx.Tx, query string, src []map[string]interface{}) {
+  for _, item := range src {
+    _, err := tx.NamedExec(query, item)
+
+    if err != nil {
+      panic(err)
+    }
   }
 }

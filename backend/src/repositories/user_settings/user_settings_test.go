@@ -48,21 +48,21 @@ func TestRepository_GetUserInfoSuccess(t *testing.T) {
 
   userSettings, err := repository.GetUserSettings(1)
   utils.AssertNil(err, t)
-  utils.AssertTrue(mock.SettingsEqual(mock.FirstUserSettings, userSettings), t)
+  utils.AssertTrue(mock.SettingsEqual(mock.GetFirstUserSettings(), userSettings), t)
 }
 
 func TestRepository_GetUserInfoUserNoFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  _, err := repository.GetUserSettings(11)
+  _, err := repository.GetUserSettings(mock.GetNotExistsUserId())
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_GetUserInfoErrorNoTable(t *testing.T) {
   mock.DropTables(db)
 
-  _, err := repository.GetUserSettings(11)
+  _, err := repository.GetUserSettings(mock.GetNotExistsUserId())
   utils.AssertNotNil(err, t)
 }
 
@@ -81,7 +81,7 @@ func TestRepository_UpdateUserInfoUserNoFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.UpdateUserSettings(11, mock.TestInfo)
+  err := repository.UpdateUserSettings(mock.GetNotExistsUserId(), mock.TestInfo)
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
