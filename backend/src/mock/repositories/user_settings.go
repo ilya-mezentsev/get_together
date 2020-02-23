@@ -5,16 +5,6 @@ import (
 )
 
 var (
-  FirstUserSettings = models.FullUserInfo{
-    UserSettings: models.UserSettings{
-      Name: "J. Smith", Nickname: "mather_fucker", Gender: "male", Age: 12,
-    },
-    Rating: []models.Rating{
-      {Tag: "tag1", Value: 65},
-      {Tag: "tag2", Value: 55},
-      {Tag: "tag3", Value: 43},
-    },
-  }
   TestInfo = models.UserSettings{
     Nickname: "some_nickname",
     Gender: "male",
@@ -37,4 +27,24 @@ func SettingsEqual(s1, s2 models.FullUserInfo) bool {
   }
 
   return true
+}
+
+func GetFirstUserSettings() models.FullUserInfo {
+  return models.FullUserInfo{
+    UserSettings: models.UserSettings{
+      Name: UsersInfo[0]["name"].(string),
+      Nickname: UsersInfo[0]["nickname"].(string),
+      Gender: UsersInfo[0]["gender"].(string),
+      Age: uint(UsersInfo[0]["age"].(int)),
+    },
+    Rating: []models.Rating{
+      {Tag: UsersRating[0]["tag"].(string), Value: float64(UsersRating[0]["value"].(int))},
+      {Tag: UsersRating[1]["tag"].(string), Value: float64(UsersRating[1]["value"].(int))},
+      {Tag: UsersRating[2]["tag"].(string), Value: float64(UsersRating[2]["value"].(int))},
+    },
+  }
+}
+
+func GetNotExistsUserId() uint {
+  return uint(len(UsersCredentials) + 1)
 }

@@ -51,21 +51,21 @@ func TestRepository_GetFullMeetingInfoSuccess(t *testing.T) {
 
   info, err := repository.GetFullMeetingInfo(1)
   utils.AssertNil(err, t)
-  utils.AssertEqual(mock.FirstLabeledPlace, info.LabeledPlace, t)
+  utils.AssertEqual(mock.GetFirstLabeledPlace(), info.LabeledPlace, t)
 }
 
 func TestRepository_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  _, err := repository.GetFullMeetingInfo(11)
+  _, err := repository.GetFullMeetingInfo(mock.GetNotExistsMeetingId())
   utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_GetFullMeetingInfoNoTableError(t *testing.T) {
   mock.DropTables(db)
 
-  _, err := repository.GetFullMeetingInfo(11)
+  _, err := repository.GetFullMeetingInfo(mock.GetNotExistsMeetingId())
   utils.AssertNotNil(err, t)
 }
 
@@ -76,8 +76,8 @@ func TestRepository_GetPublicMeetingsSuccess(t *testing.T) {
   meetings, err := repository.GetPublicMeetings()
   utils.AssertNil(err, t)
   for idx, meeting := range meetings {
-    utils.AssertEqual(mock.PublicPlaces[idx].Longitude, meeting.PublicPlace.Longitude, t)
-    utils.AssertEqual(mock.PublicPlaces[idx].Latitude, meeting.PublicPlace.Latitude, t)
+    utils.AssertEqual(mock.GetPlaceLongitudeById(idx), meeting.PublicPlace.Longitude, t)
+    utils.AssertEqual(mock.GetPlaceLatitudeById(idx), meeting.PublicPlace.Latitude, t)
   }
 }
 
@@ -128,14 +128,14 @@ func TestRepository_CreateMeetingAdminNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.CreateMeeting(11, mock2.NewMeetingSettings)
+  err := repository.CreateMeeting(mock.GetNotExistsUserId(), mock2.NewMeetingSettings)
   utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_CreateMeetingNoTableError(t *testing.T) {
   mock.DropTables(db)
 
-  err := repository.CreateMeeting(11, mock2.NewMeetingSettings)
+  err := repository.CreateMeeting(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
   utils.AssertNotNil(err, t)
 }
 
@@ -153,14 +153,14 @@ func TestRepository_DeleteMeetingMeetingNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.DeleteMeeting(11)
+  err := repository.DeleteMeeting(mock.GetNotExistsMeetingId())
   utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_DeleteMeetingNoTableError(t *testing.T) {
   mock.DropTables(db)
 
-  err := repository.DeleteMeeting(11)
+  err := repository.DeleteMeeting(mock.GetNotExistsMeetingId())
   utils.AssertNotNil(err, t)
 }
 
@@ -178,13 +178,13 @@ func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.UpdatedSettings(11, mock2.NewMeetingSettings)
+  err := repository.UpdatedSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
   utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_UpdatedSettingsNoTableError(t *testing.T) {
   mock.DropTables(db)
 
-  err := repository.UpdatedSettings(11, mock2.NewMeetingSettings)
+  err := repository.UpdatedSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
   utils.AssertNotNil(err, t)
 }
