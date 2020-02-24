@@ -9,6 +9,8 @@
   "error_detail": "some error description"
 }
 ```
+#### General errors (can be returned on each request):
+* internal-error
 
 ### API default success response:
 ```json5
@@ -30,6 +32,9 @@
   }
 }
 ```
+#### Errors:
+* no-auth-cookie
+* invalid-auth-cookie
 
 ### POST /api/session/register - register new user
 #### Body:
@@ -40,6 +45,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* email-exists
 
 ### POST /api/session/login - Login user in system
 #### Body:
@@ -58,6 +65,8 @@
   }
 }
 ```
+#### Errors:
+* credentials-not-found
 
 ### PATCH /api/session/user/password - change user password
 #### Body:
@@ -68,6 +77,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* user-id-not-found
 
 ### POST /api/session/logout - Logout user from system
 #### Response - default
@@ -107,6 +118,7 @@
   "user_id": 3
 }
 ```
+#### Response:
 ```json5
 {
   "status": "ok",
@@ -135,6 +147,8 @@
   ]
 }
 ```
+#### Errors:
+* user-id-not-found
 
 ### POST /api/meeting - creates meeting
 #### Body:
@@ -157,6 +171,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* user-id-not-found
 
 ### DELETE /api/meeting - delete meeting
 #### Body:
@@ -166,6 +182,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* meeting-id-not-found
 
 ### PATCH /api/meeting/settings - updates meeting settings
 #### Body:
@@ -187,6 +205,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* meeting-id-not-found
 
 ### POST /api/meeting/request-participation
 #### Body:
@@ -197,7 +217,21 @@
   "request_description": "some description" // optional
 }
 ```
-#### Response - default
+#### Response:
+```json5
+{
+  "too_low_rating_tags": ["tag1", "tag2"], // list of tags rating in whose too low for requested meeting
+  "inappropriate_info_fields": [
+    {"error_code": "max-users-count-reached", "description": "actual: 10"},
+    {"error_code": "age-less-than-min", "description": "actual: 16, wanted: 18"},
+    {"error_code": "wrong-gender", "description": "actual: female, wanted: male"}
+  ],
+  "has_near_meeting": true
+}
+```
+#### Errors:
+* user-id-not-found
+* meeting-id-not-found
 
 ### POST /api/meeting/invite-user
 #### Body:
@@ -208,6 +242,9 @@
 }
 ```
 #### Response - default
+#### Errors:
+* user-id-not-found
+* meeting-id-not-found
 
 ### DELETE /api/meeting/user - kick user out of meeting
 #### Body:
@@ -218,6 +255,9 @@
 }
 ```
 #### Response - default
+#### Errors:
+* user-id-not-found
+* meeting-id-not-found
 
 
 ## Users
@@ -246,6 +286,8 @@
   }
 }
 ```
+#### Errors:
+* user-id-not-found
 
 ### PATCH /api/user/settings - change settings
 #### Body:
@@ -262,6 +304,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* user-id-not-found
 
 ## Chatting
 ### POST /api/chat/meeting - creates chat for meeting
