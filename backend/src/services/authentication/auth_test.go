@@ -1,21 +1,13 @@
 package authentication
 
 import (
-  "io/ioutil"
-  "log"
   mock "mock/services"
-  "os"
   "services"
   "testing"
   "utils"
 )
 
 var authService = New(&mock.CredentialsRepo)
-
-func TestMain(m *testing.M) {
-  log.SetOutput(ioutil.Discard)
-  os.Exit(m.Run())
-}
 
 func TestAuthService_RegisterUserSuccess(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
@@ -32,14 +24,14 @@ func TestAuthService_RegisterUserEmailExistsError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.ExistingUserEmail)
-  utils.AssertErrorsEqual(EmailExists, err, t)
+  utils.AssertErrorsEqual(EmailExists, err.ExternalError(), t)
 }
 
 func TestAuthService_RegisterUserInternalError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.BadUser)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestAuthService_LoginSuccess(t *testing.T) {
@@ -52,13 +44,13 @@ func TestAuthService_LoginSuccess(t *testing.T) {
 func TestAuthService_LoginCredentialsNotFoundError(t *testing.T) {
   _, err := authService.Login(mock.NewUser)
 
-  utils.AssertErrorsEqual(CredentialsNotFound, err, t)
+  utils.AssertErrorsEqual(CredentialsNotFound, err.ExternalError(), t)
 }
 
 func TestAuthService_LoginInternalError(t *testing.T) {
   _, err := authService.Login(mock.BadUser)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestAuthService_ChangePasswordSuccess(t *testing.T) {
@@ -75,17 +67,17 @@ func TestAuthService_ChangePasswordSuccess(t *testing.T) {
 func TestAuthService_ChangePasswordUserNotFoundError(t *testing.T) {
   err := authService.ChangePassword(11, "")
 
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.UserIdNotFound, err.ExternalError(), t)
 }
 
 func TestAuthService_ChangePasswordInternalError_1(t *testing.T) {
   err := authService.ChangePassword(1, mock.BadUser.Password)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestAuthService_ChangePasswordInternalError_2(t *testing.T) {
   err := authService.ChangePassword(mock.BadUserId, "")
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }

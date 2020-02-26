@@ -4,50 +4,36 @@ import (
   "interfaces"
   "internal_errors"
   "models"
-  "plugins/logger"
   "services"
   "utils"
 )
 
-type AuthService struct {
+type Service struct {
   repository interfaces.CredentialsRepository
 }
 
-func New(repository interfaces.CredentialsRepository) AuthService {
-  return AuthService{repository: repository}
+func New(repository interfaces.CredentialsRepository) Service {
+  return Service{repository: repository}
 }
 
-func (s AuthService) RegisterUser(credentials models.UserCredentials) error {
+func (s Service) RegisterUser(credentials models.UserCredentials) interfaces.ErrorWrapper {
   credentials.Password = s.generatePassword(credentials)
 
   switch err := s.repository.CreateUser(credentials); err {
   case nil:
     return nil
   case internal_errors.UnableToRegisterUserEmailExists:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "credentials": credentials,
-      },
-    }, logger.Warning)
-    return EmailExists
+    return models.NewErrorWrapper(err, EmailExists)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to register user: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "credentials": credentials,
-      },
-    }, logger.Error)
-    return services.InternalError
+    return models.NewErrorWrapper(err, services.InternalError)
   }
 }
 
-func (s AuthService) generatePassword(credentials models.UserCredentials) string {
+func (s Service) generatePassword(credentials models.UserCredentials) string {
   return utils.GetHash(credentials.Email + credentials.Password)
 }
 
-func (s AuthService) Login(credentials models.UserCredentials) (uint, error) {
+func (s Service) Login(credentials models.UserCredentials) (uint, interfaces.ErrorWrapper) {
   credentials.Password = s.generatePassword(credentials)
   userId, err := s.repository.GetUserIdByCredentials(credentials)
 
@@ -55,26 +41,13 @@ func (s AuthService) Login(credentials models.UserCredentials) (uint, error) {
   case nil:
     return userId, nil
   case internal_errors.UnableToLoginUserNotFound:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "credentials": credentials,
-      },
-    }, logger.Warning)
-    return 0, CredentialsNotFound
+    return 0, models.NewErrorWrapper(err, CredentialsNotFound)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to login user: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "credentials": credentials,
-      },
-    }, logger.Error)
-    return 0, services.InternalError
+    return 0, models.NewErrorWrapper(err, services.InternalError)
   }
 }
 
-func (s AuthService) ChangePassword(userId uint, password string) error {
+func (s Service) ChangePassword(userId uint, password string) interfaces.ErrorWrapper {
   email, err := s.getUserEmail(userId)
   if err != nil {
     return err
@@ -86,39 +59,19 @@ func (s AuthService) ChangePassword(userId uint, password string) error {
   case nil:
     return nil
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to change user password: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "user_id": userId,
-      },
-    }, logger.Error)
-    return services.InternalError
+    return models.NewErrorWrapper(err, services.InternalError)
   }
 }
 
-func (s AuthService) getUserEmail(userId uint) (string, error) {
+func (s Service) getUserEmail(userId uint) (string, interfaces.ErrorWrapper) {
   email, err := s.repository.GetUserEmail(userId)
 
   switch err {
   case nil:
     return email, nil
   case internal_errors.UnableToFindUserById:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "user_id": userId,
-      },
-    }, logger.Warning)
-    return "", services.UserIdNotFound
+    return "", models.NewErrorWrapper(err, services.UserIdNotFound)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to get user email: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "user_id": userId,
-      },
-    }, logger.Error)
-    return "", services.InternalError
+    return "", models.NewErrorWrapper(err, services.InternalError)
   }
 }

@@ -5,7 +5,6 @@ import (
   "interfaces"
   "internal_errors"
   "models"
-  "plugins/logger"
   "plugins/meetings_time"
   "services"
 )
@@ -32,7 +31,8 @@ func New(
   }
 }
 
-func (s Service) HandleParticipationRequest(request models.ParticipationRequest) (models.RejectInfo, error) {
+func (s Service) HandleParticipationRequest(
+  request models.ParticipationRequest) (models.RejectInfo, interfaces.ErrorWrapper) {
   userSettings, meetingSettings, err := s.getUserAndMeetingSettings(request)
   if err != nil {
     return models.RejectInfo{}, err
@@ -51,7 +51,7 @@ func (s Service) HandleParticipationRequest(request models.ParticipationRequest)
 }
 
 func (s Service) getUserAndMeetingSettings(
-  request models.ParticipationRequest) (models.FullUserInfo, models.ParticipationMeetingSettings, error) {
+  request models.ParticipationRequest) (models.FullUserInfo, models.ParticipationMeetingSettings, interfaces.ErrorWrapper) {
   var (
     userSettings models.FullUserInfo
     meetingSettings models.ParticipationMeetingSettings
@@ -63,22 +63,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindUserById:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Warning)
-    return userSettings, meetingSettings, services.UserIdNotFound
+    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.UserIdNotFound)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "error while getting user settings: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Error)
-    return userSettings, meetingSettings, services.InternalError
+    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.InternalError)
   }
 
   meetingSettings, err = s.meetingsSettingsRepository.GetMeetingSettings(request.MeetingId)
@@ -86,22 +73,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindByMeetingId:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Warning)
-    return userSettings, meetingSettings, services.MeetingIdNotFound
+    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.MeetingIdNotFound)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "error while getting meeting settings: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Error)
-    return userSettings, meetingSettings, services.InternalError
+    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.InternalError)
   }
 
   return userSettings, meetingSettings, nil
@@ -110,7 +84,7 @@ func (s Service) getUserAndMeetingSettings(
 func (s Service) hasNearMeeting(
   request models.ParticipationRequest,
   meetingSettings models.ParticipationMeetingSettings,
-) (bool, error) {
+) (bool, interfaces.ErrorWrapper) {
   meetings, err := s.meetingsSettingsRepository.GetNearMeetings(
     models.UserTimeCheckData{
       UserId: request.UserId,
@@ -125,30 +99,11 @@ func (s Service) hasNearMeeting(
         Duration: meetingSettings.Duration,
       }, meetings), nil
   case internal_errors.UnableToFindUserById:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Warning)
-    return false, services.UserIdNotFound
+    return false, models.NewErrorWrapper(err, services.UserIdNotFound)
   case internal_errors.UnableToFindByMeetingId:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: err.Error(),
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Warning)
-    return false, services.MeetingIdNotFound
+    return false, models.NewErrorWrapper(err, services.MeetingIdNotFound)
   default:
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "error while finding near meetings: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "request": request,
-      },
-    }, logger.Warning)
-    return false, services.InternalError
+    return false, models.NewErrorWrapper(err, services.InternalError)
   }
 }
 

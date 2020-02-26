@@ -1,22 +1,14 @@
 package meetings
 
 import (
-  "io/ioutil"
-  "log"
   mock "mock/services"
   "models"
-  "os"
   "services"
   "testing"
   "utils"
 )
 
 var service = New(&mock.MeetingsMockRepository)
-
-func TestMain(m *testing.M) {
-  log.SetOutput(ioutil.Discard)
-  os.Exit(m.Run())
-}
 
 func TestService_GetPublicMeetingsSuccess(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
@@ -33,7 +25,7 @@ func TestService_GetPublicMeetingsInternalError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   _, err := service.GetPublicMeetings()
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestService_GetExtendedMeetingsSuccess(t *testing.T) {
@@ -54,14 +46,14 @@ func TestService_GetExtendedMeetingsUserNotFoundError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   _, err := service.GetExtendedMeetings(mock.NotExistsUserId)
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.UserIdNotFound, err.ExternalError(), t)
 }
 
 func TestService_GetExtendedMeetingsInternalError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   _, err := service.GetExtendedMeetings(mock.BadUserId)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestService_GetFullMeetingInfoSuccess(t *testing.T) {
@@ -77,14 +69,14 @@ func TestService_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   _, err := service.GetFullMeetingInfo(mock.NotExistsMeetingId)
-  utils.AssertErrorsEqual(services.MeetingIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.MeetingIdNotFound, err.ExternalError(), t)
 }
 
 func TestService_GetFullMeetingInfoInternalError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   _, err := service.GetFullMeetingInfo(mock.BadMeetingId)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestService_DeleteMeetingSuccess(t *testing.T) {
@@ -100,14 +92,14 @@ func TestService_DeleteMeetingNotFoundError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.DeleteMeeting(mock.NotExistsMeetingId)
-  utils.AssertErrorsEqual(services.MeetingIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.MeetingIdNotFound, err.ExternalError(), t)
 }
 
 func TestService_DeleteMeetingInternalError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.DeleteMeeting(mock.BadMeetingId)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestService_CreateMeetingSuccess(t *testing.T) {
@@ -123,14 +115,14 @@ func TestService_CreateMeetingUserIdNotFoundError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.CreateMeeting(mock.NotExistsUserId, mock.NewMeetingSettings)
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.UserIdNotFound, err.ExternalError(), t)
 }
 
 func TestService_CreateMeetingInternalError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.CreateMeeting(mock.BadUserId, mock.NewMeetingSettings)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
 func TestService_UpdatedSettingsSuccess(t *testing.T) {
@@ -146,12 +138,12 @@ func TestService_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.UpdatedSettings(mock.NotExistsMeetingId, mock.NewMeetingSettings)
-  utils.AssertErrorsEqual(services.MeetingIdNotFound, err, t)
+  utils.AssertErrorsEqual(services.MeetingIdNotFound, err.ExternalError(), t)
 }
 
 func TestService_UpdatedSettings(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
   err := service.UpdatedSettings(mock.BadMeetingId, mock.NewMeetingSettings)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }

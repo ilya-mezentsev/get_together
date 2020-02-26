@@ -2,8 +2,6 @@ package session
 
 import (
   "fmt"
-  "io/ioutil"
-  "log"
   mock "mock/services"
   "net/http"
   "os"
@@ -11,7 +9,7 @@ import (
   "utils"
 )
 
-var sessionController Controller
+var sessionController Service
 
 func init() {
   coderKey := os.Getenv("CODER_KEY")
@@ -54,11 +52,6 @@ func getRequestWithInvalidSession() *http.Request {
   return req
 }
 
-func TestMain(m *testing.M) {
-  log.SetOutput(ioutil.Discard)
-  os.Exit(m.Run())
-}
-
 func TestController_GetSessionSuccess(t *testing.T) {
   session, err := sessionController.GetSession(getRequestWithSession())
 
@@ -69,13 +62,13 @@ func TestController_GetSessionSuccess(t *testing.T) {
 func TestController_GetSessionNoAuthCookieError(t *testing.T) {
   _, err := sessionController.GetSession(getRequestWithoutSession())
 
-  utils.AssertErrorsEqual(NoAuthCookie, err, t)
+  utils.AssertErrorsEqual(NoAuthCookie, err.ExternalError(), t)
 }
 
 func TestController_GetSessionInvalidCookieError(t *testing.T) {
   _, err := sessionController.GetSession(getRequestWithInvalidSession())
 
-  utils.AssertErrorsEqual(InvalidAuthCookie, err, t)
+  utils.AssertErrorsEqual(InvalidAuthCookie, err.ExternalError(), t)
 }
 
 func TestController_SetSessionSuccess(t *testing.T) {
@@ -85,8 +78,8 @@ func TestController_SetSessionSuccess(t *testing.T) {
 
   utils.AssertNil(err, t)
 
-  cookie, err := req.Cookie(cookieSessionKey)
-  utils.AssertNil(err, t)
+  cookie, e := req.Cookie(cookieSessionKey)
+  utils.AssertNil(e, t)
   utils.AssertEqual(mock.TestToken, cookie.Value, t)
 }
 
