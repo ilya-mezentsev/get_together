@@ -33,17 +33,17 @@ func (s Service) generatePassword(credentials models.UserCredentials) string {
   return utils.GetHash(credentials.Email + credentials.Password)
 }
 
-func (s Service) Login(credentials models.UserCredentials) (uint, interfaces.ErrorWrapper) {
+func (s Service) Login(credentials models.UserCredentials) (models.UserSession, interfaces.ErrorWrapper) {
   credentials.Password = s.generatePassword(credentials)
   userId, err := s.repository.GetUserIdByCredentials(credentials)
 
   switch err {
   case nil:
-    return userId, nil
+    return models.UserSession{ID: userId}, nil
   case internal_errors.UnableToLoginUserNotFound:
-    return 0, models.NewErrorWrapper(err, CredentialsNotFound)
+    return models.UserSession{}, models.NewErrorWrapper(err, CredentialsNotFound)
   default:
-    return 0, models.NewErrorWrapper(err, services.InternalError)
+    return models.UserSession{}, models.NewErrorWrapper(err, services.InternalError)
   }
 }
 

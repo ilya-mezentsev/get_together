@@ -1,10 +1,25 @@
 package models
 
 type (
+  ErrorResponse struct {
+    Status string `json:"status"`
+    ErrorDetail string `json:"error_detail"`
+  }
+
+  SuccessResponse struct {
+    Status string `json:"status"`
+    Data interface{} `json:"data"`
+  }
+
   ParticipationRequest struct {
     UserId uint `json:"user_id"`
     MeetingId uint `json:"meeting_id"`
     RequestDescription string `json:"request_description"`
+  }
+
+  ChangePasswordRequest struct {
+    UserId uint `json:"user_id"`
+    Password string `json:"password"`
   }
 
   InappropriateInfoField struct {
