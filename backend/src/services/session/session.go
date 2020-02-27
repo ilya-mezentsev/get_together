@@ -1,8 +1,9 @@
 package session
 
 import (
+  "interfaces"
+  "models"
   "net/http"
-  "plugins/logger"
   "services"
   "services/session/plugins/code"
   "time"
@@ -10,47 +11,32 @@ import (
 
 const cookieSessionKey = "GT-Session-Token"
 
-type Controller struct {
+type Service struct {
   coder code.Coder
 }
 
-func New(key string) Controller {
-  return Controller{coder: code.NewCoder(key)}
+func New(key string) Service {
+  return Service{coder: code.NewCoder(key)}
 }
 
-func (c Controller) GetSession(r *http.Request) (map[string]interface{}, error) {
+func (c Service) GetSession(r *http.Request) (map[string]interface{}, interfaces.ErrorWrapper) {
   cookie, err := r.Cookie(cookieSessionKey)
   if err != nil {
-    logger.WarningF("unable to get session from cookie: %v", err)
-    return nil, NoAuthCookie
+    return nil, models.NewErrorWrapper(err, NoAuthCookie)
   }
 
   decoded, err := c.coder.Decrypt(cookie.Value)
   if err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to decrypt session: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "session": cookie.Value,
-      },
-    }, logger.Warning)
-    return nil, InvalidAuthCookie
+    return nil, models.NewErrorWrapper(err, InvalidAuthCookie)
   }
 
   return decoded, nil
 }
 
-func (c Controller) SetSession(r *http.Request, session map[string]interface{}) error {
+func (c Service) SetSession(r *http.Request, session map[string]interface{}) interfaces.ErrorWrapper {
   token, err := c.coder.Encrypt(session)
   if err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "unable to encrypt session: %v",
-      Args: []interface{}{err},
-      Optional: map[string]interface{}{
-        "session": session,
-      },
-    }, logger.Warning)
-    return services.InternalError
+    return models.NewErrorWrapper(err, services.InternalError)
   }
 
   r.AddCookie(&http.Cookie{
@@ -63,7 +49,7 @@ func (c Controller) SetSession(r *http.Request, session map[string]interface{}) 
   return nil
 }
 
-func (c Controller) InvalidateSession(r *http.Request) {
+func (c Service) InvalidateSession(r *http.Request) {
   r.AddCookie(&http.Cookie{
     Name: cookieSessionKey,
     Value: "",
