@@ -22,7 +22,9 @@ static
 # env
 .env
 .idea
+.vscode
 
 # golang libs and built
 pkg
+bin
 github.com
