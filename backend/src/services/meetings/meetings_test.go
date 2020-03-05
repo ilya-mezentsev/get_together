@@ -157,7 +157,7 @@ func TestChangeMeetingDurationIfTrue(t *testing.T) {
 }
 
 func TestChangeMeetingDurationIfFalse(t *testing.T) {
-	defer mock.MeetingsMockRepository.ResetState()
+  defer mock.MeetingsMockRepository.ResetState()
 
 	testMeeting := mock.TestMeetingFalse
 	changeMeetingDurationIfNeeded(&testMeeting)
