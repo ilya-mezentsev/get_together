@@ -148,7 +148,7 @@ func TestService_UpdatedSettings(t *testing.T) {
   utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
-func TestChangeMeetingDurationIfNeeded(t *testing.T) {
+func TestchangeMeetingDurationIfNeeded(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
 	testMeeting1 := models.MeetingLimitation{
@@ -157,21 +157,21 @@ func TestChangeMeetingDurationIfNeeded(t *testing.T) {
 		Gender:   "female",
 		MaxUsers: 10,
 	}
-	ChangeMeetingDurationIfNeeded(&testMeeting1)
+	changeMeetingDurationIfNeeded(&testMeeting1)
 	if testMeeting1.Duration != 2 {
     t.Log("Wrong resoult")
 		t.Fail()
 	}
 
 	testMeeting2 := models.MeetingLimitation{5, 16, "male", 4}
-	ChangeMeetingDurationIfNeeded(&testMeeting2)
+	changeMeetingDurationIfNeeded(&testMeeting2)
 	if testMeeting2.Duration != 5 {
     t.Log("Wrong resoult")
 		t.Fail()
 	}
 
 	testMeeting3 := models.MeetingLimitation{0, 18, "male", 7}
-	ChangeMeetingDurationIfNeeded(&testMeeting3)
+	changeMeetingDurationIfNeeded(&testMeeting3)
 	if testMeeting3.Duration != 4 {
     t.Log("Wrong resoult")
 		t.Fail()
