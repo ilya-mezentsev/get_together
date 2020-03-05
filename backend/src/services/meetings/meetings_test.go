@@ -159,21 +159,21 @@ func TestchangeMeetingDurationIfNeeded(t *testing.T) {
 	}
 	changeMeetingDurationIfNeeded(&testMeeting1)
 	if testMeeting1.Duration != 2 {
-    t.Log("Wrong resoult")
+    t.Log("Wrong result")
 		t.Fail()
 	}
 
 	testMeeting2 := models.MeetingLimitation{5, 16, "male", 4}
 	changeMeetingDurationIfNeeded(&testMeeting2)
 	if testMeeting2.Duration != 5 {
-    t.Log("Wrong resoult")
+    t.Log("Wrong result")
 		t.Fail()
 	}
 
 	testMeeting3 := models.MeetingLimitation{0, 18, "male", 7}
 	changeMeetingDurationIfNeeded(&testMeeting3)
 	if testMeeting3.Duration != 4 {
-    t.Log("Wrong resoult")
+    t.Log("Wrong result")
 		t.Fail()
 	}
 }
