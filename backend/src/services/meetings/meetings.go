@@ -11,6 +11,7 @@ import (
 const (
   invitedStatus = "invited"
   notInvitedStatus = "not-invited"
+  defaultDuration  = 4
 )
 
 type Service struct {
@@ -60,6 +61,12 @@ func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, int
   default:
     return nil, models.NewErrorWrapper(err, services.InternalError)
   }
+}
+
+func ChangeMeetingDurationIfNeeded(m *models.MeetingLimitation) {
+	if m.Duration == 0 {
+		m.Duration = defaultDuration
+	}
 }
 
 func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) interfaces.ErrorWrapper {
