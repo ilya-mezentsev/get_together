@@ -149,17 +149,17 @@ func TestService_UpdatedSettings(t *testing.T) {
 }
 
 func TestChangeMeetingDurationIfTrue(t *testing.T) {
-	defer mock.MeetingsMockRepository.ResetState()
+  defer mock.MeetingsMockRepository.ResetState()
 
-	testMeeting := mock.TestMeetingTrue
-	ChangeMeetingDurationIfNeeded(&testMeeting)
-	utils.AssertEqual(testMeeting.Duration, mock.TestMeetingTrue.Duration, t)
+  testMeeting := mock.TestMeetingTrue
+  ChangeMeetingDurationIfNeeded(&testMeeting)
+  utils.AssertEqual(testMeeting.Duration, mock.TestMeetingTrue.Duration, t)
 }
 
 func TestChangeMeetingDurationIfFalse(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
-	testMeeting := mock.TestMeetingFalse
-	changeMeetingDurationIfNeeded(&testMeeting)
-	utils.AssertEqual(testMeeting.Duration, defaultDuration, t)
+  testMeeting := mock.TestMeetingFalse
+  changeMeetingDurationIfNeeded(&testMeeting)
+  utils.AssertEqual(testMeeting.Duration, defaultDuration, t)
 }
