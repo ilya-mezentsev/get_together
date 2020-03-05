@@ -70,6 +70,12 @@ var (
       Gender: "female",
       MaxUsers: 10,
     },
+    AnotherMeetingLimitation: models.MeetingLimitation{
+      Duration: 0,
+      MinAge: 16,
+      Gender: "male",
+      MaxUsers: 6,
+    },
   }
   MeetingsMockRepository = MeetingsRepositoryMock{Meetings: meetings}
   BadMeetingId uint = 0
