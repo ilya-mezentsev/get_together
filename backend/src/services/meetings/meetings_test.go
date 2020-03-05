@@ -148,32 +148,18 @@ func TestService_UpdatedSettings(t *testing.T) {
   utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
-func TestchangeMeetingDurationIfNeeded(t *testing.T) {
+func TestChangeMeetingDurationIfTrue(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	testMeeting1 := models.MeetingLimitation{
-		Duration: 2,
-		MinAge:   12,
-		Gender:   "female",
-		MaxUsers: 10,
-	}
-	changeMeetingDurationIfNeeded(&testMeeting1)
-	if testMeeting1.Duration != 2 {
-    t.Log("Wrong result")
-		t.Fail()
-	}
+	testMeeting := mock.TestMeetingTrue
+	ChangeMeetingDurationIfNeeded(&testMeeting)
+	utils.AssertEqual(testMeeting.Duration, mock.TestMeetingTrue.Duration, t)
+}
 
-	testMeeting2 := models.MeetingLimitation{5, 16, "male", 4}
-	changeMeetingDurationIfNeeded(&testMeeting2)
-	if testMeeting2.Duration != 5 {
-    t.Log("Wrong result")
-		t.Fail()
-	}
+func TestChangeMeetingDurationIfFalse(t *testing.T) {
+	defer mock.MeetingsMockRepository.ResetState()
 
-	testMeeting3 := models.MeetingLimitation{0, 18, "male", 7}
-	changeMeetingDurationIfNeeded(&testMeeting3)
-	if testMeeting3.Duration != 4 {
-    t.Log("Wrong result")
-		t.Fail()
-	}
+	testMeeting := mock.TestMeetingFalse
+	changeMeetingDurationIfNeeded(&testMeeting)
+	utils.AssertEqual(testMeeting.Duration, defaultDuration, t)
 }
