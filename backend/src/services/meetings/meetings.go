@@ -63,7 +63,7 @@ func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, int
   }
 }
 
-func ChangeMeetingDurationIfNeeded(m *models.MeetingLimitation) {
+func changeMeetingDurationIfNeeded(m *models.MeetingLimitation) {
   if m.Duration == 0 {
     m.Duration = defaultDuration
   }
