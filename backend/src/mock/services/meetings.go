@@ -70,17 +70,13 @@ var (
       Gender: "female",
       MaxUsers: 10,
     },
-    AnotherMeetingLimitation: models.MeetingLimitation{
-      Duration: 0,
-      MinAge: 16,
-      Gender: "male",
-      MaxUsers: 6,
-    },
   }
   MeetingsMockRepository = MeetingsRepositoryMock{Meetings: meetings}
   BadMeetingId uint = 0
   NotExistsMeetingId uint = 11
   NotExistsUserId uint = 11
+  testMeeting1 := models.MeetingLimitation{5, 16, "male", 4}
+  testMeeting2 := models.MeetingLimitation{0, 18, "female", 8}
 )
 
 func (m *MeetingsRepositoryMock) ResetState() {
