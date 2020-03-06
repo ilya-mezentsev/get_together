@@ -148,18 +148,18 @@ func TestService_UpdatedSettings(t *testing.T) {
   utils.AssertErrorsEqual(services.InternalError, err.ExternalError(), t)
 }
 
-func TestChangeMeetingDurationIfTrue(t *testing.T) {
+func TestChangeMeetingDurationIfNeeded_PassedDuration(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
-  testMeeting := mock.TestMeetingTrue
+  testMeeting := mock.TestMeetingGood
   ChangeMeetingDurationIfNeeded(&testMeeting)
-  utils.AssertEqual(testMeeting.Duration, mock.TestMeetingTrue.Duration, t)
+  utils.AssertEqual(testMeeting.Duration, mock.TestMeetingGood.Duration, t)
 }
 
-func TestChangeMeetingDurationIfFalse(t *testing.T) {
+func TestChangeMeetingDurationIfNeeded_DefaultDuration(t *testing.T) {
   defer mock.MeetingsMockRepository.ResetState()
 
-  testMeeting := mock.TestMeetingFalse
+  testMeeting := mock.TestMeetingBad
   changeMeetingDurationIfNeeded(&testMeeting)
   utils.AssertEqual(testMeeting.Duration, defaultDuration, t)
 }
