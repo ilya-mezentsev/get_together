@@ -70,7 +70,7 @@ func changeMeetingDurationIfNeeded(m *models.MeetingLimitation) {
 }
 
 func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) interfaces.ErrorWrapper {
-  changeMeetingDurationIfNeeded(settings.MeetingLimitation); 
+  changeMeetingDurationIfNeeded(settings.MeetingLimitation) 
   switch err := s.repository.CreateMeeting(adminId, settings); err {
   case nil:
     return nil
