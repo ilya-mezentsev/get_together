@@ -153,7 +153,7 @@ func TestChangeMeetingDurationIfNeeded_PassedDuration(t *testing.T) {
 
   testMeeting := mock.MeetingWithDuration
   ChangeMeetingDurationIfNeeded(&testMeeting)
-  utils.AssertEqual(testMeeting.Duration, mock.MeetingWithDuration.Duration, t)
+  utils.AssertEqual(mock.MeetingWithDuration.Duration, testMeeting.Duration, t)
 }
 
 func TestChangeMeetingDurationIfNeeded_DefaultDuration(t *testing.T) {
@@ -161,5 +161,5 @@ func TestChangeMeetingDurationIfNeeded_DefaultDuration(t *testing.T) {
 
   testMeeting := mock.MeetingWithoutDuration
   changeMeetingDurationIfNeeded(&testMeeting)
-  utils.AssertEqual(testMeeting.Duration, defaultDuration, t)
+  utils.AssertEqual(defaultDuration, testMeeting.Duration, t)
 }
