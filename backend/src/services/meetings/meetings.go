@@ -72,6 +72,7 @@ func changeMeetingDurationIfNeeded(m *models.MeetingLimitation) {
 func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) interfaces.ErrorWrapper {
   switch err := s.repository.CreateMeeting(adminId, settings); err {
   case nil:
+    changeMeetingDurationIfNeeded(settings.MeetingLimitation)
     return nil
   case internal_errors.UnableToFindUserById:
     return models.NewErrorWrapper(err, services.UserIdNotFound)
