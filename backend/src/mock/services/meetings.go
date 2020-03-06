@@ -75,8 +75,8 @@ var (
   BadMeetingId uint = 0
   NotExistsMeetingId uint = 11
   NotExistsUserId uint = 11
-  TestMeetingGood := models.MeetingLimitation{5, 16, "male", 4}
-  TestMeetingBad := models.MeetingLimitation{0, 18, "female", 8}
+  MeetingWithDuration := models.MeetingLimitation{5, 16, "male", 4}
+  MeetingWithoutDuration := models.MeetingLimitation{0, 18, "female", 8}
 )
 
 func (m *MeetingsRepositoryMock) ResetState() {
