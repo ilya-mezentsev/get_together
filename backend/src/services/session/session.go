@@ -33,8 +33,10 @@ func (c Service) GetSession(r *http.Request) (map[string]interface{}, interfaces
   return decoded, nil
 }
 
-func (c Service) SetSession(r *http.Request, session map[string]interface{}) interfaces.ErrorWrapper {
-  token, err := c.coder.Encrypt(session)
+func (c Service) SetSession(r *http.Request, session models.UserSession) interfaces.ErrorWrapper {
+  token, err := c.coder.Encrypt(map[string]interface{}{
+    "id": session.ID,
+  })
   if err != nil {
     return models.NewErrorWrapper(err, services.InternalError)
   }

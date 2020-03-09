@@ -37,3 +37,7 @@ func Error(msg interface{}) {
   log.Println(
     "[ERROR]: " + fmt.Sprintf("%v", msg))
 }
+
+func ErrorF(template string, a ...interface{}) {
+  Error(fmt.Sprintf(template, a...))
+}

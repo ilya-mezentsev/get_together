@@ -15,8 +15,8 @@ type (
   }
 
   UserCredentials struct {
-    Email string `db:"email"`
-    Password string `db:"password"`
+    Email string `db:"email" json:"email"`
+    Password string `db:"password" json:"password"`
   }
 
   FullUserInfo struct {
