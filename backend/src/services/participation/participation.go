@@ -25,14 +25,11 @@ func New(
   userSettingsRepository interfaces.UsersSettingsRepository,
   meetingsSettingsRepository interfaces.MeetingsSettingsRepository,
 ) Service {
-  return Service{
-    userSettingsRepository: userSettingsRepository,
-    meetingsSettingsRepository: meetingsSettingsRepository,
-  }
+  return Service{userSettingsRepository, meetingsSettingsRepository}
 }
 
 func (s Service) HandleParticipationRequest(
-  request models.ParticipationRequest) (models.RejectInfo, interfaces.ErrorWrapper) {
+  request models.ParticipationRequest) (models.RejectInfo, error) {
   userSettings, meetingSettings, err := s.getUserAndMeetingSettings(request)
   if err != nil {
     return models.RejectInfo{}, err
@@ -51,7 +48,7 @@ func (s Service) HandleParticipationRequest(
 }
 
 func (s Service) getUserAndMeetingSettings(
-  request models.ParticipationRequest) (models.FullUserInfo, models.ParticipationMeetingSettings, interfaces.ErrorWrapper) {
+  request models.ParticipationRequest) (models.FullUserInfo, models.ParticipationMeetingSettings, error) {
   var (
     userSettings models.FullUserInfo
     meetingSettings models.ParticipationMeetingSettings
@@ -63,9 +60,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindUserById:
-    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.UserIdNotFound)
+    return userSettings, meetingSettings, services.UserIdNotFound
   default:
-    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.InternalError)
+    return userSettings, meetingSettings, services.InternalError
   }
 
   meetingSettings, err = s.meetingsSettingsRepository.GetMeetingSettings(request.MeetingId)
@@ -73,9 +70,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindByMeetingId:
-    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.MeetingIdNotFound)
+    return userSettings, meetingSettings, services.MeetingIdNotFound
   default:
-    return userSettings, meetingSettings, models.NewErrorWrapper(err, services.InternalError)
+    return userSettings, meetingSettings, services.InternalError
   }
 
   return userSettings, meetingSettings, nil
@@ -84,7 +81,7 @@ func (s Service) getUserAndMeetingSettings(
 func (s Service) hasNearMeeting(
   request models.ParticipationRequest,
   meetingSettings models.ParticipationMeetingSettings,
-) (bool, interfaces.ErrorWrapper) {
+) (bool, error) {
   meetings, err := s.meetingsSettingsRepository.GetNearMeetings(
     models.UserTimeCheckData{
       UserId: request.UserId,
@@ -99,11 +96,11 @@ func (s Service) hasNearMeeting(
         Duration: meetingSettings.Duration,
       }, meetings), nil
   case internal_errors.UnableToFindUserById:
-    return false, models.NewErrorWrapper(err, services.UserIdNotFound)
+    return false, services.UserIdNotFound
   case internal_errors.UnableToFindByMeetingId:
-    return false, models.NewErrorWrapper(err, services.MeetingIdNotFound)
+    return false, services.MeetingIdNotFound
   default:
-    return false, models.NewErrorWrapper(err, services.InternalError)
+    return false, services.InternalError
   }
 }
 

@@ -4,7 +4,6 @@ import (
   "api"
   "models"
   "net/http"
-  "plugins/logger"
   "services/authentication"
   "services/session"
 )
@@ -29,14 +28,9 @@ func InitRequestHandlers(authService authentication.Service, sessionService sess
 func (h Handler) getSession(w http.ResponseWriter, r *http.Request) {
   defer api.SendErrorIfPanicked(w)
 
-  s, eWrapper := h.sessionService.GetSession(r)
-  if eWrapper != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while getting session: %v; returning: %v",
-      Args: []interface{}{eWrapper.OriginalError(), eWrapper.ExternalError()},
-    }, logger.Warning)
-
-    panic(eWrapper.ExternalError())
+  s, err := h.sessionService.GetSession(r)
+  if err != nil {
+    panic(err)
   }
 
   api.EncodeAndSendResponse(w, s)
@@ -48,17 +42,9 @@ func (h Handler) registerUser(w http.ResponseWriter, r *http.Request) {
   var registration models.UserCredentials
   api.DecodeRequestBody(r, &registration)
 
-  eWrapper := h.authService.RegisterUser(registration)
-  if eWrapper != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while register user: %v",
-      Args: []interface{}{eWrapper.OriginalError()},
-      Optional: map[string]interface{}{
-        "credentials": registration,
-      },
-    }, logger.Warning)
-
-    panic(eWrapper.ExternalError())
+  err := h.authService.RegisterUser(registration)
+  if err != nil {
+    panic(err)
   }
 
   api.SendDefaultResponse(w)
@@ -72,18 +58,14 @@ func (h Handler) loginUser(w http.ResponseWriter, r *http.Request) {
 
   userSession, err := h.authService.Login(credentials)
   if err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while login user: %v",
-      Args: []interface{}{err.OriginalError()},
-      Optional: map[string]interface{}{
-        "credentials": credentials,
-      },
-    }, logger.Warning)
-
-    panic(err.ExternalError())
+    panic(err)
   }
 
-  h.sessionService.SetSession(r, userSession)
+  err = h.sessionService.SetSession(r, userSession)
+  if err != nil {
+    panic(err)
+  }
+
   api.SendDefaultResponse(w)
 }
 
@@ -95,15 +77,7 @@ func (h Handler) changeUserPassword(w http.ResponseWriter, r *http.Request) {
 
   err := h.authService.ChangePassword(changePasswordRequest.UserId, changePasswordRequest.Password)
   if err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while changing password: %v",
-      Args: []interface{}{err.OriginalError()},
-      Optional: map[string]interface{}{
-        "request": changePasswordRequest,
-      },
-    }, logger.Warning)
-
-    panic(err.ExternalError())
+    panic(err)
   }
 
   api.SendDefaultResponse(w)
