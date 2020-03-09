@@ -11,6 +11,11 @@ type (
     Data interface{} `json:"data"`
   }
 
+  UpdateUserSettingsRequest struct {
+    UserId uint `json:"user_id"`
+    Settings UserSettings `json:"settings"`
+  }
+
   ParticipationRequest struct {
     UserId uint `json:"user_id"`
     MeetingId uint `json:"meeting_id"`

@@ -2,16 +2,16 @@ package models
 
 type (
   Rating struct {
-    Tag string `db:"tag"`
-    Value float64 `db:"value"`
+    Tag string `db:"tag" json:"tag"`
+    Value float64 `db:"value" json:"value"`
   }
 
   UserSettings struct {
-    Name string `db:"name"`
-    Nickname string `db:"nickname"`
-    Gender string `db:"gender"`
-    Age uint `db:"age"`
-    AvatarUrl string `db:"avatar_url"`
+    Name string `db:"name" json:"name"`
+    Nickname string `db:"nickname" json:"nickname"`
+    Gender string `db:"gender" json:"gender"`
+    Age uint `db:"age" json:"age"`
+    AvatarUrl string `db:"avatar_url" json:"avatar_url"`
   }
 
   UserCredentials struct {
@@ -21,7 +21,7 @@ type (
 
   FullUserInfo struct {
     UserSettings
-    Rating []Rating
+    Rating []Rating `json:"rating"`
   }
 )
 

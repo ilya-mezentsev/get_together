@@ -262,13 +262,9 @@
 
 ## Users
 
-### GET /api/user/settings - returns user's settings
-#### Body:
-```json5
-{
-  "user_id": 1
-}
-```
+### GET /api/user/settings/:id - returns user's settings
+#### Path parameters
+* `:id` - user id
 #### Response:
 ```json5
 {
