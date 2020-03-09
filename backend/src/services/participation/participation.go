@@ -28,8 +28,7 @@ func New(
   return Service{userSettingsRepository, meetingsSettingsRepository}
 }
 
-func (s Service) HandleParticipationRequest(
-  request models.ParticipationRequest) (models.RejectInfo, error) {
+func (s Service) HandleParticipationRequest(request models.ParticipationRequest) (models.RejectInfo, error) {
   userSettings, meetingSettings, err := s.getUserAndMeetingSettings(request)
   if err != nil {
     return models.RejectInfo{}, err
@@ -139,18 +138,21 @@ func (s Service) parseUserAndMeetingSettings(
 ) []models.InappropriateInfoField {
   var inappropriateInfoFields []models.InappropriateInfoField
 
-  switch {
-  case meetingSettings.UsersCount >= meetingSettings.MaxUsers:
+  if meetingSettings.UsersCount >= meetingSettings.MaxUsers {
     inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
       ErrorCode: maxUsersCountReached,
       Description: fmt.Sprintf("actual: %d", meetingSettings.UsersCount),
     })
-  case userSettings.Age < meetingSettings.MinAge:
+  }
+
+  if userSettings.Age < meetingSettings.MinAge {
     inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
       ErrorCode: ageLessThanMin,
       Description: fmt.Sprintf("actual: %d, wanted: %d", userSettings.Age, meetingSettings.MinAge),
     })
-  case userSettings.Gender != meetingSettings.Gender:
+  }
+
+  if userSettings.Gender != meetingSettings.Gender {
     inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
       ErrorCode: wrongGender,
       Description: fmt.Sprintf("actual: %s, wanted: %s", userSettings.Gender, meetingSettings.Gender),

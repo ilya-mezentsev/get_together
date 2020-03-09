@@ -24,11 +24,17 @@ var (
       },
     },
     2: {
-      UserSettings:   models.UserSettings{
+      UserSettings: models.UserSettings{
         Name: "Nick",
         Age: 16,
       },
-      Rating: nil,
+    },
+    3: {
+      UserSettings: models.UserSettings{
+        Gender: "male",
+        Name: "Nick",
+        Age: 16,
+      },
     },
   }
   UsersSettingsRepository = UsersSettingsRepositoryMock{Settings: usersSettings}
