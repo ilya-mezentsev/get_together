@@ -43,6 +43,14 @@ func TestService_HandleParticipationRequestWrongGender(t *testing.T) {
   utils.AssertEqual(mock.WrongGender, info.InappropriateInfoFields[0], t)
 }
 
+func TestService_HandleParticipationRequestFewInappropriateInfoFields(t *testing.T) {
+  info, err := service.HandleParticipationRequest(mock.FewInappropriateInfoFields)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(mock.MaxUsersCountReached, info.InappropriateInfoFields[0], t)
+  utils.AssertEqual(mock.InappropriateAge, info.InappropriateInfoFields[1], t)
+}
+
 func TestService_HandleParticipationRequestUserIdNotFound(t *testing.T) {
   _, err := service.HandleParticipationRequest(mock.NotExistsUserIdRequest)
 

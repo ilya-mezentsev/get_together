@@ -30,7 +30,7 @@ var (
       MeetingLimitations: models.MeetingLimitations{
         MaxUsers: 5,
         Duration: 4,
-        MinAge: 12,
+        MinAge: 18,
         Gender: "female",
       },
       MeetingParameters: models.MeetingParameters{
@@ -93,6 +93,10 @@ var (
   WrongGenderRequest = models.ParticipationRequest{
     UserId: 1,
     MeetingId: 4,
+  }
+  FewInappropriateInfoFields = models.ParticipationRequest{
+    UserId: 3,
+    MeetingId: 2,
   }
   NotExistsUserIdRequest = models.ParticipationRequest{
     UserId: NotExistsUserId,
