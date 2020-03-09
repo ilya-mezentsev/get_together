@@ -11,7 +11,7 @@ import (
   sessionMock "mock/services"
   "models"
   "os"
-  "repositories/credentials"
+  "repositories"
   "services"
   "services/authentication"
   sessionService "services/session"
@@ -47,7 +47,7 @@ func init() {
   }
 
   InitRequestHandlers(
-    authentication.New(credentials.New(db)), sessionService.New(coderKey))
+    authentication.New(repositories.Credentials(db)), sessionService.New(coderKey))
 }
 
 func TestMain(m *testing.M) {

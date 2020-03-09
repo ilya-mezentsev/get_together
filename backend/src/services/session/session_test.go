@@ -62,13 +62,13 @@ func TestController_GetSessionSuccess(t *testing.T) {
 func TestController_GetSessionNoAuthCookieError(t *testing.T) {
   _, err := sessionController.GetSession(getRequestWithoutSession())
 
-  utils.AssertErrorsEqual(NoAuthCookie, err.ExternalError(), t)
+  utils.AssertErrorsEqual(NoAuthCookie, err, t)
 }
 
 func TestController_GetSessionInvalidCookieError(t *testing.T) {
   _, err := sessionController.GetSession(getRequestWithInvalidSession())
 
-  utils.AssertErrorsEqual(InvalidAuthCookie, err.ExternalError(), t)
+  utils.AssertErrorsEqual(InvalidAuthCookie, err, t)
 }
 
 func TestController_SetSessionSuccess(t *testing.T) {

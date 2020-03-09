@@ -13,19 +13,19 @@ type Service struct {
 }
 
 func New(repository interfaces.CredentialsRepository) Service {
-  return Service{repository: repository}
+  return Service{repository}
 }
 
-func (s Service) RegisterUser(credentials models.UserCredentials) interfaces.ErrorWrapper {
+func (s Service) RegisterUser(credentials models.UserCredentials) error {
   credentials.Password = s.generatePassword(credentials)
 
   switch err := s.repository.CreateUser(credentials); err {
   case nil:
     return nil
   case internal_errors.UnableToRegisterUserEmailExists:
-    return models.NewErrorWrapper(err, EmailExists)
+    return EmailExists
   default:
-    return models.NewErrorWrapper(err, services.InternalError)
+    return services.InternalError
   }
 }
 
@@ -33,7 +33,7 @@ func (s Service) generatePassword(credentials models.UserCredentials) string {
   return utils.GetHash(credentials.Email + credentials.Password)
 }
 
-func (s Service) Login(credentials models.UserCredentials) (models.UserSession, interfaces.ErrorWrapper) {
+func (s Service) Login(credentials models.UserCredentials) (models.UserSession, error) {
   credentials.Password = s.generatePassword(credentials)
   userId, err := s.repository.GetUserIdByCredentials(credentials)
 
@@ -41,13 +41,13 @@ func (s Service) Login(credentials models.UserCredentials) (models.UserSession, 
   case nil:
     return models.UserSession{ID: userId}, nil
   case internal_errors.UnableToLoginUserNotFound:
-    return models.UserSession{}, models.NewErrorWrapper(err, CredentialsNotFound)
+    return models.UserSession{}, CredentialsNotFound
   default:
-    return models.UserSession{}, models.NewErrorWrapper(err, services.InternalError)
+    return models.UserSession{}, services.InternalError
   }
 }
 
-func (s Service) ChangePassword(userId uint, password string) interfaces.ErrorWrapper {
+func (s Service) ChangePassword(userId uint, password string) error {
   email, err := s.getUserEmail(userId)
   if err != nil {
     return err
@@ -59,19 +59,19 @@ func (s Service) ChangePassword(userId uint, password string) interfaces.ErrorWr
   case nil:
     return nil
   default:
-    return models.NewErrorWrapper(err, services.InternalError)
+    return services.InternalError
   }
 }
 
-func (s Service) getUserEmail(userId uint) (string, interfaces.ErrorWrapper) {
+func (s Service) getUserEmail(userId uint) (string, error) {
   email, err := s.repository.GetUserEmail(userId)
 
   switch err {
   case nil:
     return email, nil
   case internal_errors.UnableToFindUserById:
-    return "", models.NewErrorWrapper(err, services.UserIdNotFound)
+    return "", services.UserIdNotFound
   default:
-    return "", models.NewErrorWrapper(err, services.InternalError)
+    return "", services.InternalError
   }
 }

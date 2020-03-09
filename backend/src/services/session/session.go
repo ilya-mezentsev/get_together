@@ -1,7 +1,6 @@
 package session
 
 import (
-  "interfaces"
   "models"
   "net/http"
   "services"
@@ -16,29 +15,29 @@ type Service struct {
 }
 
 func New(key string) Service {
-  return Service{coder: code.NewCoder(key)}
+  return Service{code.NewCoder(key)}
 }
 
-func (c Service) GetSession(r *http.Request) (map[string]interface{}, interfaces.ErrorWrapper) {
+func (c Service) GetSession(r *http.Request) (map[string]interface{}, error) {
   cookie, err := r.Cookie(cookieSessionKey)
   if err != nil {
-    return nil, models.NewErrorWrapper(err, NoAuthCookie)
+    return nil, NoAuthCookie
   }
 
   decoded, err := c.coder.Decrypt(cookie.Value)
   if err != nil {
-    return nil, models.NewErrorWrapper(err, InvalidAuthCookie)
+    return nil, InvalidAuthCookie
   }
 
   return decoded, nil
 }
 
-func (c Service) SetSession(r *http.Request, session models.UserSession) interfaces.ErrorWrapper {
+func (c Service) SetSession(r *http.Request, session models.UserSession) error {
   token, err := c.coder.Encrypt(map[string]interface{}{
     "id": session.ID,
   })
   if err != nil {
-    return models.NewErrorWrapper(err, services.InternalError)
+    return services.InternalError
   }
 
   r.AddCookie(&http.Cookie{

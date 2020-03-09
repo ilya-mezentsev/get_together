@@ -60,7 +60,7 @@ type Repository struct {
 }
 
 func New(db *sqlx.DB) Repository {
-  return Repository{db: db}
+  return Repository{db}
 }
 
 func (r Repository) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
