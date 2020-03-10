@@ -7,8 +7,8 @@ import (
   "github.com/jmoiron/sqlx"
   "io/ioutil"
   "log"
+  sessionAPIMock "mock/api"
   mock "mock/repositories"
-  sessionMock "mock/services"
   "models"
   "os"
   "repositories"
@@ -57,19 +57,19 @@ func TestMain(m *testing.M) {
 }
 
 func TestSessionGet_Success(t *testing.T) {
-  var response sessionMock.GetSessionSuccess
+  var response sessionAPIMock.GetSessionSuccess
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.RequestWithSession(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.RequestWithSession(router))).Decode(&response)
 
   utils.AssertNil(err, t)
-  utils.AssertEqual(float64(sessionMock.TestSessionData.ID), response.Data["id"], t)
+  utils.AssertEqual(float64(sessionAPIMock.TestSessionData.ID), response.Data["id"], t)
   utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
 func TestSessionGet_NoSessionError(t *testing.T) {
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.RequestWithoutSession(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.RequestWithoutSession(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -79,7 +79,7 @@ func TestSessionGet_NoSessionError(t *testing.T) {
 func TestSessionGet_InvalidSessionError(t *testing.T) {
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.RequestWithInvalidToken(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.RequestWithInvalidToken(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -90,9 +90,9 @@ func TestSessionRegister_Success(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  var response sessionMock.DefaultSuccess
+  var response sessionAPIMock.DefaultSuccess
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessRegistrationRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessRegistrationRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusOk, response.Status, t)
@@ -104,7 +104,7 @@ func TestSessionRegister_EmailExistsError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.EmailExistsRegistrationRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.EmailExistsRegistrationRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -116,7 +116,7 @@ func TestSessionRegister_InternalError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessRegistrationRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessRegistrationRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -129,7 +129,7 @@ func TestSessionLogin_Success(t *testing.T) {
 
   var response models.SuccessResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessLoginRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessLoginRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusOk, response.Status, t)
@@ -142,7 +142,7 @@ func TestSessionLogin_CredentialsNotFoundError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.NoCredentialsLoginRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.NoCredentialsLoginRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -154,7 +154,7 @@ func TestSessionLogin_InternalError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessLoginRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessLoginRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -167,7 +167,7 @@ func TestSessionChangePassword_Success(t *testing.T) {
 
   var response models.SuccessResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessChangePasswordRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessChangePasswordRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusOk, response.Status, t)
@@ -180,7 +180,7 @@ func TestSessionChangePassword_UserIdNotFoundError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.UserIdNotFoundChangePasswordRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.UserIdNotFoundChangePasswordRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -192,7 +192,7 @@ func TestSessionChangePassword_InternalError(t *testing.T) {
 
   var response models.ErrorResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessChangePasswordRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessChangePasswordRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
@@ -205,7 +205,7 @@ func TestSessionLogout_Success(t *testing.T) {
 
   var response models.SuccessResponse
   err := json.NewDecoder(
-    utils.MakeRequest(sessionMock.SuccessLogoutRequest(router))).Decode(&response)
+    utils.MakeRequest(sessionAPIMock.SuccessLogoutRequest(router))).Decode(&response)
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusOk, response.Status, t)
