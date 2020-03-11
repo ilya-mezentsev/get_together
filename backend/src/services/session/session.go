@@ -3,7 +3,7 @@ package session
 import (
   "models"
   "net/http"
-  "services"
+  "services/errors"
   "services/session/plugins/code"
   "time"
 )
@@ -21,12 +21,12 @@ func New(key string) Service {
 func (c Service) GetSession(r *http.Request) (map[string]interface{}, error) {
   cookie, err := r.Cookie(cookieSessionKey)
   if err != nil {
-    return nil, NoAuthCookie
+    return nil, errors.NoAuthCookie
   }
 
   decoded, err := c.coder.Decrypt(cookie.Value)
   if err != nil {
-    return nil, InvalidAuthCookie
+    return nil, errors.InvalidAuthCookie
   }
 
   return decoded, nil
@@ -37,7 +37,7 @@ func (c Service) SetSession(r *http.Request, session models.UserSession) error {
     "id": session.ID,
   })
   if err != nil {
-    return services.InternalError
+    return errors.InternalError
   }
 
   r.AddCookie(&http.Cookie{
