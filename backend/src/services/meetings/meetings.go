@@ -1,11 +1,11 @@
 package meetings
 
 import (
-  "interfaces"
-  "internal_errors"
-  "models"
-  "services"
-  "services/meetings/plugins/coords"
+	"interfaces"
+	"internal_errors"
+	"models"
+	"services/errors"
+	"services/meetings/plugins/coords"
 )
 
 const (
@@ -28,9 +28,9 @@ func (s Service) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, erro
   case nil:
     return meeting, nil
   case internal_errors.UnableToFindByMeetingId:
-    return models.PrivateMeeting{}, services.MeetingIdNotFound
+    return models.PrivateMeeting{}, errors.MeetingIdNotFound
   default:
-    return models.PrivateMeeting{}, services.InternalError
+    return models.PrivateMeeting{}, errors.InternalError
   }
 }
 
@@ -41,7 +41,7 @@ func (s Service) GetPublicMeetings() ([]models.PublicMeeting, error) {
   case nil:
     return coords.ShakePublicMeetings(meetings), nil
   default:
-    return nil, services.InternalError
+    return nil, errors.InternalError
   }
 }
 
@@ -56,9 +56,9 @@ func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, err
   case nil:
     return coords.ShakeExtendedMeetings(meetings), nil
   case internal_errors.UnableToFindUserById:
-    return nil, services.UserIdNotFound
+    return nil, errors.UserIdNotFound
   default:
-    return nil, services.InternalError
+    return nil, errors.InternalError
   }
 }
 
@@ -67,9 +67,9 @@ func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) error 
   case nil:
     return nil
   case internal_errors.UnableToFindUserById:
-    return services.UserIdNotFound
+    return errors.UserIdNotFound
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }
 
@@ -78,9 +78,9 @@ func (s Service) DeleteMeeting(meetingId uint) error {
   case nil:
     return nil
   case internal_errors.UnableToFindByMeetingId:
-    return services.MeetingIdNotFound
+    return errors.MeetingIdNotFound
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }
 
@@ -89,8 +89,8 @@ func (s Service) UpdatedSettings(meetingId uint, settings models.AllSettings) er
   case nil:
     return nil
   case internal_errors.UnableToFindByMeetingId:
-    return services.MeetingIdNotFound
+    return errors.MeetingIdNotFound
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }

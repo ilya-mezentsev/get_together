@@ -2,18 +2,17 @@ package session
 
 import (
   "api"
+  "interfaces"
   "models"
   "net/http"
-  "services/authentication"
-  "services/session"
 )
 
 type Handler struct {
-  authService authentication.Service
-  sessionService session.Service
+  authService interfaces.AuthenticationService
+  sessionService interfaces.SessionService
 }
 
-func InitRequestHandlers(authService authentication.Service, sessionService session.Service) {
+func InitRequestHandlers(authService interfaces.AuthenticationService, sessionService interfaces.SessionService) {
   handler := Handler{authService, sessionService}
 
   sessionAPI := api.GetRouter().PathPrefix("/session").Subrouter()

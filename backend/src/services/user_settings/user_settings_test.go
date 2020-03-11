@@ -1,10 +1,10 @@
 package user_settings
 
 import (
-  mock "mock/services"
-  "services"
-  "testing"
-  "utils"
+	mock "mock/services"
+	"services/errors"
+	"testing"
+	"utils"
 )
 
 var service = New(&mock.UsersSettingsRepository)
@@ -20,13 +20,13 @@ func TestUsersSettingsService_GetUserInfoSuccess(t *testing.T) {
 func TestUsersSettingsService_GetUserInfoUserNotFoundError(t *testing.T) {
   _, err := service.GetUserSettings(11)
 
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(errors.UserIdNotFound, err, t)
 }
 
 func TestUsersSettingsService_GetUserInfoInternalError(t *testing.T) {
   _, err := service.GetUserSettings(mock.BadUserId)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
 
 func TestUsersSettingsService_UpdateUserInfoSuccess(t *testing.T) {
@@ -40,11 +40,11 @@ func TestUsersSettingsService_UpdateUserInfoSuccess(t *testing.T) {
 func TestUsersSettingsService_UpdateUserInfoUserNotFoundError(t *testing.T) {
   err := service.UpdateUserSettings(11, mock.NewUserInfo)
 
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(errors.UserIdNotFound, err, t)
 }
 
 func TestUsersSettingsService_UpdateUserInfoInternalError(t *testing.T) {
   err := service.UpdateUserSettings(mock.BadUserId, mock.NewUserInfo)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
