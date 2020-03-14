@@ -14,6 +14,7 @@ import (
   "repositories"
   "services"
   "services/errors"
+  "services/proxies/validation"
   "testing"
   "utils"
 )
@@ -110,6 +111,26 @@ func TestSessionRegister_EmailExistsError(t *testing.T) {
   utils.AssertEqual(errors.EmailExists.Error(), response.ErrorDetail, t)
 }
 
+func TestSessionRegister_InvalidEmailError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidEmailRegistrationRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidEmail, response.ErrorDetail, t)
+}
+
+func TestSessionRegister_InvalidPasswordError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidPasswordRegistrationRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidPassword, response.ErrorDetail, t)
+}
+
 func TestSessionRegister_InternalError(t *testing.T) {
   mock.DropTables(db)
 
@@ -148,6 +169,26 @@ func TestSessionLogin_CredentialsNotFoundError(t *testing.T) {
   utils.AssertEqual(errors.CredentialsNotFound.Error(), response.ErrorDetail, t)
 }
 
+func TestSessionLogin_InvalidEmailError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidEmailLoginRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidEmail, response.ErrorDetail, t)
+}
+
+func TestSessionLogin_InvalidPasswordError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidPasswordLoginRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidPassword, response.ErrorDetail, t)
+}
+
 func TestSessionLogin_InternalError(t *testing.T) {
   mock.DropTables(db)
 
@@ -184,6 +225,26 @@ func TestSessionChangePassword_UserIdNotFoundError(t *testing.T) {
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
   utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
+}
+
+func TestSessionChangePassword_InvalidUserIdError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidUserIdChangePasswordRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+}
+
+func TestSessionChangePassword_InvalidPasswordError(t *testing.T) {
+  var response models.ErrorResponse
+  err := json.NewDecoder(
+    utils.MakeRequest(sessionAPIMock.InvalidPasswordChangePasswordRequest(router))).Decode(&response)
+
+  utils.AssertNil(err, t)
+  utils.AssertEqual(api.StatusError, response.Status, t)
+  utils.AssertEqual(validation.InvalidPassword, response.ErrorDetail, t)
 }
 
 func TestSessionChangePassword_InternalError(t *testing.T) {
