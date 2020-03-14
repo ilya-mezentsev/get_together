@@ -6,7 +6,7 @@ type validationResults struct {
 	validation []string
 }
 
-func (e validationResults) Add(err string) {
+func (e *validationResults) Add(err string) {
 	e.validation = append(e.validation, err)
 }
 
