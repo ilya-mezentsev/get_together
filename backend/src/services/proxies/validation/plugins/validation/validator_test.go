@@ -137,3 +137,15 @@ func TestValidGender_False(t *testing.T) {
 		utils.AssertFalse(ValidGender(g), t)
 	}
 }
+
+func TestValidURL_True(t *testing.T) {
+	for _, u := range plugins.ValidURLs {
+		utils.AssertTrue(ValidURL(u), t)
+	}
+}
+
+func TestValidURL_False(t *testing.T) {
+	for _, u := range plugins.InvalidURLs {
+		utils.AssertFalse(ValidURL(u), t)
+	}
+}

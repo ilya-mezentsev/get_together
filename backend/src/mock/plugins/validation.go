@@ -81,4 +81,12 @@ var (
 	InvalidGenders = []string{
 		"bad", "мальчик", "Саша",
 	}
+	ValidURLs = []string{
+		"vk.com", "https://www.google.com", "http://yandex.ru",
+		"localhost:80/api", "https://some-site.com/path?agr1=2&arg2=12",
+	}
+	InvalidURLs = []string{
+		"", "hello-world", "привет,домен", "даже не знаю, что сюда еще добавить",
+		"https://site .com",
+	}
 )
