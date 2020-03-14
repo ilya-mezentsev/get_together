@@ -3,17 +3,17 @@ package users
 import (
 	"api"
 	"github.com/gorilla/mux"
+	"interfaces"
 	"models"
 	"net/http"
-	"services/user_settings"
 	"strconv"
 )
 
 type Handler struct {
-	usersService user_settings.Service
+	usersService interfaces.UserSettingsService
 }
 
-func InitRequestHandlers(usersService user_settings.Service) {
+func InitRequestHandlers(usersService interfaces.UserSettingsService) {
 	handler := Handler{usersService}
 
 	usersAPI := api.GetRouter().PathPrefix("/user").Subrouter()
@@ -26,8 +26,7 @@ func (h Handler) getUserSettings(w http.ResponseWriter, r *http.Request) {
 	defer api.SendErrorIfPanicked(w)
 
 	vars := mux.Vars(r)
-
-	// TODO create service for checking input parameters
+	// checking of this parameter will be performed in validation proxy
 	userId, _ := strconv.Atoi(vars["id"])
 	info, err := h.usersService.GetUserSettings(uint(userId))
 	if err != nil {

@@ -2,7 +2,7 @@ package authentication
 
 import (
   mock "mock/services"
-  "services"
+  "services/errors"
   "testing"
   "utils"
 )
@@ -24,14 +24,14 @@ func TestAuthService_RegisterUserEmailExistsError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.ExistingUserEmail)
-  utils.AssertErrorsEqual(EmailExists, err, t)
+  utils.AssertErrorsEqual(errors.EmailExists, err, t)
 }
 
 func TestAuthService_RegisterUserInternalError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
   err := authService.RegisterUser(mock.BadUser)
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
 
 func TestAuthService_LoginSuccess(t *testing.T) {
@@ -44,13 +44,13 @@ func TestAuthService_LoginSuccess(t *testing.T) {
 func TestAuthService_LoginCredentialsNotFoundError(t *testing.T) {
   _, err := authService.Login(mock.NewUser)
 
-  utils.AssertErrorsEqual(CredentialsNotFound, err, t)
+  utils.AssertErrorsEqual(errors.CredentialsNotFound, err, t)
 }
 
 func TestAuthService_LoginInternalError(t *testing.T) {
   _, err := authService.Login(mock.BadUser)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
 
 func TestAuthService_ChangePasswordSuccess(t *testing.T) {
@@ -67,17 +67,17 @@ func TestAuthService_ChangePasswordSuccess(t *testing.T) {
 func TestAuthService_ChangePasswordUserNotFoundError(t *testing.T) {
   err := authService.ChangePassword(11, "")
 
-  utils.AssertErrorsEqual(services.UserIdNotFound, err, t)
+  utils.AssertErrorsEqual(errors.UserIdNotFound, err, t)
 }
 
 func TestAuthService_ChangePasswordInternalError_1(t *testing.T) {
   err := authService.ChangePassword(1, mock.BadUser.Password)
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
 
 func TestAuthService_ChangePasswordInternalError_2(t *testing.T) {
   err := authService.ChangePassword(mock.BadUserId, "")
 
-  utils.AssertErrorsEqual(services.InternalError, err, t)
+  utils.AssertErrorsEqual(errors.InternalError, err, t)
 }

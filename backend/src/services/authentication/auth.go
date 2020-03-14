@@ -4,7 +4,7 @@ import (
   "interfaces"
   "internal_errors"
   "models"
-  "services"
+  "services/errors"
   "utils"
 )
 
@@ -23,9 +23,9 @@ func (s Service) RegisterUser(credentials models.UserCredentials) error {
   case nil:
     return nil
   case internal_errors.UnableToRegisterUserEmailExists:
-    return EmailExists
+    return errors.EmailExists
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }
 
@@ -41,9 +41,9 @@ func (s Service) Login(credentials models.UserCredentials) (models.UserSession, 
   case nil:
     return models.UserSession{ID: userId}, nil
   case internal_errors.UnableToLoginUserNotFound:
-    return models.UserSession{}, CredentialsNotFound
+    return models.UserSession{}, errors.CredentialsNotFound
   default:
-    return models.UserSession{}, services.InternalError
+    return models.UserSession{}, errors.InternalError
   }
 }
 
@@ -59,7 +59,7 @@ func (s Service) ChangePassword(userId uint, password string) error {
   case nil:
     return nil
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }
 
@@ -70,8 +70,8 @@ func (s Service) getUserEmail(userId uint) (string, error) {
   case nil:
     return email, nil
   case internal_errors.UnableToFindUserById:
-    return "", services.UserIdNotFound
+    return "", errors.UserIdNotFound
   default:
-    return "", services.InternalError
+    return "", errors.InternalError
   }
 }

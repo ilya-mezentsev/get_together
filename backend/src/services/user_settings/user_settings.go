@@ -1,10 +1,10 @@
 package user_settings
 
 import (
-  "interfaces"
-  "internal_errors"
-  "models"
-  "services"
+	"interfaces"
+	"internal_errors"
+	"models"
+	"services/errors"
 )
 
 type Service struct {
@@ -22,9 +22,9 @@ func (u Service) GetUserSettings(userId uint) (models.FullUserInfo, error) {
   case nil:
     return info, nil
   case internal_errors.UnableToFindUserById:
-    return models.FullUserInfo{}, services.UserIdNotFound
+    return models.FullUserInfo{}, errors.UserIdNotFound
   default:
-    return models.FullUserInfo{}, services.InternalError
+    return models.FullUserInfo{}, errors.InternalError
   }
 }
 
@@ -33,8 +33,8 @@ func (u Service) UpdateUserSettings(userId uint, info models.UserSettings) error
   case nil:
     return nil
   case internal_errors.UnableToFindUserById:
-    return services.UserIdNotFound
+    return errors.UserIdNotFound
   default:
-    return services.InternalError
+    return errors.InternalError
   }
 }

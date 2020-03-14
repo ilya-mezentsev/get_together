@@ -13,8 +13,7 @@ import (
   "os"
   "repositories"
   "services"
-  "services/authentication"
-  sessionService "services/session"
+  "services/errors"
   "testing"
   "utils"
 )
@@ -47,7 +46,7 @@ func init() {
   }
 
   InitRequestHandlers(
-    authentication.New(repositories.Credentials(db)), sessionService.New(coderKey))
+    services.Authentication(repositories.Credentials(db)), services.Session(coderKey))
 }
 
 func TestMain(m *testing.M) {
@@ -73,7 +72,7 @@ func TestSessionGet_NoSessionError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(sessionService.NoAuthCookie.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.NoAuthCookie.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionGet_InvalidSessionError(t *testing.T) {
@@ -83,7 +82,7 @@ func TestSessionGet_InvalidSessionError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(sessionService.InvalidAuthCookie.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.InvalidAuthCookie.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionRegister_Success(t *testing.T) {
@@ -108,7 +107,7 @@ func TestSessionRegister_EmailExistsError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(authentication.EmailExists.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.EmailExists.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionRegister_InternalError(t *testing.T) {
@@ -120,7 +119,7 @@ func TestSessionRegister_InternalError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(services.InternalError.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.InternalError.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionLogin_Success(t *testing.T) {
@@ -146,7 +145,7 @@ func TestSessionLogin_CredentialsNotFoundError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(authentication.CredentialsNotFound.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.CredentialsNotFound.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionLogin_InternalError(t *testing.T) {
@@ -158,7 +157,7 @@ func TestSessionLogin_InternalError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(services.InternalError.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.InternalError.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionChangePassword_Success(t *testing.T) {
@@ -184,7 +183,7 @@ func TestSessionChangePassword_UserIdNotFoundError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(services.UserIdNotFound.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionChangePassword_InternalError(t *testing.T) {
@@ -196,7 +195,7 @@ func TestSessionChangePassword_InternalError(t *testing.T) {
 
   utils.AssertNil(err, t)
   utils.AssertEqual(api.StatusError, response.Status, t)
-  utils.AssertEqual(services.InternalError.Error(), response.ErrorDetail, t)
+  utils.AssertEqual(errors.InternalError.Error(), response.ErrorDetail, t)
 }
 
 func TestSessionLogout_Success(t *testing.T) {

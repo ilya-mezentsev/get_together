@@ -1,12 +1,12 @@
 package participation
 
 import (
-  "fmt"
-  "interfaces"
-  "internal_errors"
-  "models"
-  "plugins/meetings_time"
-  "services"
+	"fmt"
+	"interfaces"
+	"internal_errors"
+	"models"
+	"plugins/meetings_time"
+	"services/errors"
 )
 
 const (
@@ -59,9 +59,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindUserById:
-    return userSettings, meetingSettings, services.UserIdNotFound
+    return userSettings, meetingSettings, errors.UserIdNotFound
   default:
-    return userSettings, meetingSettings, services.InternalError
+    return userSettings, meetingSettings, errors.InternalError
   }
 
   meetingSettings, err = s.meetingsSettingsRepository.GetMeetingSettings(request.MeetingId)
@@ -69,9 +69,9 @@ func (s Service) getUserAndMeetingSettings(
   case nil:
     break
   case internal_errors.UnableToFindByMeetingId:
-    return userSettings, meetingSettings, services.MeetingIdNotFound
+    return userSettings, meetingSettings, errors.MeetingIdNotFound
   default:
-    return userSettings, meetingSettings, services.InternalError
+    return userSettings, meetingSettings, errors.InternalError
   }
 
   return userSettings, meetingSettings, nil
@@ -95,11 +95,11 @@ func (s Service) hasNearMeeting(
         Duration: meetingSettings.Duration,
       }, meetings), nil
   case internal_errors.UnableToFindUserById:
-    return false, services.UserIdNotFound
+    return false, errors.UserIdNotFound
   case internal_errors.UnableToFindByMeetingId:
-    return false, services.MeetingIdNotFound
+    return false, errors.MeetingIdNotFound
   default:
-    return false, services.InternalError
+    return false, errors.InternalError
   }
 }
 

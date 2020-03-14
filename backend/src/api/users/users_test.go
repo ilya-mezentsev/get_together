@@ -13,7 +13,7 @@ import (
 	"os"
 	"repositories"
 	"services"
-	"services/user_settings"
+	"services/errors"
 	"testing"
 	"utils"
 )
@@ -39,7 +39,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	InitRequestHandlers(user_settings.New(repositories.UserSettings(db)))
+	InitRequestHandlers(services.UserSettings(repositories.UserSettings(db)))
 }
 
 func TestMain(m *testing.M) {
@@ -73,7 +73,7 @@ func TestUserSettingsGet_UserIdNotFoundError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(services.UserIdNotFound.Error(), response.ErrorDetail, t)
+	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
 func TestUserSettingsGet_InternalError(t *testing.T) {
@@ -85,7 +85,7 @@ func TestUserSettingsGet_InternalError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(services.InternalError.Error(), response.ErrorDetail, t)
+	utils.AssertEqual(errors.InternalError.Error(), response.ErrorDetail, t)
 }
 
 func TestUserSettingsPatch_Success(t *testing.T) {
@@ -111,7 +111,7 @@ func TestUserSettingsPatch_UserIdNotFoundError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(services.UserIdNotFound.Error(), response.ErrorDetail, t)
+	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
 func TestUserSettingsPatch_InternalError(t *testing.T) {
@@ -123,5 +123,5 @@ func TestUserSettingsPatch_InternalError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(services.InternalError.Error(), response.ErrorDetail, t)
+	utils.AssertEqual(errors.InternalError.Error(), response.ErrorDetail, t)
 }
