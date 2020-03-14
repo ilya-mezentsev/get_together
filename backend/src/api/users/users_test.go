@@ -14,6 +14,8 @@ import (
 	"repositories"
 	"services"
 	"services/errors"
+	"services/proxies/validation"
+	"strings"
 	"testing"
 	"utils"
 )
@@ -76,6 +78,16 @@ func TestUserSettingsGet_UserIdNotFoundError(t *testing.T) {
 	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
+func TestUserSettingsGet_InvalidIdError(t *testing.T) {
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(usersAPIMock.InvalidIDUserSettingsRequest(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+}
+
 func TestUserSettingsGet_InternalError(t *testing.T) {
 	mock.DropTables(db)
 
@@ -112,6 +124,31 @@ func TestUserSettingsPatch_UserIdNotFoundError(t *testing.T) {
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
 	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
+}
+
+func TestUserSettingsPatch_InvalidUserIdError(t *testing.T) {
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(usersAPIMock.InvalidIdUserSettingsRequest(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+}
+
+func TestUserSettingsPatch_InvalidAllSettingsUserIdError(t *testing.T) {
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(usersAPIMock.InvalidAllSettingsUserSettingsRequest(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	for _, validationError := range []string{
+		validation.InvalidUserName, validation.InvalidUserNickname,
+		validation.InvalidUserAge, validation.InvalidUserAvatarURL,
+	} {
+		utils.AssertTrue(strings.Contains(response.ErrorDetail, validationError), t)
+	}
 }
 
 func TestUserSettingsPatch_InternalError(t *testing.T) {
