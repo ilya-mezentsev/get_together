@@ -24,7 +24,7 @@ func (p AuthenticationServiceProxy) RegisterUser(credentials models.UserCredenti
 	}
 }
 
-func (p AuthenticationServiceProxy) validateCredentials(credentials models.UserCredentials) validationResults {
+func (p AuthenticationServiceProxy) validateCredentials(credentials models.UserCredentials)validationResults {
 	validationResults := validationResults{}
 	if !validation.ValidEmail(credentials.Email) {
 		validationResults.Add(InvalidEmail)

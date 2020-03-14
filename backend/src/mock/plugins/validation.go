@@ -61,7 +61,7 @@ var (
 		"too short", strings.Repeat("very long", 200), "here we are<",
 	}
 	ValidNames = []string{
-		"Иван Иванов", "John Doe", "Илья М.", "tag1", "тег встречи",
+		"Иван Иванов", "John Doe", "Илья М", "tag1", "тег встречи",
 	}
 	InvalidNames = []string{
 		"", "     ", "1", "bad_<<", "hello/world", "bad^name",

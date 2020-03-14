@@ -9,7 +9,7 @@ import (
 const (
 	nicknamePattern = `^[-a-zA-Z0-9_$]{3,16}$`
 	passwordPattern = `^[-a-zA-Z0-9_$*%&]{8,32}$`
-	namePattern = `^[a-zA-Za-zA-Zа-яА-ЯёЁ0-9. ]{3,16}$`
+	namePattern = `^[a-zA-Za-zA-Zа-яА-ЯёЁ0-9 ]{3,16}$`
 	textPattern = `^[-_%$?:.,*()a-zA-Zа-яА-ЯёЁ0-9 ]+$`
 
 	shortTextMinLength, shortTextMaxLength = 3, 255

@@ -122,12 +122,12 @@ const (
 )
 
 var (
-  // all passwords are 'mYStRoNg*PwD12'
+  // all passwords are 'hello'
   UsersCredentials = []map[string]interface{}{
-    {"email": "mail@ya.ru", "password": "4409ae9505d657bfeb51a875059e8d1c"},
-    {"email": "me@gmail.com", "password": "b868a6c97c67fc75b35af0e482b02143"},
-    {"email": "hello.world@mail.ru", "password": "c9d669040d46452e93435db552aa782f"},
-    {"email": "world@hello.ru", "password": "b0fd7f596010a80a30845a9b0111ede0"},
+    {"email": "mail@ya.ru", "password": "b3b8da2ec36ac421900a323b02a97dbe"},
+    {"email": "me@gmail.com", "password": "b8e97d073fa923f95b2ca8e3d68f1adc"},
+    {"email": "hello.world@mail.ru", "password": "302a508e05cf15606703717feebf5831"},
+    {"email": "world@hello.ru", "password": "ef47443cceae359859ac44b8ce412309"},
   }
   UsersInfo = []map[string]interface{}{
     {"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
