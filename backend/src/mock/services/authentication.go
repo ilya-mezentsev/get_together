@@ -3,6 +3,7 @@ package services
 import (
   "errors"
   "internal_errors"
+  "mock/repositories"
   "models"
   "utils"
 )
@@ -12,25 +13,12 @@ type CredentialsMock struct {
 }
 
 var (
-  Users = []models.UserCredentials{
-    {Email: "mail@ya.ru", Password: "hello_world"},
-    {Email: "mail@gmail.com", Password: "hi_there"},
-  }
-  usersWithHashedPassword = []models.UserCredentials{
-    {Email: "mail@ya.ru", Password: "99cef3d35538f52fca31516cea7a5ee4"},
-    {Email: "mail@gmail.com", Password: "93a23777000f3507a34969f2e7a38a7c"},
-  }
   CredentialsRepo = CredentialsMock{
-    Users: usersWithHashedPassword,
+    Users: allUsersCredentials(),
   }
-
   NewUser = models.UserCredentials{
     Email: "test@test.ru",
     Password: "pass",
-  }
-  ExistingUserEmail = models.UserCredentials{
-    Email: "mail@ya.ru",
-    Password: "3dac4de4c9d5af7382da4c63f5555f2b",
   }
   BadUser = models.UserCredentials{
     Email: "bad-email@ya.ru",
@@ -42,7 +30,7 @@ var (
 )
 
 func (c *CredentialsMock) ResetState() {
-  c.Users = usersWithHashedPassword
+  c.Users = allUsersCredentials()
 }
 
 func (c *CredentialsMock) CreateUser(user models.UserCredentials) error {
@@ -109,4 +97,23 @@ func (c *CredentialsMock) GetUserEmail(userId uint) (string, error) {
   }
 
   return "", internal_errors.UnableToFindUserById
+}
+
+func FirstUserCredentials() models.UserCredentials {
+  return models.UserCredentials{
+    Email: repositories.UsersCredentials[0]["email"].(string),
+    Password: repositories.TestingPassword,
+  }
+}
+
+func allUsersCredentials() []models.UserCredentials {
+  var credentials []models.UserCredentials
+  for _, c := range repositories.UsersCredentials {
+    credentials = append(credentials, models.UserCredentials{
+      Email: c["email"].(string),
+      Password: c["password"].(string),
+    })
+  }
+
+  return credentials
 }

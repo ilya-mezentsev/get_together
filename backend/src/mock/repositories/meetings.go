@@ -16,8 +16,8 @@ var (
   ExpectedDate = time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC)
 )
 
-func GetFirstLabeledPlace() models.LabeledPlace {
-  return models.LabeledPlace{
+func GetFirstLabeledPlace() *models.LabeledPlace {
+  return &models.LabeledPlace{
     Label: MeetingsPlaces[0]["label"].(string),
     PublicPlace: models.PublicPlace{
       Latitude: models.Latitude(MeetingsPlaces[0]["latitude"].(float64)),

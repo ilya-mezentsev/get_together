@@ -23,7 +23,7 @@ func TestAuthService_RegisterUserSuccess(t *testing.T) {
 func TestAuthService_RegisterUserEmailExistsError(t *testing.T) {
   defer mock.CredentialsRepo.ResetState()
 
-  err := authService.RegisterUser(mock.ExistingUserEmail)
+  err := authService.RegisterUser(mock.FirstUserCredentials())
   utils.AssertErrorsEqual(errors.EmailExists, err, t)
 }
 
@@ -35,7 +35,7 @@ func TestAuthService_RegisterUserInternalError(t *testing.T) {
 }
 
 func TestAuthService_LoginSuccess(t *testing.T) {
-  userSession, err := authService.Login(mock.Users[0])
+  userSession, err := authService.Login(mock.FirstUserCredentials())
 
   utils.AssertNil(err, t)
   utils.AssertEqual(1, int(userSession.ID), t)

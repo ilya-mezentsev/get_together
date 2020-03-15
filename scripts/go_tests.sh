@@ -14,8 +14,10 @@ rm -rf ${REPORT_FOLDER}/*
 for dir in "${folders[@]}"
 do
   reportFileName=$(echo -n ${dir} | md5sum | awk '{print $1}')
-  cd ${GOPATH}/src/${dir} && go test -coverprofile=${REPORT_FOLDER}/${reportFileName}.out
+  reportFilePath=${REPORT_FOLDER}/${reportFileName}
+  cd ${GOPATH}/src/${dir} && go test -coverprofile=${reportFilePath}.out
   if [[ $1 = html ]]; then # open reports in browser
-    go tool cover -html=${REPORT_FOLDER}/${reportFileName}.out
+    go tool cover -html=${reportFilePath}.out -o ${reportFilePath}.html
+    chromium ${reportFilePath}.html >/dev/null 2>&1 &
   fi
 done

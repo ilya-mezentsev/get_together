@@ -1,9 +1,12 @@
 package services
 
 import (
-  "internal_errors"
-  "models"
-  "time"
+	"github.com/lib/pq"
+	"internal_errors"
+	"mock/repositories"
+	"models"
+	"services/proxies/validation/plugins/validation"
+	"time"
 )
 
 type MeetingsRepositoryMock struct {
@@ -11,40 +14,6 @@ type MeetingsRepositoryMock struct {
 }
 
 var (
-  meetings = map[uint]models.PrivateMeeting{
-    1: {
-      DefaultMeeting: models.DefaultMeeting{
-        ID: 1,
-        AdminId: 1,
-        CreatedAt: time.Unix(0, 0),
-      },
-      LabeledPlace: models.LabeledPlace{
-        Label: "221b baker street",
-        PublicPlace: models.PublicPlace{
-          Latitude: 51.5207,
-          Longitude: -0.1550,
-        },
-      },
-      AllSettings: models.AllSettings{
-        ExtendedSettings: models.ExtendedSettings{
-          PublicSettings: models.PublicSettings{
-            Title: "Deduction party",
-            Description: "Fuck you, Moriarty",
-            Tags: []string{"logic", "smoking pipe"},
-          },
-          MeetingParameters: models.MeetingParameters{
-            DateTime: time.Unix(0, 1),
-            RequestDescriptionRequired: false,
-          },
-        },
-        MeetingLimitations: models.MeetingLimitations{
-          Duration: 2,
-          MinAge: 16,
-          MaxUsers: 10,
-        },
-      },
-    },
-  }
   NewMeetingSettings = models.AllSettings{
     ExtendedSettings: models.ExtendedSettings{
       PublicSettings: models.PublicSettings{
@@ -71,14 +40,14 @@ var (
       MaxUsers: 10,
     },
   }
-  MeetingsMockRepository = MeetingsRepositoryMock{Meetings: meetings}
+  MeetingsMockRepository = MeetingsRepositoryMock{Meetings: allMeetings()}
   BadMeetingId uint = 0
   NotExistsMeetingId uint = 11
   NotExistsUserId uint = 11
 )
 
 func (m *MeetingsRepositoryMock) ResetState() {
-  m.Meetings = meetings
+  m.Meetings = allMeetings()
 }
 
 func (m *MeetingsRepositoryMock) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
@@ -176,4 +145,67 @@ func (m *MeetingsRepositoryMock) UpdatedSettings(meetingId uint, settings models
     AllSettings: settings,
   }
   return nil
+}
+
+func allMeetings() map[uint]models.PrivateMeeting {
+	meetings := map[uint]models.PrivateMeeting{}
+	for _, m := range repositories.MeetingsSettings {
+		meetingId := uint(m["meeting_id"].(int))
+		datetime, _ := time.Parse(validation.DateFormat, m["date_time"].(string))
+
+		meetings[meetingId] = models.PrivateMeeting{
+			DefaultMeeting: models.DefaultMeeting{
+				ID: meetingId,
+				AdminId: getAdminIdByMeetingId(meetingId),
+				CreatedAt: time.Unix(0, 0),
+			},
+			LabeledPlace: getLabeledPlaceByMeetingId(meetingId),
+			AllSettings: models.AllSettings{
+				ExtendedSettings: models.ExtendedSettings{
+					PublicSettings: models.PublicSettings{
+						Title: m["title"].(string),
+						Description: "Fuck you, Moriarty",
+						Tags: pqStringArrayToStringArray(m["tags"].(*pq.StringArray)),
+					},
+					MeetingParameters: models.MeetingParameters{
+						DateTime: datetime,
+						RequestDescriptionRequired: false,
+					},
+				},
+				MeetingLimitations: models.MeetingLimitations{
+					Duration: uint(m["duration"].(int)),
+					MinAge: uint(m["min_age"].(int)),
+					MaxUsers: uint(m["max_users"].(int)),
+				},
+			},
+		}
+	}
+
+	return meetings
+}
+
+func getAdminIdByMeetingId(meetingId uint) uint {
+	for id, m := range repositories.Meetings {
+		if id+1 == int(meetingId) {
+			return uint(m["admin_id"].(int))
+		}
+	}
+
+	return 0
+}
+
+func getLabeledPlaceByMeetingId(meetingId uint) *models.LabeledPlace {
+	for _, m := range repositories.MeetingsPlaces {
+		if uint(m["meeting_id"].(int)) == meetingId {
+			return &models.LabeledPlace{
+				Label: m["label"].(string),
+				PublicPlace: models.PublicPlace{
+					Latitude: models.Latitude(m["latitude"].(float64)),
+					Longitude: models.Longitude(m["longitude"].(float64)),
+				},
+			}
+		}
+	}
+
+	return nil
 }

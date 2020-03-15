@@ -78,7 +78,7 @@ type (
   // for invited users
   PrivateMeeting struct {
     DefaultMeeting
-    LabeledPlace
+    *LabeledPlace
     AllSettings
   }
 )
