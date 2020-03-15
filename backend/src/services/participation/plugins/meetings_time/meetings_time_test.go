@@ -1,7 +1,7 @@
 package meetings_time
 
 import (
-  mock "mock/plugins"
+	mock "mock/plugins"
   "testing"
   "utils"
 )
