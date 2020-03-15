@@ -5,8 +5,8 @@ import (
 	"interfaces"
 	"internal_errors"
 	"models"
-	"plugins/meetings_time"
 	"services/errors"
+	"services/participation/plugins/meetings_time"
 )
 
 const (
