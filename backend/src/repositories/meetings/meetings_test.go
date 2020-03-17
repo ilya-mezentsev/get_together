@@ -51,7 +51,9 @@ func TestRepository_GetFullMeetingInfoSuccess(t *testing.T) {
 
   info, err := repository.GetFullMeetingInfo(1)
   utils.AssertNil(err, t)
-  utils.AssertEqual(mock.GetFirstLabeledPlace(), info.LabeledPlace, t)
+  utils.AssertEqual(mock.GetFirstLabeledPlace().Label, info.LabeledPlace.Label, t)
+  utils.AssertEqual(mock.GetFirstLabeledPlace().GetLatitude(), info.LabeledPlace.GetLatitude(), t)
+  utils.AssertEqual(mock.GetFirstLabeledPlace().GetLongitude(), info.LabeledPlace.GetLongitude(), t)
 }
 
 func TestRepository_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
@@ -121,7 +123,9 @@ func TestRepository_CreateMeetingSuccess(t *testing.T) {
   err := repository.CreateMeeting(1, mock2.NewMeetingSettings)
   utils.AssertNil(err, t)
   meeting, _ := repository.GetFullMeetingInfo(4)
-  utils.AssertEqual(mock2.NewMeetingSettings.LabeledPlace, meeting.LabeledPlace, t)
+  utils.AssertEqual(mock2.NewMeetingSettings.Label, meeting.LabeledPlace.Label, t)
+  utils.AssertEqual((&mock2.NewMeetingSettings).GetLatitude(), meeting.LabeledPlace.GetLatitude(), t)
+  utils.AssertEqual((&mock2.NewMeetingSettings).GetLongitude(), meeting.LabeledPlace.GetLongitude(), t)
 }
 
 func TestRepository_CreateMeetingAdminNotFoundError(t *testing.T) {

@@ -1,8 +1,12 @@
 package services
 
 import (
+  "fmt"
+  "github.com/lib/pq"
   "internal_errors"
+  "mock/repositories"
   "models"
+  "services/proxies/validation/plugins/validation"
   "time"
 )
 
@@ -11,125 +15,14 @@ type MeetingsSettingsRepositoryMock struct {
 }
 
 var (
-  meetingsSettings = map[uint]models.ParticipationMeetingSettings{
-    1: {
-      MeetingLimitations: models.MeetingLimitations{
-        MaxUsers: 10,
-        Duration: 4,
-        MinAge: 16,
-        Gender: "male",
-      },
-      MeetingParameters: models.MeetingParameters{
-        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
-        RequestDescriptionRequired: false,
-      },
-      Tags: []string{"tag1", "tag2"},
-      UsersCount: 2,
-    },
-    2: {
-      MeetingLimitations: models.MeetingLimitations{
-        MaxUsers: 5,
-        Duration: 4,
-        MinAge: 18,
-        Gender: "female",
-      },
-      MeetingParameters: models.MeetingParameters{
-        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
-        RequestDescriptionRequired: false,
-      },
-      Tags: []string{"tag3"},
-      UsersCount: 5,
-    },
-    3:  {
-      MeetingLimitations: models.MeetingLimitations{
-        MaxUsers: 6,
-        Duration: 2,
-        MinAge: 18,
-        Gender: "male",
-      },
-      MeetingParameters: models.MeetingParameters{
-        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
-        RequestDescriptionRequired: false,
-      },
-      Tags: []string{"tag3"},
-      UsersCount: 1,
-    },
-    4: {
-      MeetingLimitations: models.MeetingLimitations{
-        MaxUsers: 5,
-        Duration: 4,
-        MinAge: 12,
-        Gender: "female",
-      },
-      MeetingParameters: models.MeetingParameters{
-        DateTime: time.Date(2020, 3, 2, 20, 0, 0, 0, time.UTC),
-        RequestDescriptionRequired: false,
-      },
-      Tags: []string{"tag3"},
-      UsersCount: 2,
-    },
-  }
+  meetingIdToUsersCount = map[uint]uint{1: 10, 2: 5, 3: 6}
   MeetingsSettingsRepository = MeetingsSettingsRepositoryMock{
-    meetings: meetingsSettings,
-  }
-  MeetingIdWithParticipation uint = 3
-
-  HasNearMeetingRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: MeetingIdWithParticipation,
-  }
-  BadRatingRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: 1,
-  }
-  MeetingFullRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: 2,
-  }
-  InappropriateAgeRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: 3,
-  }
-  WrongGenderRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: 4,
-  }
-  FewInappropriateInfoFields = models.ParticipationRequest{
-    UserId: 3,
-    MeetingId: 2,
-  }
-  NotExistsUserIdRequest = models.ParticipationRequest{
-    UserId: NotExistsUserId,
-    MeetingId: 4,
-  }
-  NotExistsMeetingIdRequest = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: NotExistsMeetingId,
-  }
-  InternalErrorRequest1 = models.ParticipationRequest{
-    UserId: BadUserId,
-    MeetingId: 1,
-  }
-  InternalErrorRequest2 = models.ParticipationRequest{
-    UserId: 1,
-    MeetingId: BadMeetingId,
-  }
-  WrongGender = models.InappropriateInfoField{
-    ErrorCode: "wrong-gender",
-    Description: "actual: male, wanted: female",
-  }
-  InappropriateAge = models.InappropriateInfoField{
-    ErrorCode: "age-less-than-min",
-    Description: "actual: 16, wanted: 18",
-  }
-  MaxUsersCountReached = models.InappropriateInfoField{
-    ErrorCode: "max-users-count-reached",
-    Description: "actual: 5",
+    meetings: allMeetingsSettings(),
   }
 )
 
 func (m *MeetingsSettingsRepositoryMock) ResetState() {
-  m.meetings = meetingsSettings
+  m.meetings = allMeetingsSettings()
 }
 
 func (m *MeetingsSettingsRepositoryMock) GetMeetingSettings(meetingId uint) (models.ParticipationMeetingSettings, error) {
@@ -152,7 +45,7 @@ func (m *MeetingsSettingsRepositoryMock) GetNearMeetings(data models.UserTimeChe
   }
 
   var meetings []models.TimeMeetingParameters
-  for meetingId, meeting := range meetingsSettings {
+  for meetingId, meeting := range allMeetingsSettings() {
     if meetingId != data.MeetingId {
       meetings = append(meetings, models.TimeMeetingParameters{
         DateTime: meeting.DateTime,
@@ -161,6 +54,40 @@ func (m *MeetingsSettingsRepositoryMock) GetNearMeetings(data models.UserTimeChe
     }
   }
   return meetings, nil
+}
+
+func allMeetingsSettings() map[uint]models.ParticipationMeetingSettings {
+  settings := map[uint]models.ParticipationMeetingSettings{}
+  for _, m := range repositories.MeetingsSettings {
+    datetime, _ := time.Parse(validation.DateFormat, m["date_time"].(string))
+    meetingId := uint(m["meeting_id"].(int))
+
+    settings[meetingId] = models.ParticipationMeetingSettings{
+      MeetingLimitations: models.MeetingLimitations{
+        MaxUsers: uint(m["max_users"].(int)),
+        Duration: uint(m["duration"].(int)),
+        MinAge: uint(m["min_age"].(int)),
+        Gender: m["gender"].(string),
+      },
+      MeetingParameters:  models.MeetingParameters{
+        DateTime: datetime,
+        RequestDescriptionRequired: false,
+      },
+      Tags: pqStringArrayToStringArray(m["tags"].(*pq.StringArray)),
+      UsersCount: meetingIdToUsersCount[meetingId],
+    }
+  }
+
+  return settings
+}
+
+func pqStringArrayToStringArray(pqStringArray *pq.StringArray) []string {
+  var strings []string
+  for _, s := range *pqStringArray {
+    strings = append(strings, s)
+  }
+
+  return strings
 }
 
 func TagsEqual(t1, t2 []string) bool {
@@ -175,4 +102,98 @@ func TagsEqual(t1, t2 []string) bool {
   }
 
   return true
+}
+
+func HasField(fields []models.InappropriateInfoField, field models.InappropriateInfoField) bool {
+  for _, f := range fields {
+    if f == field {
+      return true
+    }
+  }
+
+  return false
+}
+
+func TooLowRatingTagsRequest() (models.ParticipationRequest, []string) {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: 1,
+  }, []string{"tag2"}
+}
+
+func HasNearMeetingRequest() models.ParticipationRequest {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: 1,
+  }
+}
+
+func InappropriateAgeRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: 1,
+  }, inappropriateAge(12, 16)
+}
+
+func inappropriateAge(actual, wanted uint) models.InappropriateInfoField {
+  return models.InappropriateInfoField{
+    ErrorCode: "age-less-than-min",
+    Description: fmt.Sprintf("actual: %d, wanted: %d", actual, wanted),
+  }
+}
+
+func WrongGenderRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: 2,
+  }, wantedFemaleGender()
+}
+
+func wantedFemaleGender() models.InappropriateInfoField {
+  return models.InappropriateInfoField{
+    ErrorCode: "wrong-gender",
+    Description: "actual: male, wanted: female",
+  }
+}
+
+func MaxUsersCountReachedRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: 3,
+  }, maxUsersCountReached(6)
+}
+
+func maxUsersCountReached(actual uint) models.InappropriateInfoField {
+  return models.InappropriateInfoField{
+    ErrorCode: "max-users-count-reached",
+    Description: fmt.Sprintf("actual: %d", actual),
+  }
+}
+
+func InternalErrorBadMeetingIdRequest() models.ParticipationRequest {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: BadMeetingId,
+  }
+}
+
+func NotExistsMeetingRequest() models.ParticipationRequest {
+  return models.ParticipationRequest{
+    UserId: 1,
+    MeetingId: NotExistsMeetingId,
+  }
+}
+
+func NotExistsUserRequest() models.ParticipationRequest {
+  return models.ParticipationRequest{
+    UserId: NotExistsUserId,
+    MeetingId: 1,
+  }
+}
+
+func InternalErrorUserIdRequest() models.ParticipationRequest {
+  return models.ParticipationRequest{
+    UserId: BadUserId,
+    MeetingId: 1,
+  }
 }

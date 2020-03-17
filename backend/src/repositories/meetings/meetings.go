@@ -64,7 +64,9 @@ func New(db *sqlx.DB) Repository {
 }
 
 func (r Repository) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
-  var info models.PrivateMeeting
+  var info = models.PrivateMeeting{
+    LabeledPlace: &models.LabeledPlace{},
+  }
   rows, err := r.db.Query(FullMeetingInfoQuery, meetingId)
   if err != nil {
     return info, err

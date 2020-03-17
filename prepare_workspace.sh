@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function prepareFolders() {
-  mkdir $1/backend/test_report
+  mkdir $1/backend/test_report 2>/dev/null
 }
 
 function prepareFiles() {

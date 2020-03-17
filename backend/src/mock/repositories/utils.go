@@ -3,6 +3,7 @@ package repositories
 import (
   "github.com/jmoiron/sqlx"
   "github.com/lib/pq"
+  "utils"
 )
 
 const (
@@ -114,20 +115,18 @@ const (
   CreateUserRatingQuery = `INSERT INTO users_rating(user_id, tag, value) VALUES(:user_id, :tag, :value);`
   CreateMeetingQuery = `INSERT INTO meetings(admin_id, user_ids) VALUES(:admin_id, :user_ids);`
   CreateMeetingSettingsQuery = `
-  INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration)
-  VALUES(:meeting_id, :title, :date_time, :tags, :duration);`
+  INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration, max_users, min_age, gender)
+  VALUES(:meeting_id, :title, :date_time, :tags, :duration, :max_users, :min_age, :gender);`
   CreateMeetingPlaceQuery = `
   INSERT INTO meetings_places(meeting_id, label, latitude, longitude)
   VALUES(:meeting_id, :label, :latitude, :longitude);`
 )
 
 var (
-  // all passwords are 'mYStRoNg*PwD12'
+  TestingPassword = "mYStRoNg*PwD12"
   UsersCredentials = []map[string]interface{}{
-    {"email": "mail@ya.ru", "password": "4409ae9505d657bfeb51a875059e8d1c"},
-    {"email": "me@gmail.com", "password": "b868a6c97c67fc75b35af0e482b02143"},
-    {"email": "hello.world@mail.ru", "password": "c9d669040d46452e93435db552aa782f"},
-    {"email": "world@hello.ru", "password": "b0fd7f596010a80a30845a9b0111ede0"},
+    {"email": "mail@ya.ru"}, {"email": "me@gmail.com"},
+    {"email": "hello.world@mail.ru"}, {"email": "world@hello.ru"},
   }
   UsersInfo = []map[string]interface{}{
     {"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
@@ -157,6 +156,9 @@ var (
       "date_time": "2020-03-02T14:00:00",
       "tags": pq.Array([]string{"tag1", "tag2"}),
       "duration": 4,
+      "max_users": 10,
+      "min_age": 16,
+      "gender": "male",
     },
     {
       "meeting_id": 2,
@@ -164,6 +166,9 @@ var (
       "date_time": "2020-03-02T16:00:00",
       "tags": pq.Array([]string{"tag3"}),
       "duration": 4,
+      "max_users": 5,
+      "min_age": 18,
+      "gender": "female",
     },
     {
       "meeting_id": 3,
@@ -171,6 +176,9 @@ var (
       "date_time": "2020-03-02T20:00:00",
       "tags": pq.Array([]string{"tag1"}),
       "duration": 4,
+      "max_users": 6,
+      "min_age": 12,
+      "gender": "male",
     },
   }
   MeetingsPlaces = []map[string]interface{}{
@@ -185,6 +193,12 @@ var (
     CreateMeetingPlaceQuery: MeetingsPlaces,
   }
 )
+
+func init() {
+  for idx, c := range UsersCredentials {
+    UsersCredentials[idx]["password"] = utils.GetHash(c["email"].(string) + TestingPassword)
+  }
+}
 
 func DropTables(db *sqlx.DB) {
   _, err := db.Exec(DropTablesQuery)

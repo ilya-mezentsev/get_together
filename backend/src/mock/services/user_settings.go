@@ -2,6 +2,7 @@ package services
 
 import (
   "internal_errors"
+  "mock/repositories"
   "models"
 )
 
@@ -10,44 +11,16 @@ type UsersSettingsRepositoryMock struct {
 }
 
 var (
-  usersSettings = map[uint]models.FullUserInfo{
-    1: {
-      UserSettings: models.UserSettings{
-        Gender: "male",
-        Name: "J. Smith",
-        Age: 16,
-      },
-      Rating: []models.Rating{
-        {Tag: "tag1", Value: 65},
-        {Tag: "tag2", Value: 55},
-        {Tag: "tag3", Value: 43},
-      },
-    },
-    2: {
-      UserSettings: models.UserSettings{
-        Name: "Nick",
-        Age: 16,
-      },
-    },
-    3: {
-      UserSettings: models.UserSettings{
-        Gender: "male",
-        Name: "Nick",
-        Age: 16,
-      },
-    },
-  }
-  UsersSettingsRepository = UsersSettingsRepositoryMock{Settings: usersSettings}
+  UsersSettingsRepository = UsersSettingsRepositoryMock{Settings: allUsersSettings()}
   NewUserInfo = models.UserSettings{
     Name: "Hello world",
     Age: 16,
     Gender: "male",
   }
-  TagsWithBadRating = []string{"tag2"}
 )
 
 func (u *UsersSettingsRepositoryMock) ResetState() {
-  u.Settings = usersSettings
+  u.Settings = allUsersSettings()
 }
 
 func (u *UsersSettingsRepositoryMock) GetUserSettings(userId uint) (models.FullUserInfo, error) {
@@ -80,3 +53,36 @@ func (u *UsersSettingsRepositoryMock) UpdateUserSettings(userId uint, info model
   return nil
 }
 
+func allUsersSettings() map[uint]models.FullUserInfo {
+  settings := map[uint]models.FullUserInfo{}
+  for _, u := range repositories.UsersInfo {
+    userId := uint(u["user_id"].(int))
+    settings[userId] = models.FullUserInfo{
+      UserSettings: models.UserSettings{
+        Name: u["name"].(string),
+        Nickname: u["nickname"].(string),
+        Gender: u["gender"].(string),
+        Age: uint(u["age"].(int)),
+      },
+      Rating: getRatingByUserId(userId),
+    }
+  }
+
+  return settings
+}
+
+func getRatingByUserId(userId uint) []models.Rating {
+  var rating []models.Rating
+  for _, r := range repositories.UsersRating {
+    if uint(r["user_id"].(int)) != userId {
+      continue
+    }
+
+    rating = append(rating, models.Rating{
+      Tag: r["tag"].(string),
+      Value: float64(r["value"].(int)),
+    })
+  }
+
+  return rating
+}
