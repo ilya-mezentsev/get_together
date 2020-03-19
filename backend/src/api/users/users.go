@@ -10,10 +10,10 @@ import (
 )
 
 type Handler struct {
-	usersService interfaces.UserSettingsService
+	usersService interfaces.UsersSettings
 }
 
-func InitRequestHandlers(usersService interfaces.UserSettingsService) {
+func InitRequestHandlers(usersService interfaces.UsersSettings) {
 	handler := Handler{usersService}
 
 	usersAPI := api.GetRouter().PathPrefix("/user").Subrouter()

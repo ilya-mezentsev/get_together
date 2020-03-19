@@ -6,7 +6,7 @@ package coords
 //  3. Set for all meetings in block average coordinates
 
 import (
-  "interfaces"
+	"interfaces"
   "math"
   "models"
 )

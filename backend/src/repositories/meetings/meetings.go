@@ -53,6 +53,10 @@ const (
   SET title = :title, max_users = :max_users, tags = :tags, date_time = :date_time, description = :description,
   duration = :duration, min_age = :min_age, gender = :gender, request_description_required = :request_description_required
   WHERE meeting_id = :meeting_id`
+
+  AddUserIdToMeetingQuery = `UPDATE meetings SET user_ids = array_append(user_ids, :user_id) WHERE id = :meeting_id`
+  MeetingHasUserQuery = `SELECT 1 FROM meetings WHERE id = :meeting_id AND :user_id = ANY(user_ids)`
+  KickUserFromMeetingQuery = `UPDATE meetings SET user_ids = array_remove(user_ids, :user_id) WHERE id = :meeting_id`
 )
 
 type Repository struct {
@@ -211,7 +215,7 @@ func (r Repository) DeleteMeeting(meetingId uint) error {
   }
 }
 
-func (r Repository) UpdatedSettings(meetingId uint, settings models.AllSettings) error {
+func (r Repository) UpdateSettings(meetingId uint, settings models.AllSettings) error {
   meeting := r.meetingSettingsToMap(meetingId, settings)
   res, err := r.db.NamedExec(UpdateMeetingSettingsQuery, meeting)
   if err != nil {
@@ -228,4 +232,61 @@ func (r Repository) UpdatedSettings(meetingId uint, settings models.AllSettings)
   }
 
   return nil
+}
+
+func (r Repository) AddUserToMeeting(meetingId, userId uint) error {
+  userInMeeting, err := r.meetingHasUser(meetingId, userId)
+  if err != nil {
+    return err
+  }
+  if userInMeeting {
+    return internal_errors.UserAlreadyInMeeting
+  }
+
+  return r.updateMeetingUserIds(AddUserIdToMeetingQuery, meetingId, userId)
+}
+
+func (r Repository) meetingHasUser(meetingId, userId uint) (bool, error) {
+  rows, err := r.db.NamedQuery(MeetingHasUserQuery, r.getNamedArguments(meetingId, userId))
+  if err != nil {
+    return false, err
+  }
+
+  return rows.Next(), nil
+}
+
+func (r Repository) getNamedArguments(meetingId, userId uint) map[string]interface{} {
+  return map[string]interface{}{
+    "user_id": userId,
+    "meeting_id": meetingId,
+  }
+}
+
+func (r Repository) updateMeetingUserIds(query string, meetingId, userId uint) error {
+  res, err := r.db.NamedExec(query, r.getNamedArguments(meetingId, userId))
+  if err != nil {
+    return err
+  }
+
+  rowsAffected, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  if rowsAffected == 0 {
+    return internal_errors.UnableToFindByMeetingId
+  }
+
+  return nil
+}
+
+func (r Repository) KickUserFromMeeting(meetingId, userId uint) error {
+  userInMeeting, err := r.meetingHasUser(meetingId, userId)
+  if err != nil {
+    return err
+  }
+  if !userInMeeting {
+    return internal_errors.UserNotInMeeting
+  }
+
+  return r.updateMeetingUserIds(KickUserFromMeetingQuery, meetingId, userId)
 }

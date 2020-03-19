@@ -145,9 +145,9 @@ var (
     {"user_id": 3, "tag": "tag3", "value": 55},
   }
   Meetings = []map[string]interface{}{
-    {"admin_id": 1, "user_ids": pq.Array([]uint{1})},
-    {"admin_id": 2, "user_ids": pq.Array([]uint{2, 4})},
-    {"admin_id": 3, "user_ids": pq.Array([]uint{3})},
+    {"meeting_id": 1, "admin_id": 1, "user_ids": []uint{1}},
+    {"meeting_id": 2, "admin_id": 2, "user_ids": []uint{2, 4}},
+    {"meeting_id": 3, "admin_id": 3, "user_ids": []uint{3}},
   }
   MeetingsSettings = []map[string]interface{}{
     {
@@ -220,7 +220,14 @@ func InitTables(db *sqlx.DB) {
 func insertData(db *sqlx.DB) {
   tx := db.MustBegin()
   addDataFromSource(tx, CreateUserQuery, UsersCredentials)
-  addDataFromSource(tx, CreateMeetingQuery, Meetings)
+
+  var meetings []map[string]interface{}
+  for _, m := range Meetings {
+    meetings = append(meetings, map[string]interface{}{
+      "meeting_id": m["meeting_id"], "admin_id": m["admin_id"], "user_ids": pq.Array(m["user_ids"]),
+    })
+  }
+  addDataFromSource(tx, CreateMeetingQuery, meetings)
   if err := tx.Commit(); err != nil {
     panic(err)
   }

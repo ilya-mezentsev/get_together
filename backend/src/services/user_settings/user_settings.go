@@ -8,10 +8,10 @@ import (
 )
 
 type Service struct {
-  repository interfaces.UsersSettingsRepository
+  repository interfaces.UsersSettings
 }
 
-func New(repository interfaces.UsersSettingsRepository) Service {
+func New(repository interfaces.UsersSettings) Service {
   return Service{repository}
 }
 

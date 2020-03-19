@@ -172,7 +172,7 @@ func TestRepository_UpdatedSettingsSuccess(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.UpdatedSettings(2, mock2.NewMeetingSettings)
+  err := repository.UpdateSettings(2, mock2.NewMeetingSettings)
   utils.AssertNil(err, t)
   meeting, _ := repository.GetFullMeetingInfo(2)
   utils.AssertEqual(mock2.NewMeetingSettings.Title, meeting.Title, t)
@@ -182,13 +182,91 @@ func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
   mock.InitTables(db)
   defer mock.DropTables(db)
 
-  err := repository.UpdatedSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+  err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
   utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_UpdatedSettingsNoTableError(t *testing.T) {
   mock.DropTables(db)
 
-  err := repository.UpdatedSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+  err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+  utils.AssertNotNil(err, t)
+}
+
+func TestRepository_AddUserToMeetingSuccess(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.AddUserToMeeting(1, mock.UserIdThatNotInFirstMeeting)
+  userInMeeting, _ := repository.meetingHasUser(1, mock.UserIdThatNotInFirstMeeting)
+
+  utils.AssertNil(err, t)
+  utils.AssertTrue(userInMeeting, t)
+}
+
+func TestRepository_AddUserToMeetingUserAlreadyInMeetingError(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.AddUserToMeeting(1, 1)
+  utils.AssertErrorsEqual(internal_errors.UserAlreadyInMeeting, err, t)
+}
+
+func TestRepository_AddUserToMeetingNotExistsError(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.AddUserToMeeting(0, 1)
+
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+}
+
+func TestRepository_AddUserToMeetingInternalError(t *testing.T) {
+  mock.DropTables(db)
+
+  err := repository.AddUserToMeeting(1, 1)
+  utils.AssertNotNil(err, t)
+}
+
+func TestRepository_KickUserFromMeetingSuccess(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.KickUserFromMeeting(1, 1)
+  userInMeeting, _ := repository.meetingHasUser(1, 1)
+
+  utils.AssertNil(err, t)
+  utils.AssertFalse(userInMeeting, t)
+}
+
+func TestRepository_KickUserFromMeetingNotExistsError(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.updateMeetingUserIds(KickUserFromMeetingQuery, 0, 1)
+
+  utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+}
+
+func TestRepository_KickUserFromMeetingUserNotInMeetingError(t *testing.T) {
+  mock.InitTables(db)
+  defer mock.DropTables(db)
+
+  err := repository.KickUserFromMeeting(1, mock.UserIdThatNotInFirstMeeting)
+
+  utils.AssertErrorsEqual(internal_errors.UserNotInMeeting, err, t)
+}
+
+func TestRepository_KickUserFromMeetingInternalError(t *testing.T) {
+  mock.DropTables(db)
+
+  err := repository.KickUserFromMeeting(1, 1)
+  utils.AssertNotNil(err, t)
+}
+
+func TestRepository_UpdateMeetingUserIdsInternalError(t *testing.T) {
+  mock.DropTables(db)
+
+  err := repository.updateMeetingUserIds(AddUserIdToMeetingQuery, 1, 1)
   utils.AssertNotNil(err, t)
 }

@@ -4,6 +4,7 @@ import (
 	"interfaces"
 	"services/authentication"
 	"services/meetings"
+	"services/meetings_accessor"
 	"services/participation"
 	"services/proxies/validation"
 	"services/session"
@@ -14,12 +15,16 @@ func Authentication(repository interfaces.CredentialsRepository) interfaces.Auth
 	return validation.NewAuthenticationServiceProxy(authentication.New(repository))
 }
 
-func Meetings(repository interfaces.MeetingsRepository) interfaces.MeetingsService {
+func Meetings(repository interfaces.Meetings) interfaces.Meetings {
 	return validation.NewMeetingsServiceProxy(meetings.New(repository))
 }
 
+func MeetingsAccessor(repository interfaces.MeetingsAccessorRepository) interfaces.MeetingsAccessorService {
+	return validation.NewMeetingsAccessorServiceProxy(meetings_accessor.New(repository))
+}
+
 func Participation(
-	userSettingsRepository interfaces.UsersSettingsRepository,
+	userSettingsRepository interfaces.UsersSettings,
 	meetingsSettingsRepository interfaces.MeetingsSettingsRepository,
 ) interfaces.ParticipationService {
 	return validation.NewParticipationServiceProxy(
@@ -30,6 +35,6 @@ func Session(key string) interfaces.SessionService {
 	return validation.NewSessionServiceProxy(session.New(key))
 }
 
-func UserSettings(repository interfaces.UsersSettingsRepository) interfaces.UserSettingsService {
+func UserSettings(repository interfaces.UsersSettings) interfaces.UsersSettings {
 	return validation.NewUserSettingsServiceProxy(user_settings.New(repository))
 }
