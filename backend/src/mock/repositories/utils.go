@@ -1,13 +1,13 @@
 package repositories
 
 import (
-  "github.com/jmoiron/sqlx"
-  "github.com/lib/pq"
-  "utils"
+	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
+	"utils"
 )
 
 const (
-  DropTablesQuery = `
+	DropTablesQuery = `
   DROP TABLE IF EXISTS users CASCADE;
   DROP TABLE IF EXISTS users_info;
   DROP TABLE IF EXISTS users_rating;
@@ -21,7 +21,7 @@ const (
   DROP TYPE IF EXISTS MEETING_STATUS;
   DROP TYPE IF EXISTS CHAT_TYPE;
   DROP TYPE IF EXISTS CHAT_STATUS;`
-  CreateTablesQuery = `
+	CreateTablesQuery = `
   CREATE TYPE GENDER AS ENUM('male', 'female', '');
   CREATE TYPE MEETING_STATUS AS ENUM('pending', 'archived');
   CREATE TYPE CHAT_TYPE AS ENUM('meeting', 'meeting_request');
@@ -108,145 +108,145 @@ const (
     text TEXT NOT NULL,
     sending_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );`
-  CreateUserQuery = `INSERT INTO users(email, password) VALUES(:email, :password);`
-  CreateUserInfoQuery = `
+	CreateUserQuery     = `INSERT INTO users(email, password) VALUES(:email, :password);`
+	CreateUserInfoQuery = `
   INSERT INTO users_info(user_id, name, nickname, age, gender)
   VALUES(:user_id, :name, :nickname, :age, :gender);`
-  CreateUserRatingQuery = `INSERT INTO users_rating(user_id, tag, value) VALUES(:user_id, :tag, :value);`
-  CreateMeetingQuery = `INSERT INTO meetings(admin_id, user_ids) VALUES(:admin_id, :user_ids);`
-  CreateMeetingSettingsQuery = `
+	CreateUserRatingQuery      = `INSERT INTO users_rating(user_id, tag, value) VALUES(:user_id, :tag, :value);`
+	CreateMeetingQuery         = `INSERT INTO meetings(admin_id, user_ids) VALUES(:admin_id, :user_ids);`
+	CreateMeetingSettingsQuery = `
   INSERT INTO meetings_settings(meeting_id, title, date_time, tags, duration, max_users, min_age, gender)
   VALUES(:meeting_id, :title, :date_time, :tags, :duration, :max_users, :min_age, :gender);`
-  CreateMeetingPlaceQuery = `
+	CreateMeetingPlaceQuery = `
   INSERT INTO meetings_places(meeting_id, label, latitude, longitude)
   VALUES(:meeting_id, :label, :latitude, :longitude);`
 )
 
 var (
-  TestingPassword = "mYStRoNg*PwD12"
-  UsersCredentials = []map[string]interface{}{
-    {"email": "mail@ya.ru"}, {"email": "me@gmail.com"},
-    {"email": "hello.world@mail.ru"}, {"email": "world@hello.ru"},
-  }
-  UsersInfo = []map[string]interface{}{
-    {"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
-    {"user_id": 2, "name": "Mr. Anderson", "nickname": "Lol228", "age": 8, "gender": "male"},
-    {"user_id": 3, "name": "Alex", "nickname": "nagibator", "age": 21, "gender": "female"},
-  }
-  UsersRating = []map[string]interface{}{
-    {"user_id": 1, "tag": "tag1", "value": 65},
-    {"user_id": 1, "tag": "tag2", "value": 55},
-    {"user_id": 1, "tag": "tag3", "value": 43},
-    {"user_id": 2, "tag": "tag1", "value": 40},
-    {"user_id": 2, "tag": "tag2", "value": 90},
-    {"user_id": 2, "tag": "tag3", "value": 55},
-    {"user_id": 3, "tag": "tag1", "value": 40},
-    {"user_id": 3, "tag": "tag2", "value": 90},
-    {"user_id": 3, "tag": "tag3", "value": 55},
-  }
-  Meetings = []map[string]interface{}{
-    {"meeting_id": 1, "admin_id": 1, "user_ids": []uint{1}},
-    {"meeting_id": 2, "admin_id": 2, "user_ids": []uint{2, 4}},
-    {"meeting_id": 3, "admin_id": 3, "user_ids": []uint{3}},
-  }
-  MeetingsSettings = []map[string]interface{}{
-    {
-      "meeting_id": 1,
-      "title": "hello_world",
-      "date_time": "2020-03-02T14:00:00",
-      "tags": pq.Array([]string{"tag1", "tag2"}),
-      "duration": 4,
-      "max_users": 10,
-      "min_age": 16,
-      "gender": "male",
-    },
-    {
-      "meeting_id": 2,
-      "title": "hello_world",
-      "date_time": "2020-03-02T16:00:00",
-      "tags": pq.Array([]string{"tag3"}),
-      "duration": 4,
-      "max_users": 5,
-      "min_age": 18,
-      "gender": "female",
-    },
-    {
-      "meeting_id": 3,
-      "title": "hello_world",
-      "date_time": "2020-03-02T20:00:00",
-      "tags": pq.Array([]string{"tag1"}),
-      "duration": 4,
-      "max_users": 6,
-      "min_age": 12,
-      "gender": "male",
-    },
-  }
-  MeetingsPlaces = []map[string]interface{}{
-    {"meeting_id": 1, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
-    {"meeting_id": 2, "label": "hello-world", "latitude": 0.0, "longitude": 0.0},
-    {"meeting_id": 3, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
-  }
-  QueryToSubData = map[string][]map[string]interface{}{
-    CreateUserInfoQuery: UsersInfo,
-    CreateUserRatingQuery: UsersRating,
-    CreateMeetingSettingsQuery: MeetingsSettings,
-    CreateMeetingPlaceQuery: MeetingsPlaces,
-  }
+	TestingPassword  = "mYStRoNg*PwD12"
+	UsersCredentials = []map[string]interface{}{
+		{"email": "mail@ya.ru"}, {"email": "me@gmail.com"},
+		{"email": "hello.world@mail.ru"}, {"email": "world@hello.ru"},
+	}
+	UsersInfo = []map[string]interface{}{
+		{"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
+		{"user_id": 2, "name": "Mr. Anderson", "nickname": "Lol228", "age": 8, "gender": "male"},
+		{"user_id": 3, "name": "Alex", "nickname": "nagibator", "age": 21, "gender": "female"},
+	}
+	UsersRating = []map[string]interface{}{
+		{"user_id": 1, "tag": "tag1", "value": 65},
+		{"user_id": 1, "tag": "tag2", "value": 55},
+		{"user_id": 1, "tag": "tag3", "value": 43},
+		{"user_id": 2, "tag": "tag1", "value": 40},
+		{"user_id": 2, "tag": "tag2", "value": 90},
+		{"user_id": 2, "tag": "tag3", "value": 55},
+		{"user_id": 3, "tag": "tag1", "value": 40},
+		{"user_id": 3, "tag": "tag2", "value": 90},
+		{"user_id": 3, "tag": "tag3", "value": 55},
+	}
+	Meetings = []map[string]interface{}{
+		{"meeting_id": 1, "admin_id": 1, "user_ids": []uint{1}},
+		{"meeting_id": 2, "admin_id": 2, "user_ids": []uint{2, 4}},
+		{"meeting_id": 3, "admin_id": 3, "user_ids": []uint{3}},
+	}
+	MeetingsSettings = []map[string]interface{}{
+		{
+			"meeting_id": 1,
+			"title":      "hello_world",
+			"date_time":  "2020-03-02T14:00:00",
+			"tags":       pq.Array([]string{"tag1", "tag2"}),
+			"duration":   4,
+			"max_users":  10,
+			"min_age":    16,
+			"gender":     "male",
+		},
+		{
+			"meeting_id": 2,
+			"title":      "hello_world",
+			"date_time":  "2020-03-02T16:00:00",
+			"tags":       pq.Array([]string{"tag3"}),
+			"duration":   4,
+			"max_users":  5,
+			"min_age":    18,
+			"gender":     "female",
+		},
+		{
+			"meeting_id": 3,
+			"title":      "hello_world",
+			"date_time":  "2020-03-02T20:00:00",
+			"tags":       pq.Array([]string{"tag1"}),
+			"duration":   4,
+			"max_users":  6,
+			"min_age":    12,
+			"gender":     "male",
+		},
+	}
+	MeetingsPlaces = []map[string]interface{}{
+		{"meeting_id": 1, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
+		{"meeting_id": 2, "label": "hello-world", "latitude": 0.0, "longitude": 0.0},
+		{"meeting_id": 3, "label": "221b baker street", "latitude": 51.5207, "longitude": -0.1550},
+	}
+	QueryToSubData = map[string][]map[string]interface{}{
+		CreateUserInfoQuery:        UsersInfo,
+		CreateUserRatingQuery:      UsersRating,
+		CreateMeetingSettingsQuery: MeetingsSettings,
+		CreateMeetingPlaceQuery:    MeetingsPlaces,
+	}
 )
 
 func init() {
-  for idx, c := range UsersCredentials {
-    UsersCredentials[idx]["password"] = utils.GetHash(c["email"].(string) + TestingPassword)
-  }
+	for idx, c := range UsersCredentials {
+		UsersCredentials[idx]["password"] = utils.GetHash(c["email"].(string) + TestingPassword)
+	}
 }
 
 func DropTables(db *sqlx.DB) {
-  _, err := db.Exec(DropTablesQuery)
-  if err != nil {
-    panic(err)
-  }
+	_, err := db.Exec(DropTablesQuery)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func InitTables(db *sqlx.DB) {
-  DropTables(db)
-  _, err := db.Exec(CreateTablesQuery)
-  if err != nil {
-    panic(err)
-  }
+	DropTables(db)
+	_, err := db.Exec(CreateTablesQuery)
+	if err != nil {
+		panic(err)
+	}
 
-  insertData(db)
+	insertData(db)
 }
 
 func insertData(db *sqlx.DB) {
-  tx := db.MustBegin()
-  addDataFromSource(tx, CreateUserQuery, UsersCredentials)
+	tx := db.MustBegin()
+	addDataFromSource(tx, CreateUserQuery, UsersCredentials)
 
-  var meetings []map[string]interface{}
-  for _, m := range Meetings {
-    meetings = append(meetings, map[string]interface{}{
-      "meeting_id": m["meeting_id"], "admin_id": m["admin_id"], "user_ids": pq.Array(m["user_ids"]),
-    })
-  }
-  addDataFromSource(tx, CreateMeetingQuery, meetings)
-  if err := tx.Commit(); err != nil {
-    panic(err)
-  }
+	var meetings []map[string]interface{}
+	for _, m := range Meetings {
+		meetings = append(meetings, map[string]interface{}{
+			"meeting_id": m["meeting_id"], "admin_id": m["admin_id"], "user_ids": pq.Array(m["user_ids"]),
+		})
+	}
+	addDataFromSource(tx, CreateMeetingQuery, meetings)
+	if err := tx.Commit(); err != nil {
+		panic(err)
+	}
 
-  tx = db.MustBegin()
-  for query, data := range QueryToSubData {
-    addDataFromSource(tx, query, data)
-  }
-  if err := tx.Commit(); err != nil {
-    panic(err)
-  }
+	tx = db.MustBegin()
+	for query, data := range QueryToSubData {
+		addDataFromSource(tx, query, data)
+	}
+	if err := tx.Commit(); err != nil {
+		panic(err)
+	}
 }
 
 func addDataFromSource(tx *sqlx.Tx, query string, src []map[string]interface{}) {
-  for _, item := range src {
-    _, err := tx.NamedExec(query, item)
+	for _, item := range src {
+		_, err := tx.NamedExec(query, item)
 
-    if err != nil {
-      panic(err)
-    }
-  }
+		if err != nil {
+			panic(err)
+		}
+	}
 }

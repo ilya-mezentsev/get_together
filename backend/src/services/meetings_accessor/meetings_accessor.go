@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	invitedStatus = "invited"
+	invitedStatus    = "invited"
 	notInvitedStatus = "not-invited"
 )
 
@@ -47,8 +47,8 @@ func (s Service) GetPublicMeetings() ([]models.PublicMeeting, error) {
 
 func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
 	meetings, err := s.repository.GetExtendedMeetings(models.UserMeetingStatusesData{
-		UserId: userId,
-		Invited: invitedStatus,
+		UserId:     userId,
+		Invited:    invitedStatus,
 		NotInvited: notInvitedStatus,
 	})
 

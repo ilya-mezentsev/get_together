@@ -21,7 +21,9 @@ func (d MeetingsSettingsRepositoryDecorator) GetMeetingSettings(
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting meeting settings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
 			},
@@ -37,7 +39,9 @@ func (d MeetingsSettingsRepositoryDecorator) GetNearMeetings(
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting near meeting: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"time_check_data": data,
 			},

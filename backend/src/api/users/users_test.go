@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	db *sqlx.DB
+	db     *sqlx.DB
 	router = api.GetRouter()
 )
 

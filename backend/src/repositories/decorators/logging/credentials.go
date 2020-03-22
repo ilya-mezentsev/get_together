@@ -19,7 +19,9 @@ func (d CredentialsRepositoryDecorator) CreateUser(user models.UserCredentials) 
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while creating user: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"credentials": user,
 			},
@@ -34,7 +36,9 @@ func (d CredentialsRepositoryDecorator) GetUserIdByCredentials(user models.UserC
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting user id by credentials: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"credentials": user,
 			},
@@ -49,7 +53,9 @@ func (d CredentialsRepositoryDecorator) UpdateUserPassword(user models.UserCrede
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while updating user password: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"credentials": user,
 			},
@@ -64,7 +70,9 @@ func (d CredentialsRepositoryDecorator) GetUserEmail(userId uint) (string, error
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting user email: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"user_id": userId,
 			},
