@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  db:
+    restart: always
+    image: postgres:latest
+    ports:
+      - 5555:5432
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+  api:
+    build: "../backend"
+    environment:
+      GOPATH: "/go"
+      CODER_KEY: ${CODER_KEY}
+      CONN_STR: "host=db port=5432 user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable"
+    command: /bin/sh -c "$RUN_GO_COMMAND"
+    ports:
+      - ${API_PORT}:8080
+    depends_on:
+      - db
+
+  frontend:
+    build: ../frontend
+    ports:
+      - 8081:4200
+      - 49153:49153
+    volumes:
+      - ${FRONTEND_DIR}:/var/www/apps/gt/frontend
+    command: /bin/sh -c "$RUN_FRONTEND_COMMAND"
+    depends_on:
+      - api
+
+  nginx:
+    build:
+      context: ../nginx
+      dockerfile: ${NGINX_DOCKERFILE}
+    ports:
+      - 80:80
+    volumes:
+      - ${STATIC_DIR}:/var/www/html
+    depends_on:
+      - frontend

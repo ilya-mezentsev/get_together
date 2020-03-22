@@ -10,6 +10,8 @@ declare -A scriptsDescriptions=(
   ['push_all']='push all files to repository'
   ['create_test_data']='make requests for creating testing: group, users and tasks'
   ['unit_tests']='run all unit_tests tests inside container'
+  ['debug']='run project in debug mode'
+  ['stage']='run project in stage mode'
 )
 
 function run() {
@@ -19,9 +21,9 @@ function run() {
     set +o allexport
     scriptName=$1
     shift
-    bash ${SCRIPTS_FOLDER}/${scriptName} "$(echo $*)"
+    bash "${SCRIPTS_FOLDER}"/"${scriptName}" "$*"
   else
-    echo file $(pwd)/.env not found
+    echo file "$(pwd)"/.env not found
     exit 1
   fi
 }
@@ -29,19 +31,19 @@ function run() {
 function showHelp {
   echo 'usage bash run.sh <command>'
   echo 'available commands:'
-  echo -e '\t-h, -help, help - ' ${scriptsDescriptions['help']}
-  for scriptName in ${SCRIPTS_FOLDER}/*.sh; do
+  echo -e '\t-h, -help, help - ' "${scriptsDescriptions['help']}"
+  for scriptName in "${SCRIPTS_FOLDER}"/*.sh; do
     # private scripts
-    if [[ $(basename ${scriptName}) == _* ]]; then
+    if [[ $(basename "${scriptName}") == _* ]]; then
       continue
     fi
 
-    scriptName=$(basename ${scriptName} | sed 's/\.sh$//1')
+    scriptName=$(basename "${scriptName}" | sed 's/\.sh$//1')
     scriptDescription=${scriptsDescriptions[$scriptName]}
     if [[ ${scriptDescription} = '' ]]; then
       scriptDescription='no description'
     fi
-    printf "\t${scriptName} - ${scriptDescription}\n"
+    printf "\t%s - %s\n" "${scriptName}" "${scriptDescription}"
   done
 }
 
@@ -53,9 +55,9 @@ fi
 scriptName="$1.sh"
 if [[ -f ${SCRIPTS_FOLDER}/${scriptName} ]]; then
   shift
-  run ${scriptName} $*
+  run "${scriptName}" "$*"
 else
-  echo file ${SCRIPTS_FOLDER}/${scriptName} not found
+  echo file "${SCRIPTS_FOLDER}"/"${scriptName}" not found
   showHelp
   exit 1
 fi

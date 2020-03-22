@@ -1,0 +1,4 @@
+FROM nginx:latest
+EXPOSE 80
+ADD ./conf /etc/nginx/apps/gt
+COPY nginx.stage.conf /etc/nginx/nginx.conf
