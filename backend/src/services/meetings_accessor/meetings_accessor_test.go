@@ -34,8 +34,8 @@ func TestService_GetExtendedMeetingsSuccess(t *testing.T) {
 	meetings, err := service.GetExtendedMeetings(1)
 	utils.AssertNil(err, t)
 	expectedMeetings, _ := mock.MeetingsMockRepository.GetExtendedMeetings(models.UserMeetingStatusesData{
-		UserId: 1,
-		Invited: "",
+		UserId:     1,
+		Invited:    "",
 		NotInvited: "",
 	})
 	utils.AssertEqual(expectedMeetings[0].PublicPlace.Latitude, meetings[0].PublicPlace.Latitude, t)

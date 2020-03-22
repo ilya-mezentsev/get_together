@@ -20,5 +20,5 @@ $ bash prepare_workspace.sh $(pwd)
 
 #### Check by running integration tests:
 ```bash
-$ bash run.sh integration_tests
+$ bash run.sh unit_tests
 ```

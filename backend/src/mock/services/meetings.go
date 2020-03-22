@@ -10,147 +10,147 @@ import (
 )
 
 type MeetingsRepositoryMock struct {
-	Meetings map[uint]models.PrivateMeeting
+	Meetings      map[uint]models.PrivateMeeting
 	MeetingsUsers map[uint][]uint
 }
 
 var (
-  NewMeetingSettings = models.AllSettings{
-    ExtendedSettings: models.ExtendedSettings{
-      PublicSettings: models.PublicSettings{
-        Title: "Winx top!",
-        Description: "Who likes winx come!",
-        Tags: []string{"winx", "my_love"},
-      },
-      MeetingParameters: models.MeetingParameters{
-        DateTime: time.Unix(0, 0),
-        RequestDescriptionRequired: false,
-      },
-    },
-    LabeledPlace: models.LabeledPlace{
-      Label: "221b baker street",
-      PublicPlace: models.PublicPlace{
-        Latitude: 51.5207,
-        Longitude: -0.1550,
-      },
-    },
-    MeetingLimitations: models.MeetingLimitations{
-      Duration: 2,
-      MinAge: 12,
-      Gender: "female",
-      MaxUsers: 10,
-    },
-  }
-  MeetingsMockRepository = MeetingsRepositoryMock{
-  	Meetings: allMeetings(),
+	NewMeetingSettings = models.AllSettings{
+		ExtendedSettings: models.ExtendedSettings{
+			PublicSettings: models.PublicSettings{
+				Title:       "Winx top!",
+				Description: "Who likes winx come!",
+				Tags:        []string{"winx", "my_love"},
+			},
+			MeetingParameters: models.MeetingParameters{
+				DateTime:                   time.Unix(0, 0),
+				RequestDescriptionRequired: false,
+			},
+		},
+		LabeledPlace: models.LabeledPlace{
+			Label: "221b baker street",
+			PublicPlace: models.PublicPlace{
+				Latitude:  51.5207,
+				Longitude: -0.1550,
+			},
+		},
+		MeetingLimitations: models.MeetingLimitations{
+			Duration: 2,
+			MinAge:   12,
+			Gender:   "female",
+			MaxUsers: 10,
+		},
+	}
+	MeetingsMockRepository = MeetingsRepositoryMock{
+		Meetings:      allMeetings(),
 		MeetingsUsers: allMeetingsUsers(),
-  }
-  UserIdThatNotInFirstMeeting = repositories.UserIdThatNotInFirstMeeting
-  BadMeetingId uint = 0
-  NotExistsMeetingId uint = 11
-  NotExistsUserId uint = 11
+	}
+	UserIdThatNotInFirstMeeting      = repositories.UserIdThatNotInFirstMeeting
+	BadMeetingId                uint = 0
+	NotExistsMeetingId          uint = 11
+	NotExistsUserId             uint = 11
 )
 
 func (m *MeetingsRepositoryMock) ResetState() {
-  m.Meetings = allMeetings()
+	m.Meetings = allMeetings()
 	m.MeetingsUsers = allMeetingsUsers()
 }
 
 func (m *MeetingsRepositoryMock) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
-  if meetingId == BadMeetingId {
-    return models.PrivateMeeting{}, someInternalError
-  }
+	if meetingId == BadMeetingId {
+		return models.PrivateMeeting{}, someInternalError
+	}
 
-  meetingInfo, found := m.Meetings[meetingId]
-  if !found {
-    return models.PrivateMeeting{}, internal_errors.UnableToFindByMeetingId
-  }
+	meetingInfo, found := m.Meetings[meetingId]
+	if !found {
+		return models.PrivateMeeting{}, internal_errors.UnableToFindByMeetingId
+	}
 
-  return meetingInfo, nil
+	return meetingInfo, nil
 }
 
 func (m *MeetingsRepositoryMock) GetPublicMeetings() ([]models.PublicMeeting, error) {
-  if m.Meetings == nil {
-    return nil, someInternalError
-  }
+	if m.Meetings == nil {
+		return nil, someInternalError
+	}
 
-  var meetings []models.PublicMeeting
-  for _, m := range m.Meetings {
-    meetings = append(meetings, models.PublicMeeting{
-      DefaultMeeting: m.DefaultMeeting,
-      PublicSettings: m.PublicSettings,
-      PublicPlace: &m.PublicPlace,
-    })
-  }
+	var meetings []models.PublicMeeting
+	for _, m := range m.Meetings {
+		meetings = append(meetings, models.PublicMeeting{
+			DefaultMeeting: m.DefaultMeeting,
+			PublicSettings: m.PublicSettings,
+			PublicPlace:    &m.PublicPlace,
+		})
+	}
 
-  return meetings, nil
+	return meetings, nil
 }
 
 func (m *MeetingsRepositoryMock) GetExtendedMeetings(
-  data models.UserMeetingStatusesData) ([]models.ExtendedMeeting, error) {
-  userId := data.UserId
-  if userId == BadUserId {
-    return nil, someInternalError
-  } else if userId == NotExistsUserId {
-    return nil, internal_errors.UnableToFindUserById
-  }
+	data models.UserMeetingStatusesData) ([]models.ExtendedMeeting, error) {
+	userId := data.UserId
+	if userId == BadUserId {
+		return nil, someInternalError
+	} else if userId == NotExistsUserId {
+		return nil, internal_errors.UnableToFindUserById
+	}
 
-  var meetings []models.ExtendedMeeting
-  for _, m := range m.Meetings {
-    meetings = append(meetings, models.ExtendedMeeting{
-      DefaultMeeting: m.DefaultMeeting,
-      ExtendedSettings: m.ExtendedSettings,
-      PublicPlace: &m.PublicPlace,
-      CurrentUserStatus: "",
-    })
-  }
+	var meetings []models.ExtendedMeeting
+	for _, m := range m.Meetings {
+		meetings = append(meetings, models.ExtendedMeeting{
+			DefaultMeeting:    m.DefaultMeeting,
+			ExtendedSettings:  m.ExtendedSettings,
+			PublicPlace:       &m.PublicPlace,
+			CurrentUserStatus: "",
+		})
+	}
 
-  return meetings, nil
+	return meetings, nil
 }
 
 func (m *MeetingsRepositoryMock) CreateMeeting(adminId uint, settings models.AllSettings) error {
-  if adminId == BadUserId {
-    return someInternalError
-  } else if adminId == NotExistsUserId {
-    return internal_errors.UnableToFindUserById
-  }
+	if adminId == BadUserId {
+		return someInternalError
+	} else if adminId == NotExistsUserId {
+		return internal_errors.UnableToFindUserById
+	}
 
-  m.Meetings[2] = models.PrivateMeeting{
-    DefaultMeeting: models.DefaultMeeting{
-      ID: 2,
-      AdminId: adminId,
-      CreatedAt: time.Unix(0, 1),
-    },
-    AllSettings: settings,
-  }
-  return nil
+	m.Meetings[2] = models.PrivateMeeting{
+		DefaultMeeting: models.DefaultMeeting{
+			ID:        2,
+			AdminId:   adminId,
+			CreatedAt: time.Unix(0, 1),
+		},
+		AllSettings: settings,
+	}
+	return nil
 }
 
 func (m *MeetingsRepositoryMock) DeleteMeeting(meetingId uint) error {
-  if meetingId == BadMeetingId {
-    return someInternalError
-  } else if meetingId == NotExistsMeetingId {
-    return internal_errors.UnableToFindByMeetingId
-  }
+	if meetingId == BadMeetingId {
+		return someInternalError
+	} else if meetingId == NotExistsMeetingId {
+		return internal_errors.UnableToFindByMeetingId
+	}
 
-  delete(m.Meetings, meetingId)
-  return nil
+	delete(m.Meetings, meetingId)
+	return nil
 }
 
 func (m *MeetingsRepositoryMock) UpdateSettings(meetingId uint, settings models.AllSettings) error {
-  if meetingId == BadMeetingId {
-    return someInternalError
-  } else if meetingId == NotExistsMeetingId {
-    return internal_errors.UnableToFindByMeetingId
-  }
+	if meetingId == BadMeetingId {
+		return someInternalError
+	} else if meetingId == NotExistsMeetingId {
+		return internal_errors.UnableToFindByMeetingId
+	}
 
-  meeting := m.Meetings[meetingId]
-  m.Meetings[meetingId] = models.PrivateMeeting{
-    DefaultMeeting: meeting.DefaultMeeting,
-    LabeledPlace: meeting.LabeledPlace,
-    AllSettings: settings,
-  }
-  return nil
+	meeting := m.Meetings[meetingId]
+	m.Meetings[meetingId] = models.PrivateMeeting{
+		DefaultMeeting: meeting.DefaultMeeting,
+		LabeledPlace:   meeting.LabeledPlace,
+		AllSettings:    settings,
+	}
+	return nil
 }
 
 func (m *MeetingsRepositoryMock) AddUserToMeeting(meetingId, userId uint) error {
@@ -229,26 +229,26 @@ func allMeetings() map[uint]models.PrivateMeeting {
 
 		meetings[meetingId] = models.PrivateMeeting{
 			DefaultMeeting: models.DefaultMeeting{
-				ID: meetingId,
-				AdminId: getAdminIdByMeetingId(meetingId),
+				ID:        meetingId,
+				AdminId:   getAdminIdByMeetingId(meetingId),
 				CreatedAt: time.Unix(0, 0),
 			},
 			LabeledPlace: getLabeledPlaceByMeetingId(meetingId),
 			AllSettings: models.AllSettings{
 				ExtendedSettings: models.ExtendedSettings{
 					PublicSettings: models.PublicSettings{
-						Title: m["title"].(string),
+						Title:       m["title"].(string),
 						Description: "Fuck you, Moriarty",
-						Tags: pqStringArrayToStringArray(m["tags"].(*pq.StringArray)),
+						Tags:        pqStringArrayToStringArray(m["tags"].(*pq.StringArray)),
 					},
 					MeetingParameters: models.MeetingParameters{
-						DateTime: datetime,
+						DateTime:                   datetime,
 						RequestDescriptionRequired: false,
 					},
 				},
 				MeetingLimitations: models.MeetingLimitations{
 					Duration: uint(m["duration"].(int)),
-					MinAge: uint(m["min_age"].(int)),
+					MinAge:   uint(m["min_age"].(int)),
 					MaxUsers: uint(m["max_users"].(int)),
 				},
 			},
@@ -274,7 +274,7 @@ func getLabeledPlaceByMeetingId(meetingId uint) *models.LabeledPlace {
 			return &models.LabeledPlace{
 				Label: m["label"].(string),
 				PublicPlace: models.PublicPlace{
-					Latitude: models.Latitude(m["latitude"].(float64)),
+					Latitude:  models.Latitude(m["latitude"].(float64)),
 					Longitude: models.Longitude(m["longitude"].(float64)),
 				},
 			}

@@ -1,85 +1,91 @@
 package api
 
 import (
-  "encoding/json"
-  "github.com/gorilla/mux"
-  "io/ioutil"
-  "models"
-  "net/http"
-  "plugins/logger"
+	"encoding/json"
+	"github.com/gorilla/mux"
+	"io/ioutil"
+	"models"
+	"net/http"
+	"plugins/logger"
 )
 
 const (
-  StatusOk = "ok"
-  StatusError = "error"
+	StatusOk    = "ok"
+	StatusError = "error"
 )
 
 var r *mux.Router
 
 func init() {
-  r = mux.NewRouter()
+	r = mux.NewRouter()
 }
 
 func GetRouter() *mux.Router {
-  return r
+	return r
 }
 
 func DecodeRequestBody(r *http.Request, target interface{}) {
-  requestBody, err := ioutil.ReadAll(r.Body)
-  if err != nil {
-    logger.ErrorF("Error while reading request body: %v", err)
-    panic(ReadRequestBodyError)
-  }
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logger.ErrorF("Error while reading request body: %v", err)
+		panic(ReadRequestBodyError)
+	}
 
-  err = json.Unmarshal(requestBody, target)
-  if err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while decoding request body: %v",
-      Args: []interface{}{err},
-    }, logger.Error)
+	err = json.Unmarshal(requestBody, target)
+	if err != nil {
+		logger.WithFields(logger.Fields{
+			MessageTemplate: "Error while decoding request body: %v",
+			Args: []interface{}{
+				err,
+			},
+		}, logger.Error)
 
-    panic(CannotDecodeRequestBody)
-  }
+		panic(CannotDecodeRequestBody)
+	}
 }
 
 func SendDefaultResponse(w http.ResponseWriter) {
-  EncodeAndSendResponse(w, nil)
+	EncodeAndSendResponse(w, nil)
 }
 
 func EncodeAndSendResponse(w http.ResponseWriter, v interface{}) {
-  output, _ := json.Marshal(models.SuccessResponse{
-    Status: StatusOk,
-    Data: v,
-  })
+	output, _ := json.Marshal(models.SuccessResponse{
+		Status: StatusOk,
+		Data:   v,
+	})
 
-  w.Header().Set("content-type", "application/json")
-  if _, err := w.Write(output); err != nil {
-    logger.WithFields(logger.Fields{
-      MessageTemplate: "Error while trying to write response: %v",
-      Args: []interface{}{err},
-    }, logger.Error)
+	w.Header().Set("content-type", "application/json")
+	if _, err := w.Write(output); err != nil {
+		logger.WithFields(logger.Fields{
+			MessageTemplate: "Error while trying to write response: %v",
+			Args: []interface{}{
+				err,
+			},
+		}, logger.Error)
 
-    panic(CannotWriteResponse)
-  }
+		panic(CannotWriteResponse)
+	}
 }
 
 func SendErrorIfPanicked(w http.ResponseWriter) {
-  if err := recover(); err != nil {
-    logger.WarningF("Panicked: %v", err)
+	if err := recover(); err != nil {
+		logger.WarningF("Panicked: %v", err)
 
-    output, _ := json.Marshal(models.ErrorResponse{
-      Status: StatusError,
-      ErrorDetail: err.(error).Error(),
-    })
+		output, _ := json.Marshal(models.ErrorResponse{
+			Status:      StatusError,
+			ErrorDetail: err.(error).Error(),
+		})
 
-    w.Header().Set("content-type", "application/json")
-    if _, err = w.Write(output); err != nil {
-      logger.WithFields(logger.Fields{
-        MessageTemplate: "Error while trying to write response: %v",
-        Args: []interface{}{err},
-      }, logger.Error)
+		w.Header().Set("content-type", "application/json")
+		if _, err = w.Write(output); err != nil {
+			logger.WithFields(logger.Fields{
+				MessageTemplate: "Error while trying to write response: %v",
+				Args: []interface{}{
+					err,
+				},
+			}, logger.Error)
 
-      http.Error(w, "internal server error", http.StatusInternalServerError)
-    }
-  }
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+		}
+	}
 }

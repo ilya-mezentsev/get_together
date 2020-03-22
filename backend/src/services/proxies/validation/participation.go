@@ -31,6 +31,3 @@ func (p ParticipationServiceProxy) HandleParticipationRequest(
 		return p.service.HandleParticipationRequest(request)
 	}
 }
-
-
-

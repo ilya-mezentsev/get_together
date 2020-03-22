@@ -32,4 +32,3 @@ func (p SessionServiceProxy) SetSession(r *http.Request, session models.UserSess
 func (p SessionServiceProxy) InvalidateSession(r *http.Request) {
 	p.service.InvalidateSession(r)
 }
-

@@ -19,7 +19,9 @@ func (d MeetingsRepositoryDecorator) GetFullMeetingInfo(meetingId uint) (models.
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting full meeting info: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
 			},
@@ -34,7 +36,9 @@ func (d MeetingsRepositoryDecorator) GetPublicMeetings() ([]models.PublicMeeting
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting public meetings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 		}, logger.Warning)
 	}
 
@@ -47,7 +51,9 @@ func (d MeetingsRepositoryDecorator) GetExtendedMeetings(
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting extended meetings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"user_id": userStatusesData.UserId,
 			},
@@ -62,7 +68,9 @@ func (d MeetingsRepositoryDecorator) CreateMeeting(adminId uint, settings models
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while creating meeting: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"admin_id": adminId,
 				"settings": settings,
@@ -78,7 +86,9 @@ func (d MeetingsRepositoryDecorator) DeleteMeeting(meetingId uint) error {
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while deleting meeting",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
 			},
@@ -93,10 +103,12 @@ func (d MeetingsRepositoryDecorator) UpdateSettings(meetingId uint, settings mod
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while updating settings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
-				"settings": settings,
+				"settings":   settings,
 			},
 		}, logger.Warning)
 	}
@@ -109,10 +121,12 @@ func (d MeetingsRepositoryDecorator) AddUserToMeeting(meetingId, userId uint) er
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while adding user to meeting: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
-				"user_id": userId,
+				"user_id":    userId,
 			},
 		}, logger.Warning)
 	}
@@ -125,10 +139,12 @@ func (d MeetingsRepositoryDecorator) KickUserFromMeeting(meetingId, userId uint)
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while kicking user from meeting: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"meeting_id": meetingId,
-				"user_id": userId,
+				"user_id":    userId,
 			},
 		}, logger.Warning)
 	}

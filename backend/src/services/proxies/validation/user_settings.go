@@ -51,6 +51,3 @@ func (p UserSettingsServiceProxy) UpdateUserSettings(userId uint, info models.Us
 		return p.service.UpdateUserSettings(userId, info)
 	}
 }
-
-
-

@@ -24,10 +24,10 @@ var (
 	InvalidLongitudes = []float64{
 		-181, 181, 359, 460, -190,
 	}
-	ValidLatitudes = []float64 { // -90 <= latitude <= 90
+	ValidLatitudes = []float64{ // -90 <= latitude <= 90
 		0.0, -90, 90, 89, 55.0,
 	}
-	InvalidLatitudes = []float64 {
+	InvalidLatitudes = []float64{
 		-91, 92, -180, 355, -322,
 	}
 	ValidWholePositiveNumbers = []float64{

@@ -11,18 +11,18 @@ import (
 
 type (
 	UserSettingsResponse struct {
-		Status string `json:"status"`
-		Data models.FullUserInfo `json:"data"`
+		Status string              `json:"status"`
+		Data   models.FullUserInfo `json:"data"`
 	}
 )
 
 func FirstUserSettingsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodGet,
+		Router:   r,
+		Method:   http.MethodGet,
 		Endpoint: "user/settings/1",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 	}
@@ -30,11 +30,11 @@ func FirstUserSettingsRequest(r *mux.Router) utils.RequestData {
 
 func NotExistsUserSettingsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodGet,
+		Router:   r,
+		Method:   http.MethodGet,
 		Endpoint: fmt.Sprintf("user/settings/%d", len(repositories.UsersCredentials)+1),
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 	}
@@ -42,11 +42,11 @@ func NotExistsUserSettingsRequest(r *mux.Router) utils.RequestData {
 
 func InvalidIDUserSettingsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodGet,
+		Router:   r,
+		Method:   http.MethodGet,
 		Endpoint: "user/settings/0",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 	}
@@ -55,11 +55,11 @@ func InvalidIDUserSettingsRequest(r *mux.Router) utils.RequestData {
 func PatchFirstUserSettingsRequest(r *mux.Router) utils.RequestData {
 	userInfo := repositories.UsersInfo[0]
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodPatch,
+		Router:   r,
+		Method:   http.MethodPatch,
 		Endpoint: "user/settings",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 		Data: fmt.Sprintf(
@@ -73,11 +73,11 @@ func PatchFirstUserSettingsRequest(r *mux.Router) utils.RequestData {
 func PatchNotExistsUserSettingsRequest(r *mux.Router) utils.RequestData {
 	userInfo := repositories.UsersInfo[0]
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodPatch,
+		Router:   r,
+		Method:   http.MethodPatch,
 		Endpoint: "user/settings",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 		Data: fmt.Sprintf(
@@ -91,11 +91,11 @@ func PatchNotExistsUserSettingsRequest(r *mux.Router) utils.RequestData {
 func InvalidIdUserSettingsRequest(r *mux.Router) utils.RequestData {
 	userInfo := repositories.UsersInfo[0]
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodPatch,
+		Router:   r,
+		Method:   http.MethodPatch,
 		Endpoint: "user/settings",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 		Data: fmt.Sprintf(
@@ -107,11 +107,11 @@ func InvalidIdUserSettingsRequest(r *mux.Router) utils.RequestData {
 
 func InvalidAllSettingsUserSettingsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
-		Router: r,
-		Method: http.MethodPatch,
+		Router:   r,
+		Method:   http.MethodPatch,
 		Endpoint: "user/settings",
 		Cookie: &http.Cookie{
-			Name: "GT-Session-Token",
+			Name:  "GT-Session-Token",
 			Value: TestToken,
 		},
 		Data: `{

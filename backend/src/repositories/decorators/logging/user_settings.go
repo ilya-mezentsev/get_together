@@ -20,7 +20,9 @@ func (d UserSettingsRepositoryDecorator) GetUserSettings(userId uint) (models.Fu
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while getting user settings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
 				"user_id": userId,
 			},
@@ -35,9 +37,11 @@ func (d UserSettingsRepositoryDecorator) UpdateUserSettings(userId uint, info mo
 	if err != nil {
 		logger.WithFields(logger.Fields{
 			MessageTemplate: "Error while updating user settings: %v",
-			Args: []interface{}{err},
+			Args: []interface{}{
+				err,
+			},
 			Optional: map[string]interface{}{
-				"user_id": userId,
+				"user_id":       userId,
 				"user_settings": info,
 			},
 		}, logger.Warning)
@@ -45,4 +49,3 @@ func (d UserSettingsRepositoryDecorator) UpdateUserSettings(userId uint, info mo
 
 	return err
 }
-
