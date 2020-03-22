@@ -7,10 +7,10 @@ import (
 )
 
 type UserSettingsServiceProxy struct {
-	service interfaces.UserSettingsService
+	service interfaces.UsersSettings
 }
 
-func NewUserSettingsServiceProxy(service interfaces.UserSettingsService) UserSettingsServiceProxy {
+func NewUserSettingsServiceProxy(service interfaces.UsersSettings) UserSettingsServiceProxy {
 	return UserSettingsServiceProxy{service}
 }
 

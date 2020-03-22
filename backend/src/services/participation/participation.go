@@ -17,12 +17,12 @@ const (
 )
 
 type Service struct {
-  userSettingsRepository interfaces.UsersSettingsRepository
+  userSettingsRepository interfaces.UsersSettings
   meetingsSettingsRepository interfaces.MeetingsSettingsRepository
 }
 
 func New(
-  userSettingsRepository interfaces.UsersSettingsRepository,
+  userSettingsRepository interfaces.UsersSettings,
   meetingsSettingsRepository interfaces.MeetingsSettingsRepository,
 ) Service {
   return Service{userSettingsRepository, meetingsSettingsRepository}

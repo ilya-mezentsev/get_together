@@ -1,69 +1,22 @@
 package meetings
 
 import (
-	"interfaces"
-	"internal_errors"
-	"models"
-	"services/errors"
-	"services/meetings/plugins/coords"
-)
-
-const (
-  invitedStatus = "invited"
-  notInvitedStatus = "not-invited"
+  "interfaces"
+  "internal_errors"
+  "models"
+  "services/errors"
 )
 
 type Service struct {
-  repository interfaces.MeetingsRepository
+  repository interfaces.Meetings
 }
 
-func New(repository interfaces.MeetingsRepository) Service {
+func New(repository interfaces.Meetings) Service {
   return Service{repository}
 }
 
-func (s Service) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
-  meeting, err := s.repository.GetFullMeetingInfo(meetingId)
-
-  switch err {
-  case nil:
-    return meeting, nil
-  case internal_errors.UnableToFindByMeetingId:
-    return models.PrivateMeeting{}, errors.MeetingIdNotFound
-  default:
-    return models.PrivateMeeting{}, errors.InternalError
-  }
-}
-
-func (s Service) GetPublicMeetings() ([]models.PublicMeeting, error) {
-  meetings, err := s.repository.GetPublicMeetings()
-
-  switch err {
-  case nil:
-    return coords.ShakePublicMeetings(meetings), nil
-  default:
-    return nil, errors.InternalError
-  }
-}
-
-func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
-  meetings, err := s.repository.GetExtendedMeetings(models.UserMeetingStatusesData{
-    UserId: userId,
-    Invited: invitedStatus,
-    NotInvited: notInvitedStatus,
-  })
-
-  switch err {
-  case nil:
-    return coords.ShakeExtendedMeetings(meetings), nil
-  case internal_errors.UnableToFindUserById:
-    return nil, errors.UserIdNotFound
-  default:
-    return nil, errors.InternalError
-  }
-}
-
 func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) error {
-  switch err := s.repository.CreateMeeting(adminId, settings); err {
+  switch s.repository.CreateMeeting(adminId, settings) {
   case nil:
     return nil
   case internal_errors.UnableToFindUserById:
@@ -74,7 +27,7 @@ func (s Service) CreateMeeting(adminId uint, settings models.AllSettings) error 
 }
 
 func (s Service) DeleteMeeting(meetingId uint) error {
-  switch err := s.repository.DeleteMeeting(meetingId); err {
+  switch s.repository.DeleteMeeting(meetingId) {
   case nil:
     return nil
   case internal_errors.UnableToFindByMeetingId:
@@ -84,10 +37,36 @@ func (s Service) DeleteMeeting(meetingId uint) error {
   }
 }
 
-func (s Service) UpdatedSettings(meetingId uint, settings models.AllSettings) error {
-  switch err := s.repository.UpdatedSettings(meetingId, settings); err {
+func (s Service) UpdateSettings(meetingId uint, settings models.AllSettings) error {
+  switch s.repository.UpdateSettings(meetingId, settings) {
   case nil:
     return nil
+  case internal_errors.UnableToFindByMeetingId:
+    return errors.MeetingIdNotFound
+  default:
+    return errors.InternalError
+  }
+}
+
+func (s Service) AddUserToMeeting(meetingId, userId uint) error {
+  switch s.repository.AddUserToMeeting(meetingId, userId) {
+  case nil:
+    return nil
+  case internal_errors.UserAlreadyInMeeting:
+    return errors.UserAlreadyInMeeting
+  case internal_errors.UnableToFindByMeetingId:
+    return errors.MeetingIdNotFound
+  default:
+    return errors.InternalError
+  }
+}
+
+func (s Service) KickUserFromMeeting(meetingId, userId uint) error {
+  switch s.repository.KickUserFromMeeting(meetingId, userId) {
+  case nil:
+    return nil
+  case internal_errors.UserNotInMeeting:
+    return errors.UserNotInMeeting
   case internal_errors.UnableToFindByMeetingId:
     return errors.MeetingIdNotFound
   default:

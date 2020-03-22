@@ -7,11 +7,11 @@ import (
 )
 
 type UserSettingsRepositoryDecorator struct {
-	repository interfaces.UsersSettingsRepository
+	repository interfaces.UsersSettings
 }
 
 func NewUserSettingsRepositoryDecorator(
-	repository interfaces.UsersSettingsRepository) UserSettingsRepositoryDecorator {
+	repository interfaces.UsersSettings) UserSettingsRepositoryDecorator {
 	return UserSettingsRepositoryDecorator{repository}
 }
 

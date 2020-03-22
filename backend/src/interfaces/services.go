@@ -18,20 +18,25 @@ type (
 		InvalidateSession(r *http.Request)
 	}
 
-	MeetingsService interface {
+	MeetingsAccessorService interface {
 		GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error)
 		GetPublicMeetings() ([]models.PublicMeeting, error)
 		GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error)
+	}
+
+	Meetings interface {
 		CreateMeeting(adminId uint, settings models.AllSettings) error
 		DeleteMeeting(meetingId uint) error
-		UpdatedSettings(meetingId uint, settings models.AllSettings) error
+		UpdateSettings(meetingId uint, settings models.AllSettings) error
+		AddUserToMeeting(meetingId, userId uint) error
+		KickUserFromMeeting(meetingId, userId uint) error
 	}
 
 	ParticipationService interface {
 		HandleParticipationRequest(request models.ParticipationRequest) (models.RejectInfo, error)
 	}
 
-	UserSettingsService interface {
+	UsersSettings interface {
 		GetUserSettings(userId uint) (models.FullUserInfo, error)
 		UpdateUserSettings(userId uint, info models.UserSettings) error
 	}

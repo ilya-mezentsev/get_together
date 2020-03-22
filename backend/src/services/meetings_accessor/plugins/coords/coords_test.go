@@ -1,7 +1,7 @@
 package coords
 
 import (
-  mock "mock/plugins"
+	mock "mock/plugins"
   "models"
   "testing"
   "utils"

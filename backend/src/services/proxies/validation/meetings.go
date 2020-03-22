@@ -7,35 +7,11 @@ import (
 )
 
 type MeetingsServiceProxy struct {
-	service interfaces.MeetingsService
+	service interfaces.Meetings
 }
 
-func NewMeetingsServiceProxy(service interfaces.MeetingsService) MeetingsServiceProxy {
+func NewMeetingsServiceProxy(service interfaces.Meetings) MeetingsServiceProxy {
 	return MeetingsServiceProxy{service}
-}
-
-func (p MeetingsServiceProxy) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
-	if !validation.ValidWholePositiveNumber(float64(meetingId)) {
-		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
-		return models.PrivateMeeting{}, validationResults
-	}
-
-	return p.service.GetFullMeetingInfo(meetingId)
-}
-
-func (p MeetingsServiceProxy) GetPublicMeetings() ([]models.PublicMeeting, error) {
-	return p.service.GetPublicMeetings()
-}
-
-func (p MeetingsServiceProxy) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
-	if !validation.ValidWholePositiveNumber(float64(userId)) {
-		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
-		return nil, validationResults
-	}
-
-	return p.service.GetExtendedMeetings(userId)
 }
 
 func (p MeetingsServiceProxy) CreateMeeting(adminId uint, settings models.AllSettings) error {
@@ -94,12 +70,34 @@ func (p MeetingsServiceProxy) DeleteMeeting(meetingId uint) error {
 	return p.service.DeleteMeeting(meetingId)
 }
 
-func (p MeetingsServiceProxy) UpdatedSettings(meetingId uint, settings models.AllSettings) error {
+func (p MeetingsServiceProxy) UpdateSettings(meetingId uint, settings models.AllSettings) error {
 	validationResults := p.validateAllSettings(settings)
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) {
 		validationResults.Add(InvalidID)
 		return validationResults
 	}
 
-	return p.service.UpdatedSettings(meetingId, settings)
+	return p.service.UpdateSettings(meetingId, settings)
+}
+
+func (p MeetingsServiceProxy) AddUserToMeeting(meetingId, userId uint) error {
+	if !validation.ValidWholePositiveNumber(float64(meetingId)) ||
+		!validation.ValidWholePositiveNumber(float64(userId)) {
+		validationResults := validationResults{}
+		validationResults.Add(InvalidID)
+		return validationResults
+	}
+
+	return p.service.AddUserToMeeting(meetingId, userId)
+}
+
+func (p MeetingsServiceProxy) KickUserFromMeeting(meetingId, userId uint) error {
+	if !validation.ValidWholePositiveNumber(float64(meetingId)) ||
+		!validation.ValidWholePositiveNumber(float64(userId)) {
+		validationResults := validationResults{}
+		validationResults.Add(InvalidID)
+		return validationResults
+	}
+
+	return p.service.KickUserFromMeeting(meetingId, userId)
 }

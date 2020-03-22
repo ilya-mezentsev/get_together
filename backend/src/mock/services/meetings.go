@@ -10,7 +10,8 @@ import (
 )
 
 type MeetingsRepositoryMock struct {
-  Meetings map[uint]models.PrivateMeeting
+	Meetings map[uint]models.PrivateMeeting
+	MeetingsUsers map[uint][]uint
 }
 
 var (
@@ -40,7 +41,11 @@ var (
       MaxUsers: 10,
     },
   }
-  MeetingsMockRepository = MeetingsRepositoryMock{Meetings: allMeetings()}
+  MeetingsMockRepository = MeetingsRepositoryMock{
+  	Meetings: allMeetings(),
+		MeetingsUsers: allMeetingsUsers(),
+  }
+  UserIdThatNotInFirstMeeting = repositories.UserIdThatNotInFirstMeeting
   BadMeetingId uint = 0
   NotExistsMeetingId uint = 11
   NotExistsUserId uint = 11
@@ -48,6 +53,7 @@ var (
 
 func (m *MeetingsRepositoryMock) ResetState() {
   m.Meetings = allMeetings()
+	m.MeetingsUsers = allMeetingsUsers()
 }
 
 func (m *MeetingsRepositoryMock) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
@@ -131,7 +137,7 @@ func (m *MeetingsRepositoryMock) DeleteMeeting(meetingId uint) error {
   return nil
 }
 
-func (m *MeetingsRepositoryMock) UpdatedSettings(meetingId uint, settings models.AllSettings) error {
+func (m *MeetingsRepositoryMock) UpdateSettings(meetingId uint, settings models.AllSettings) error {
   if meetingId == BadMeetingId {
     return someInternalError
   } else if meetingId == NotExistsMeetingId {
@@ -145,6 +151,74 @@ func (m *MeetingsRepositoryMock) UpdatedSettings(meetingId uint, settings models
     AllSettings: settings,
   }
   return nil
+}
+
+func (m *MeetingsRepositoryMock) AddUserToMeeting(meetingId, userId uint) error {
+	if meetingId == BadMeetingId {
+		return someInternalError
+	}
+
+	for id, userIds := range m.MeetingsUsers {
+		if id == meetingId {
+			if HasUser(userIds, userId) {
+				return internal_errors.UserAlreadyInMeeting
+			} else {
+				m.MeetingsUsers[id] = append(userIds, userId)
+				return nil
+			}
+		}
+	}
+
+	return internal_errors.UnableToFindByMeetingId
+}
+
+func (m *MeetingsRepositoryMock) KickUserFromMeeting(meetingId, userId uint) error {
+	if meetingId == BadMeetingId {
+		return someInternalError
+	}
+
+	for id, userIds := range m.MeetingsUsers {
+		if id == meetingId {
+			if HasUser(userIds, userId) {
+				m.MeetingsUsers[id] = filterUserIds(userIds, userId)
+				return nil
+			} else {
+				return internal_errors.UserNotInMeeting
+			}
+		}
+	}
+
+	return internal_errors.UnableToFindByMeetingId
+}
+
+func HasUser(userIds []uint, userId uint) bool {
+	for _, id := range userIds {
+		if id == userId {
+			return true
+		}
+	}
+
+	return false
+}
+
+func filterUserIds(userIds []uint, userId uint) []uint {
+	var ids []uint
+	for _, id := range userIds {
+		if id != userId {
+			ids = append(ids, id)
+		}
+	}
+
+	return ids
+}
+
+func allMeetingsUsers() map[uint][]uint {
+	var meetingsUsers = map[uint][]uint{}
+	for _, m := range repositories.Meetings {
+		meetingsUsers[uint(m["meeting_id"].(int))] = m["user_ids"].([]uint)
+	}
+
+	return meetingsUsers
 }
 
 func allMeetings() map[uint]models.PrivateMeeting {
