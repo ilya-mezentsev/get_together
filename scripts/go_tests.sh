@@ -9,15 +9,15 @@ if [[ ${REPORT_FOLDER}/ != ${GOPATH}* ]]; then
   exit 1
 fi
 
-source ${PROJECT_ROOT}/scripts/_set_tests_folders.sh
-rm -rf ${REPORT_FOLDER}/*
+source "${PROJECT_ROOT}"/scripts/_set_tests_folders.sh
+rm -rf "${REPORT_FOLDER:?}"/*
 for dir in "${folders[@]}"
 do
-  reportFileName=$(echo -n ${dir} | md5sum | awk '{print $1}')
+  reportFileName=$(echo -n "${dir}" | md5sum | awk '{print $1}')
   reportFilePath=${REPORT_FOLDER}/${reportFileName}
-  cd ${GOPATH}/src/${dir} && go test -coverprofile=${reportFilePath}.out
+  cd "${GOPATH}"/src/"${dir}" && go test -coverprofile="${reportFilePath}".out
   if [[ $1 = html ]]; then # open reports in browser
-    go tool cover -html=${reportFilePath}.out -o ${reportFilePath}.html
-    chromium ${reportFilePath}.html >/dev/null 2>&1 &
+    go tool cover -html="${reportFilePath}".out -o "${reportFilePath}".html
+    chromium "${reportFilePath}".html >/dev/null 2>&1 &
   fi
 done

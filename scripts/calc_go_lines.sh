@@ -4,17 +4,17 @@ if [[ ${ENV_VARS_WERE_SET} != '1' ]]; then
   exit 1
 fi
 
-cd ${GOPATH}
+cd "${GOPATH}" || exit
 
-let linesCount=$(cat main.go | wc -l)
+(( linesCount=$(wc -l < main.go) ))
 
-cd src/
+cd src/ || exit
 
 for dir in $(ls)
 do
   if [[ ${dir} != github.com ]]; then
-    cd ${dir}
-    let linesCount=linesCount+$(find . -name '*.go' -type f -print0 | xargs -0 cat | wc -l)
+    cd "${dir}" || exit
+    (( linesCount=linesCount+$(find . -name '*.go' -type f -print0 | xargs -0 cat | wc -l) ))
     cd ../
   fi
 done
