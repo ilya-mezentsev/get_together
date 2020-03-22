@@ -9,7 +9,7 @@ declare -A scriptsDescriptions=(
   ['go_tests']='run go tests'
   ['push_all']='push all files to repository'
   ['create_test_data']='make requests for creating testing: group, users and tasks'
-  ['integration_tests']='run go tests inside container'
+  ['unit_tests']='run all unit_tests tests inside container'
 )
 
 function run() {
