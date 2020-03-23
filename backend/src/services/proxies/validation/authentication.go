@@ -39,7 +39,7 @@ func (p AuthenticationServiceProxy) validateCredentials(credentials models.UserC
 func (p AuthenticationServiceProxy) Login(credentials models.UserCredentials) (models.UserSession, error) {
 	validationResults := p.validateCredentials(credentials)
 
-	if len(validationResults.validation) != 0 {
+	if validationResults.HasErrors() {
 		return models.UserSession{}, validationResults
 	} else {
 		return p.service.Login(credentials)
@@ -55,7 +55,7 @@ func (p AuthenticationServiceProxy) ChangePassword(userId uint, password string)
 		validationResults.Add(InvalidPassword)
 	}
 
-	if len(validationResults.validation) != 0 {
+	if validationResults.HasErrors() {
 		return validationResults
 	} else {
 		return p.service.ChangePassword(userId, password)

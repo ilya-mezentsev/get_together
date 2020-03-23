@@ -55,8 +55,6 @@ func (s Service) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, err
 	switch err {
 	case nil:
 		return coords.ShakeExtendedMeetings(meetings), nil
-	case internal_errors.UnableToFindUserById:
-		return nil, errors.UserIdNotFound
 	default:
 		return nil, errors.InternalError
 	}

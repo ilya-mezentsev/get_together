@@ -22,6 +22,11 @@ type (
 		RequestDescription string `json:"request_description"`
 	}
 
+	MeetingUserRequest struct {
+		UserId    uint `json:"user_id"`
+		MeetingId uint `json:"meeting_id"`
+	}
+
 	ChangePasswordRequest struct {
 		UserId   uint   `json:"user_id"`
 		Password string `json:"password"`
@@ -36,5 +41,19 @@ type (
 		TooLowRatingTags        []string                 `json:"too_low_rating_tags"`
 		InappropriateInfoFields []InappropriateInfoField `json:"inappropriate_info_fields"`
 		HasNearMeeting          bool                     `json:"has_near_meeting"`
+	}
+
+	CreateMeetingRequest struct {
+		AdminID  uint        `json:"admin_id"`
+		Settings AllSettings `json:"settings"`
+	}
+
+	DeleteMeetingRequest struct {
+		MeetingID uint `json:"meeting_id"`
+	}
+
+	UpdateMeetingSettingsRequest struct {
+		MeetingID uint        `json:"meeting_id"`
+		Settings  AllSettings `json:"settings"`
 	}
 )

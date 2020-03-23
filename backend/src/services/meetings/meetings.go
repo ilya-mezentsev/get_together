@@ -67,8 +67,6 @@ func (s Service) KickUserFromMeeting(meetingId, userId uint) error {
 		return nil
 	case internal_errors.UserNotInMeeting:
 		return errors.UserNotInMeeting
-	case internal_errors.UnableToFindByMeetingId:
-		return errors.MeetingIdNotFound
 	default:
 		return errors.InternalError
 	}

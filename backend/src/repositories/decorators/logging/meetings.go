@@ -85,7 +85,7 @@ func (d MeetingsRepositoryDecorator) DeleteMeeting(meetingId uint) error {
 	err := d.repository.DeleteMeeting(meetingId)
 	if err != nil {
 		logger.WithFields(logger.Fields{
-			MessageTemplate: "Error while deleting meeting",
+			MessageTemplate: "Error while deleting meeting: %v",
 			Args: []interface{}{
 				err,
 			},

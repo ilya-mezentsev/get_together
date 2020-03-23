@@ -111,13 +111,9 @@
   ]
 }
 ```
-#### For registered user:
-#### Body:
-```json5
-{
-  "user_id": 3
-}
-```
+### GET /api/meetings/:id - returns all meetings for registered user
+#### Path params:
+* :id - user id
 #### Response:
 ```json5
 {
@@ -147,8 +143,6 @@
   ]
 }
 ```
-#### Errors:
-* user-id-not-found
 
 ### POST /api/meeting - creates meeting
 #### Body:
@@ -159,7 +153,6 @@
     "title": "meeting title",
     "date_time": "2020-01-24T10:41:21.381Z", // ISO format
     "label": "address of meeting",
-    // optional
     "max_users": 10,
     "tags": ["tag1", "tag2"],
     "description": "some meeting description",
@@ -233,7 +226,7 @@
 * user-id-not-found
 * meeting-id-not-found
 
-### POST /api/meeting/invite-user
+### POST /api/meeting/user
 #### Body:
 ```json5
 {

@@ -42,13 +42,6 @@ func TestService_GetExtendedMeetingsSuccess(t *testing.T) {
 	utils.AssertEqual(expectedMeetings[0].PublicPlace.Longitude, meetings[0].PublicPlace.Longitude, t)
 }
 
-func TestService_GetExtendedMeetingsUserNotFoundError(t *testing.T) {
-	defer mock.MeetingsMockRepository.ResetState()
-
-	_, err := service.GetExtendedMeetings(mock.NotExistsUserId)
-	utils.AssertErrorsEqual(errors.UserIdNotFound, err, t)
-}
-
 func TestService_GetExtendedMeetingsInternalError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 

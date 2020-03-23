@@ -122,13 +122,6 @@ func TestService_KickUserFromMeetingUserNotInMeetingError(t *testing.T) {
 	utils.AssertErrorsEqual(errors.UserNotInMeeting, err, t)
 }
 
-func TestService_KickUserFromMeetingNotFound(t *testing.T) {
-	defer mock.MeetingsMockRepository.ResetState()
-
-	err := service.KickUserFromMeeting(mock.NotExistsMeetingId, 1)
-	utils.AssertErrorsEqual(errors.MeetingIdNotFound, err, t)
-}
-
 func TestService_KickUserFromMeetingInternalError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
