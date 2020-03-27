@@ -14,7 +14,7 @@ func Credentials(db *sqlx.DB) interfaces.CredentialsRepository {
 	return logging.NewCredentialsRepositoryDecorator(credentials.New(db))
 }
 
-func Meetings(db *sqlx.DB) interfaces.Meetings {
+func Meetings(db *sqlx.DB) interfaces.FullMeetingsRepository {
 	return logging.NewMeetingsRepositoryDecorator(meetings.New(db))
 }
 

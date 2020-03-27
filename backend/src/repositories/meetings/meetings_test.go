@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"internal_errors"
 	mock "mock/repositories"
-	mock2 "mock/services"
+	servicesMock "mock/services"
 	"models"
 	"os"
 	"testing"
@@ -120,26 +120,26 @@ func TestRepository_CreateMeetingSuccess(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	err := repository.CreateMeeting(1, mock2.NewMeetingSettings)
+	err := repository.CreateMeeting(1, servicesMock.NewMeetingSettings)
 	utils.AssertNil(err, t)
-	meeting, _ := repository.GetFullMeetingInfo(4)
-	utils.AssertEqual(mock2.NewMeetingSettings.Label, meeting.LabeledPlace.Label, t)
-	utils.AssertEqual((&mock2.NewMeetingSettings).GetLatitude(), meeting.LabeledPlace.GetLatitude(), t)
-	utils.AssertEqual((&mock2.NewMeetingSettings).GetLongitude(), meeting.LabeledPlace.GetLongitude(), t)
+	meeting, _ := repository.GetFullMeetingInfo(uint(len(mock.Meetings) + 1))
+	utils.AssertEqual(servicesMock.NewMeetingSettings.Label, meeting.LabeledPlace.Label, t)
+	utils.AssertEqual((&servicesMock.NewMeetingSettings).GetLatitude(), meeting.LabeledPlace.GetLatitude(), t)
+	utils.AssertEqual((&servicesMock.NewMeetingSettings).GetLongitude(), meeting.LabeledPlace.GetLongitude(), t)
 }
 
 func TestRepository_CreateMeetingAdminNotFoundError(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	err := repository.CreateMeeting(mock.GetNotExistsUserId(), mock2.NewMeetingSettings)
+	err := repository.CreateMeeting(mock.GetNotExistsUserId(), servicesMock.NewMeetingSettings)
 	utils.AssertErrorsEqual(internal_errors.UnableToFindUserById, err, t)
 }
 
 func TestRepository_CreateMeetingNoTableError(t *testing.T) {
 	mock.DropTables(db)
 
-	err := repository.CreateMeeting(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+	err := repository.CreateMeeting(mock.GetNotExistsMeetingId(), servicesMock.NewMeetingSettings)
 	utils.AssertNotNil(err, t)
 }
 
@@ -172,24 +172,24 @@ func TestRepository_UpdatedSettingsSuccess(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	err := repository.UpdateSettings(2, mock2.NewMeetingSettings)
+	err := repository.UpdateSettings(2, servicesMock.NewMeetingSettings)
 	utils.AssertNil(err, t)
 	meeting, _ := repository.GetFullMeetingInfo(2)
-	utils.AssertEqual(mock2.NewMeetingSettings.Title, meeting.Title, t)
+	utils.AssertEqual(servicesMock.NewMeetingSettings.Title, meeting.Title, t)
 }
 
 func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+	err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), servicesMock.NewMeetingSettings)
 	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
 }
 
 func TestRepository_UpdatedSettingsNoTableError(t *testing.T) {
 	mock.DropTables(db)
 
-	err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), mock2.NewMeetingSettings)
+	err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), servicesMock.NewMeetingSettings)
 	utils.AssertNotNil(err, t)
 }
 

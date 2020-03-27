@@ -91,8 +91,6 @@ func (m *MeetingsRepositoryMock) GetExtendedMeetings(
 	userId := data.UserId
 	if userId == BadUserId {
 		return nil, someInternalError
-	} else if userId == NotExistsUserId {
-		return nil, internal_errors.UnableToFindUserById
 	}
 
 	var meetings []models.ExtendedMeeting

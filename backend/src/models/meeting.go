@@ -43,10 +43,10 @@ type (
 	}
 
 	MeetingLimitations struct {
-		MaxUsers uint   `db:"max_users"`
-		Duration uint   `db:"duration"`
-		MinAge   uint   `db:"min_age"`
-		Gender   string `db:"gender"`
+		MaxUsers uint   `db:"max_users" json:"max_users"`
+		Duration uint   `db:"duration" json:"duration"`
+		MinAge   uint   `db:"min_age" json:"min_age"`
+		Gender   string `db:"gender" json:"gender"`
 	}
 
 	ParticipationMeetingSettings struct {
