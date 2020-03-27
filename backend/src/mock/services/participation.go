@@ -71,7 +71,7 @@ func allMeetingsSettings() map[uint]models.ParticipationMeetingSettings {
 			},
 			MeetingParameters: models.MeetingParameters{
 				DateTime:                   datetime,
-				RequestDescriptionRequired: false,
+				RequestDescriptionRequired: m["request_description_required"].(bool),
 			},
 			Tags:       pqStringArrayToStringArray(m["tags"].(*pq.StringArray)),
 			UsersCount: meetingIdToUsersCount[meetingId],
@@ -196,4 +196,22 @@ func InternalErrorUserIdRequest() models.ParticipationRequest {
 		UserId:    BadUserId,
 		MeetingId: 1,
 	}
+}
+
+func ParticipationWithoutDescriptionWhereItRequiredRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+	return models.ParticipationRequest{
+			UserId:    1,
+			MeetingId: 3,
+		}, models.InappropriateInfoField{
+			ErrorCode: "participation-request-description-required",
+		}
+}
+
+func ParticipationWithoutDescriptionWhereNotRequiredRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+	return models.ParticipationRequest{
+			UserId:    1,
+			MeetingId: 2,
+		}, models.InappropriateInfoField{
+			ErrorCode: "participation-request-description-required",
+		}
 }
