@@ -217,7 +217,8 @@
   "inappropriate_info_fields": [
     {"error_code": "max-users-count-reached", "description": "actual: 10"},
     {"error_code": "age-less-than-min", "description": "actual: 16, wanted: 18"},
-    {"error_code": "wrong-gender", "description": "actual: female, wanted: male"}
+    {"error_code": "wrong-gender", "description": "actual: female, wanted: male"},
+    {"error_code": "participation-request-description-required", "description": ""}
   ],
   "has_near_meeting": true
 }

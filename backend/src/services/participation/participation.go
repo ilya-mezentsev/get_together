@@ -14,6 +14,7 @@ const (
 	maxUsersCountReached = "max-users-count-reached"
 	ageLessThanMin       = "age-less-than-min"
 	wrongGender          = "wrong-gender"
+	descriptionRequired  = "participation-request-description-required"
 )
 
 type Service struct {
@@ -41,7 +42,7 @@ func (s Service) HandleParticipationRequest(request models.ParticipationRequest)
 
 	return models.RejectInfo{
 		TooLowRatingTags:        s.getTooLowRatingTags(userSettings, meetingSettings),
-		InappropriateInfoFields: s.parseUserAndMeetingSettings(userSettings, meetingSettings),
+		InappropriateInfoFields: s.parseUserAndMeetingSettings(userSettings, meetingSettings, request),
 		HasNearMeeting:          hasNearMeeting,
 	}, nil
 }
@@ -135,6 +136,7 @@ func (s Service) getExistingTagsMap(tags []string) map[string]bool {
 func (s Service) parseUserAndMeetingSettings(
 	userSettings models.FullUserInfo,
 	meetingSettings models.ParticipationMeetingSettings,
+	request models.ParticipationRequest,
 ) []models.InappropriateInfoField {
 	var inappropriateInfoFields []models.InappropriateInfoField
 
@@ -156,6 +158,12 @@ func (s Service) parseUserAndMeetingSettings(
 		inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
 			ErrorCode:   wrongGender,
 			Description: fmt.Sprintf("actual: %s, wanted: %s", userSettings.Gender, meetingSettings.Gender),
+		})
+	}
+
+	if meetingSettings.RequestDescriptionRequired && request.RequestDescription == "" {
+		inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
+			ErrorCode: descriptionRequired,
 		})
 	}
 

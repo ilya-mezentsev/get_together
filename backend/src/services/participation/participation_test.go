@@ -93,3 +93,19 @@ func TestService_HasNearMeetingInternalError(t *testing.T) {
 
 	utils.AssertErrorsEqual(errors.InternalError, err, t)
 }
+
+func TestService_HandleParticipationRequestParticipationDescriptionRequiredTrue(t *testing.T) {
+	request, descriptionRequiredField := mock.ParticipationWithoutDescriptionWhereItRequiredRequest()
+	info, err := service.HandleParticipationRequest(request)
+
+	utils.AssertNil(err, t)
+	utils.AssertTrue(mock.HasField(info.InappropriateInfoFields, descriptionRequiredField), t)
+}
+
+func TestService_HandleParticipationRequestParticipationDescriptionRequiredFalse(t *testing.T) {
+	request, descriptionRequiredField := mock.ParticipationWithoutDescriptionWhereNotRequiredRequest()
+	info, err := service.HandleParticipationRequest(request)
+
+	utils.AssertNil(err, t)
+	utils.AssertFalse(mock.HasField(info.InappropriateInfoFields, descriptionRequiredField), t)
+}
