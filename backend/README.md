@@ -47,6 +47,8 @@
 #### Response - default
 #### Errors:
 * email-exists
+* invalid-email
+* invalid-password
 
 ### POST /api/session/login - Login user in system
 #### Body:
@@ -67,6 +69,8 @@
 ```
 #### Errors:
 * credentials-not-found
+* invalid-email
+* invalid-password
 
 ### PATCH /api/session/user/password - change user password
 #### Body:
@@ -79,6 +83,8 @@
 #### Response - default
 #### Errors:
 * user-id-not-found
+* invalid-id
+* invalid-password
 
 ### POST /api/session/logout - Logout user from system
 #### Response - default
@@ -123,7 +129,7 @@
       "id": 1,
       "admin_id": 1,
       "current_user_status": "invited", // added this field
-      "date_time": "2020-01-24T10:41:21.381Z", // added this field
+      "date_time": "21-01-2020 10:00:00", // added this field
       "title": "meeting title",
       "description": "some meeting description",
       "tags": ["tag1", "tag2"],
@@ -134,7 +140,7 @@
       "id": 2,
       "admin_id": 2,
       "current_user_status": "not-invited", // added this field
-      "date_time": "2020-01-24T10:41:21.381Z", // added this field
+      "date_time": "21-01-2020 10:00:00", // added this field
       "title": "hello world",
       "tags": ["tag3"],
       "latitude": 54.0,
@@ -143,6 +149,8 @@
   ]
 }
 ```
+#### Errors:
+* invalid-id
 
 ### POST /api/meeting - creates meeting
 #### Body:
@@ -151,8 +159,10 @@
   "admin_id": 1,
   "settings": {
     "title": "meeting title",
-    "date_time": "2020-01-24T10:41:21.381Z", // ISO format
+    "date_time": "21-01-2020 10:00:00",
     "label": "address of meeting",
+    "latitude": 51.22,
+    "longitude": 18.31,
     "max_users": 10,
     "tags": ["tag1", "tag2"],
     "description": "some meeting description",
@@ -166,6 +176,18 @@
 #### Response - default
 #### Errors:
 * user-id-not-found
+* invalid-id
+* invalid-meeting-title
+* invalid-meeting-date
+* invalid-meeting-label
+* invalid-meeting-latitude
+* invalid-meeting-longitude
+* invalid-meeting-max-users
+* invalid-meeting-tag
+* invalid-meeting-description
+* invalid-meeting-duration
+* invalid-meeting-min-age
+* invalid-meeting-gender
 
 ### DELETE /api/meeting - delete meeting
 #### Body:
@@ -177,6 +199,7 @@
 #### Response - default
 #### Errors:
 * meeting-id-not-found
+* invalid-id
 
 ### PATCH /api/meeting/settings - updates meeting settings
 #### Body:
@@ -185,8 +208,10 @@
   "meeting_id": 1,
   "settings": {
     "title": "title",
-    "date_time": "2020-01-24T10:41:21.381Z", // ISO format
+    "date_time": "21-01-2020 10:00:00",
     "label": "address of meeting",
+    "latitude": 51.22,
+    "longitude": 18.31,
     "max_users": 5,
     "tags": ["tag2"],
     "description": "hello world",
@@ -200,6 +225,18 @@
 #### Response - default
 #### Errors:
 * meeting-id-not-found
+* invalid-id
+* invalid-meeting-title
+* invalid-meeting-date
+* invalid-meeting-label
+* invalid-meeting-latitude
+* invalid-meeting-longitude
+* invalid-meeting-max-users
+* invalid-meeting-tag
+* invalid-meeting-description
+* invalid-meeting-duration
+* invalid-meeting-min-age
+* invalid-meeting-gender
 
 ### POST /api/meeting/request-participation
 #### Body:
@@ -226,6 +263,8 @@
 #### Errors:
 * user-id-not-found
 * meeting-id-not-found
+* invalid-id
+* invalid-participation-request-description
 
 ### POST /api/meeting/user
 #### Body:
@@ -239,6 +278,7 @@
 #### Errors:
 * user-id-not-found
 * meeting-id-not-found
+* invalid-id
 
 ### DELETE /api/meeting/user - kick user out of meeting
 #### Body:
@@ -252,6 +292,7 @@
 #### Errors:
 * user-id-not-found
 * meeting-id-not-found
+* invalid-id
 
 
 ## Users
@@ -278,6 +319,7 @@
 ```
 #### Errors:
 * user-id-not-found
+* invalid-id
 
 ### PATCH /api/user/settings - change settings
 #### Body:
@@ -296,6 +338,12 @@
 #### Response - default
 #### Errors:
 * user-id-not-found
+* invalid-id
+* invalid-user-name
+* invalid-user-nickname
+* invalid-user-gender
+* invalid-user-age
+* invalid-user-avatar-url
 
 ## Chatting
 ### POST /api/chat/meeting - creates chat for meeting
@@ -306,6 +354,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* invalid-id
 
 ### POST /api/chat/meeting/request - creates chat with meeting admin
 #### Body:
@@ -315,6 +365,8 @@
 }
 ```
 #### Response - default
+#### Errors:
+* invalid-id
 
 ### PATCH /api/chat/meeting - closes chat
 #### Body:
@@ -324,3 +376,5 @@
 }
 ```
 #### Response - default
+#### Errors:
+* invalid-id
