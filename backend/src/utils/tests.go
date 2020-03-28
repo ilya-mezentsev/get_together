@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"plugins/config"
 	"testing"
 )
 
@@ -50,7 +51,7 @@ func doRequestAndGetBody(req *http.Request) io.ReadCloser {
 }
 
 func SkipInShortMode() {
-	if os.Getenv("SHORT_MODE") == "1" {
+	if config.IsShortMode() {
 		fmt.Println("skipping DB tests in short mode")
 		os.Exit(0)
 	}

@@ -7,6 +7,7 @@ import (
 	"internal_errors"
 	mock "mock/repositories"
 	"os"
+	"plugins/config"
 	"testing"
 	"utils"
 )
@@ -19,14 +20,8 @@ var (
 func init() {
 	utils.SkipInShortMode()
 
-	connStr := os.Getenv("CONN_STR")
-	if connStr == "" {
-		fmt.Println("CONN_STR env var is not set")
-		os.Exit(1)
-	}
-
 	var err error
-	db, err = sqlx.Open("postgres", connStr)
+	db, err = config.GetConfiguredConnection()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

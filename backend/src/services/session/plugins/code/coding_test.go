@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mock/services"
 	"os"
+	"plugins/config"
 	"testing"
 	"utils"
 )
@@ -11,9 +12,9 @@ import (
 var coder Coder
 
 func init() {
-	coderKey := os.Getenv("CODER_KEY")
-	if coderKey == "" {
-		fmt.Println("CODER_KEY env var is not set")
+	coderKey, err := config.GetCoderKey()
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
