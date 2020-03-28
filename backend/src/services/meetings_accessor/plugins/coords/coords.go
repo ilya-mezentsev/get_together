@@ -11,7 +11,11 @@ import (
 	"models"
 )
 
-const blockSize = 10
+const (
+	blockSize      = 10
+	deltaLatitude  = 2
+	deltaLongitude = 2
+)
 
 type Border struct {
 	left, right int
@@ -146,8 +150,8 @@ func setCoordsToCenterMeetingsBlock(meetingsBlock []interfaces.Place) []interfac
 	avgLongitude = sumLongitude / float64(meetingsCount)
 
 	for meetingIdx := range meetingsBlock {
-		meetingsBlock[meetingIdx].SetLatitude(models.Latitude(avgLatitude))
-		meetingsBlock[meetingIdx].SetLongitude(models.Longitude(avgLongitude))
+		meetingsBlock[meetingIdx].SetLatitude(models.Latitude(avgLatitude + deltaLatitude))
+		meetingsBlock[meetingIdx].SetLongitude(models.Longitude(avgLongitude + deltaLongitude))
 	}
 
 	return meetingsBlock
