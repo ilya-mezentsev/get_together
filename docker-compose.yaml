@@ -32,8 +32,6 @@ services:
     volumes:
       - ${FRONTEND_DIR}:/var/www/apps/gt/frontend
     command: /bin/sh -c "$RUN_FRONTEND_COMMAND"
-    depends_on:
-      - api
 
   nginx:
     build:
