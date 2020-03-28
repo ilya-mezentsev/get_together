@@ -18,7 +18,7 @@ $ git clone https://github.com/ilya-mezentsev/get_together.git && cd get_togethe
 $ bash prepare_workspace.sh $(pwd)
 ```
 
-#### Check by running integration tests:
+#### Check by running api unit tests:
 ```bash
-$ bash run.sh unit_tests
+$ bash run.sh api_unit_tests
 ```
