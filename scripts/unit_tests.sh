@@ -16,9 +16,9 @@ TESTING_COMMAND="${TESTING_COMMAND} -cover -p 1"
 cd "${PROJECT_ROOT}" || exit
 
 export RUN_GO_COMMAND=${TESTING_COMMAND}
-docker-compose -f docker/docker-compose.yaml up -d --build api
+docker-compose up -d --build api
 
 docker wait "${COMPOSE_PROJECT_NAME}"_api_1
 docker logs "${COMPOSE_PROJECT_NAME}"_api_1
 
-docker-compose -f docker/docker-compose.yaml down
+docker-compose down

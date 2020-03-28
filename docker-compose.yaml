@@ -13,7 +13,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
 
   api:
-    build: "../backend"
+    build: backend
     environment:
       GOPATH: "/go"
       CODER_KEY: ${CODER_KEY}
@@ -25,7 +25,7 @@ services:
       - db
 
   frontend:
-    build: ../frontend
+    build: frontend
     ports:
       - 8081:4200
       - 49153:49153
@@ -37,7 +37,7 @@ services:
 
   nginx:
     build:
-      context: ../nginx
+      context: nginx
       dockerfile: ${NGINX_DOCKERFILE}
     ports:
       - 80:80

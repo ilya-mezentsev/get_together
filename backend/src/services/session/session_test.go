@@ -5,6 +5,7 @@ import (
 	mock "mock/services"
 	"net/http"
 	"os"
+	"plugins/config"
 	"services/errors"
 	"testing"
 	"utils"
@@ -13,9 +14,9 @@ import (
 var sessionController Service
 
 func init() {
-	coderKey := os.Getenv("CODER_KEY")
-	if coderKey == "" {
-		fmt.Println("CODER_KEY env var is not set")
+	coderKey, err := config.GetCoderKey()
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
