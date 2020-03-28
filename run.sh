@@ -9,7 +9,8 @@ declare -A scriptsDescriptions=(
   ['go_tests']='run go tests'
   ['push_all']='push all files to repository'
   ['create_test_data']='make requests for creating testing: group, users and tasks'
-  ['unit_tests']='run all unit_tests tests inside container'
+  ['frontend_unit_tests']='run frontend unit_tests tests inside container'
+  ['api_unit_tests']='run api unit_tests tests inside container'
   ['debug']='run project in debug mode'
   ['stage']='run project in stage mode'
 )
