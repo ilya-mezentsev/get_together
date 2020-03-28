@@ -17,7 +17,21 @@ var (
 			},
 		},
 	}
-	ShakingTest = []models.ExtendedMeeting{
+)
+
+func GetPublicMeetingsForShakingTest() []models.PublicMeeting {
+	return []models.PublicMeeting{
+		{
+			PublicPlace: &models.PublicPlace{
+				Latitude:  1,
+				Longitude: 2,
+			},
+		},
+	}
+}
+
+func GetExtendedMeetingsForShakingTest() []models.ExtendedMeeting {
+	return []models.ExtendedMeeting{
 		{
 			PublicPlace: &models.PublicPlace{
 				Latitude:  1,
@@ -115,4 +129,4 @@ var (
 			},
 		},
 	}
-)
+}
