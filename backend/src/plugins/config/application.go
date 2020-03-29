@@ -52,7 +52,3 @@ func GetAPIPort() string {
 		return fmt.Sprintf("%d", defaultPort)
 	}
 }
-
-func IsShortMode() bool {
-	return os.Getenv("SHORT_MODE") == "1"
-}

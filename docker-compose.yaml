@@ -13,9 +13,12 @@ services:
       POSTGRES_DB: ${DB_NAME}
 
   api:
-    build: backend
+    build:
+      context: backend
+      args:
+        API_SRC: ${CONTAINER_API_SRC}
     environment:
-      GOPATH: "/go"
+      GOPATH: ${CONTAINER_API_SRC}
       CODER_KEY: ${CODER_KEY}
       CONN_STR: "host=db port=5432 user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable"
     command: /bin/sh -c "$RUN_GO_COMMAND"
@@ -25,12 +28,13 @@ services:
       - db
 
   frontend:
-    build: frontend
+    build:
+      context: frontend
+      args:
+        FRONTEND_SRC: ${CONTAINER_FRONTEND_SRC}
     ports:
       - 8081:4200
       - 49153:49153
-    volumes:
-      - ${FRONTEND_DIR}:/var/www/apps/gt/frontend
     command: /bin/sh -c "$RUN_FRONTEND_COMMAND"
 
   nginx:

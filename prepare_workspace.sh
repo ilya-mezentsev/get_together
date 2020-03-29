@@ -43,6 +43,8 @@ declare -A env=(
   ['SHORT_MODE']="1"
   ['COMPOSE_PROJECT_NAME']='gt'
   ['API_PORT']="8080"
+  ['CONTAINER_API_SRC']='/var/www/apps/gt/api'
+  ['CONTAINER_FRONTEND_SRC']='/var/www/apps/gt/frontend'
 )
 
 prepareFolders "${rootFolder}"
