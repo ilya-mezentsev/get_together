@@ -56,6 +56,15 @@ func (p MeetingsServiceProxy) validateAllSettings(settings models.AllSettings) v
 	if !validation.ValidGender(settings.Gender) {
 		validationResults.Add(InvalidMeetingGender)
 	}
+	if !validation.ValidLatitude(float64(settings.GetLatitude())) {
+		validationResults.Add(InvalidMeetingLatitude)
+	}
+	if !validation.ValidLongitude(float64(settings.GetLongitude())) {
+		validationResults.Add(InvalidMeetingLongitude)
+	}
+	if !validation.ValidTitle(settings.Label) {
+		validationResults.Add(InvalidMeetingLabel)
+	}
 
 	return validationResults
 }

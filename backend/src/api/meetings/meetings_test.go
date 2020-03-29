@@ -150,7 +150,8 @@ func TestCreateMeeting_InvalidMeetingSettings(t *testing.T) {
 	for _, validationError := range []string{
 		validation.InvalidMeetingTitle, validation.InvalidMeetingDescription,
 		validation.InvalidMeetingMaxUsers, validation.InvalidMeetingDuration,
-		validation.InvalidMeetingMinAge,
+		validation.InvalidMeetingMinAge, validation.InvalidMeetingLabel,
+		validation.InvalidMeetingLatitude, validation.InvalidMeetingLongitude,
 	} {
 		utils.AssertTrue(strings.Contains(response.ErrorDetail, validationError), t)
 	}
