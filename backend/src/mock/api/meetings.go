@@ -102,7 +102,7 @@ func CreateMeetingWithInvalidSettingsRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPost,
 		Endpoint: "meeting/",
 		Cookie:   &http.Cookie{},
-		Data:     `{"admin_id": 1, "settings": {}}`,
+		Data:     `{"admin_id": 1, "settings": {"latitude": 91, "longitude": -181}}`,
 	}
 }
 
