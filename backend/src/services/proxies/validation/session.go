@@ -20,9 +20,9 @@ func (p SessionServiceProxy) GetSession(r *http.Request) (map[string]interface{}
 }
 
 func (p SessionServiceProxy) SetSession(r *http.Request, session models.UserSession) error {
-	if !validation.ValidWholePositiveNumber(float64(session.ID)) {
+	if !validation.ValidWholePositiveNumber(float64(session.Id)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return validationResults
 	}
 

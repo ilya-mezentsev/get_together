@@ -17,7 +17,7 @@ func NewMeetingsAccessorServiceProxy(service interfaces.MeetingsAccessorService)
 func (p MeetingsAccessorServiceProxy) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, error) {
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return models.PrivateMeeting{}, validationResults
 	}
 
@@ -31,7 +31,7 @@ func (p MeetingsAccessorServiceProxy) GetPublicMeetings() ([]models.PublicMeetin
 func (p MeetingsAccessorServiceProxy) GetExtendedMeetings(userId uint) ([]models.ExtendedMeeting, error) {
 	if !validation.ValidWholePositiveNumber(float64(userId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return nil, validationResults
 	}
 

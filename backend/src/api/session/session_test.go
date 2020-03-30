@@ -56,7 +56,7 @@ func TestSessionGet_Success(t *testing.T) {
 		utils.MakeRequest(sessionAPIMock.RequestWithSession(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
-	utils.AssertEqual(float64(sessionAPIMock.TestSessionData.ID), response.Data["id"], t)
+	utils.AssertEqual(float64(sessionAPIMock.TestSessionData.Id), response.Data["id"], t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
@@ -228,7 +228,7 @@ func TestSessionChangePassword_InvalidUserIdError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestSessionChangePassword_InvalidPasswordError(t *testing.T) {

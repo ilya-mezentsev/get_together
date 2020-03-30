@@ -21,7 +21,7 @@ func (e validationResults) Error() string {
 const (
 	InvalidEmail                           = "invalid-email"
 	InvalidPassword                        = "invalid-password"
-	InvalidID                              = "invalid-id"
+	InvalidId                              = "invalid-id"
 	InvalidMeetingTitle                    = "invalid-meeting-title"
 	InvalidMeetingDescription              = "invalid-meeting-description"
 	InvalidMeetingTag                      = "invalid-meeting-tag"

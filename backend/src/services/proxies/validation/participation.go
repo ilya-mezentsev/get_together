@@ -19,7 +19,7 @@ func (p ParticipationServiceProxy) HandleParticipationRequest(
 	validationResults := validationResults{}
 	if !validation.ValidWholePositiveNumber(float64(request.UserId)) ||
 		!validation.ValidWholePositiveNumber(float64(request.MeetingId)) {
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 	}
 	if request.RequestDescription != "" && !validation.ValidDescription(request.RequestDescription) {
 		validationResults.Add(InvalidParticipationRequestDescription)

@@ -116,7 +116,7 @@ func DeleteMeetingRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func DeleteMeetingIDNotFoundRequest(r *mux.Router) utils.RequestData {
+func DeleteMeetingIdNotFoundRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodDelete,
@@ -126,7 +126,7 @@ func DeleteMeetingIDNotFoundRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func DeleteMeetingByInvalidIDRequest(r *mux.Router) utils.RequestData {
+func DeleteMeetingByInvalidIdRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodDelete,
@@ -180,7 +180,7 @@ func ParticipationRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func UserIDNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
+func UserIdNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodPost,
@@ -190,23 +190,23 @@ func UserIDNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func MeetingIDNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
+func MeetingIdNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
 		Cookie:   &http.Cookie{},
-		Data:     getMeetingIDNotFoundUserRequestData(),
+		Data:     getMeetingIdNotFoundUserRequestData(),
 	}
 }
 
-func InvalidIDsParticipationRequest(r *mux.Router) utils.RequestData {
+func InvalidIdsParticipationRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
 		Cookie:   &http.Cookie{},
-		Data:     getMeetingUserInvalidIDsRequestData(),
+		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }
 
@@ -230,23 +230,23 @@ func InviteAlreadyInMeetingUserRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func InviteUserMeetingIDNotFoundRequest(r *mux.Router) utils.RequestData {
+func InviteUserMeetingIdNotFoundRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
 		Cookie:   &http.Cookie{},
-		Data:     getMeetingIDNotFoundUserRequestData(),
+		Data:     getMeetingIdNotFoundUserRequestData(),
 	}
 }
 
-func InviteUserMeetingInvalidIDsRequest(r *mux.Router) utils.RequestData {
+func InviteUserMeetingInvalidIdsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
 		Cookie:   &http.Cookie{},
-		Data:     getMeetingUserInvalidIDsRequestData(),
+		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }
 
@@ -270,21 +270,21 @@ func KickNotInMeetingUserRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func KickUserInvalidIDsRequest(r *mux.Router) utils.RequestData {
+func KickUserInvalidIdsRequest(r *mux.Router) utils.RequestData {
 	return utils.RequestData{
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/user",
 		Cookie:   &http.Cookie{},
-		Data:     getMeetingUserInvalidIDsRequestData(),
+		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }
 
-func getMeetingIDNotFoundUserRequestData() string {
+func getMeetingIdNotFoundUserRequestData() string {
 	return getMeetingUserRequestData(uint(len(repositories.Meetings)+1), 1)
 }
 
-func getMeetingUserInvalidIDsRequestData() string {
+func getMeetingUserInvalidIdsRequestData() string {
 	return getMeetingUserRequestData(0, 0)
 }
 

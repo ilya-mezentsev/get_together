@@ -1,16 +1,16 @@
 package validation
 
 import (
+	"interfaces"
 	"models"
-	"services/authentication"
 	"services/proxies/validation/plugins/validation"
 )
 
 type AuthenticationServiceProxy struct {
-	service authentication.Service
+	service interfaces.AuthenticationService
 }
 
-func NewAuthenticationServiceProxy(service authentication.Service) AuthenticationServiceProxy {
+func NewAuthenticationServiceProxy(service interfaces.AuthenticationService) AuthenticationServiceProxy {
 	return AuthenticationServiceProxy{service}
 }
 
@@ -49,7 +49,7 @@ func (p AuthenticationServiceProxy) Login(credentials models.UserCredentials) (m
 func (p AuthenticationServiceProxy) ChangePassword(userId uint, password string) error {
 	validationResults := validationResults{}
 	if !validation.ValidWholePositiveNumber(float64(userId)) {
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 	}
 	if !validation.ValidPassword(password) {
 		validationResults.Add(InvalidPassword)

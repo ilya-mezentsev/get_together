@@ -56,7 +56,7 @@ func TestRepository_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
 	defer mock.DropTables(db)
 
 	_, err := repository.GetFullMeetingInfo(mock.GetNotExistsMeetingId())
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_GetFullMeetingInfoNoTableError(t *testing.T) {
@@ -145,7 +145,7 @@ func TestRepository_DeleteMeetingSuccess(t *testing.T) {
 	err := repository.DeleteMeeting(1)
 	utils.AssertNil(err, t)
 	_, err = repository.GetFullMeetingInfo(1)
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_DeleteMeetingMeetingNotFoundError(t *testing.T) {
@@ -153,7 +153,7 @@ func TestRepository_DeleteMeetingMeetingNotFoundError(t *testing.T) {
 	defer mock.DropTables(db)
 
 	err := repository.DeleteMeeting(mock.GetNotExistsMeetingId())
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_DeleteMeetingNoTableError(t *testing.T) {
@@ -178,7 +178,7 @@ func TestRepository_UpdatedSettingsMeetingNotFoundError(t *testing.T) {
 	defer mock.DropTables(db)
 
 	err := repository.UpdateSettings(mock.GetNotExistsMeetingId(), servicesMock.NewMeetingSettings)
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_UpdatedSettingsNoTableError(t *testing.T) {
@@ -213,7 +213,7 @@ func TestRepository_AddUserToMeetingNotExistsError(t *testing.T) {
 
 	err := repository.AddUserToMeeting(0, 1)
 
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_AddUserToMeetingInternalError(t *testing.T) {
@@ -240,7 +240,7 @@ func TestRepository_KickUserFromMeetingNotExistsError(t *testing.T) {
 
 	err := repository.updateMeetingUserIds(KickUserFromMeetingQuery, 0, 1)
 
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_KickUserFromMeetingUserNotInMeetingError(t *testing.T) {

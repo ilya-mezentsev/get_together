@@ -74,6 +74,12 @@ func AssertEqual(expected, actual interface{}, t *testing.T) {
 	}
 }
 
+func AssertNotEqual(notExpected, actual interface{}, t *testing.T) {
+	if notExpected == actual {
+		logExpectationAndFail(fmt.Sprintf("not equal to %v", notExpected), actual, t)
+	}
+}
+
 func AssertNil(v interface{}, t *testing.T) {
 	if v != nil {
 		logExpectationAndFail(nil, v, t)

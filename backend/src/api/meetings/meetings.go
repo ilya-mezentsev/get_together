@@ -69,7 +69,7 @@ func (h Handler) createMeeting(w http.ResponseWriter, r *http.Request) {
 	var request models.CreateMeetingRequest
 	api.DecodeRequestBody(r, &request)
 
-	err := h.meetingsService.CreateMeeting(request.AdminID, request.Settings)
+	err := h.meetingsService.CreateMeeting(request.AdminId, request.Settings)
 	if err != nil {
 		panic(err)
 	}
@@ -80,10 +80,10 @@ func (h Handler) createMeeting(w http.ResponseWriter, r *http.Request) {
 func (h Handler) deleteMeeting(w http.ResponseWriter, r *http.Request) {
 	defer api.SendErrorIfPanicked(w)
 
-	var request models.DeleteMeetingRequest
+	var request models.GeneralMeetingRequest
 	api.DecodeRequestBody(r, &request)
 
-	err := h.meetingsService.DeleteMeeting(request.MeetingID)
+	err := h.meetingsService.DeleteMeeting(request.MeetingId)
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +97,7 @@ func (h Handler) updateMeetingSettings(w http.ResponseWriter, r *http.Request) {
 	var request models.UpdateMeetingSettingsRequest
 	api.DecodeRequestBody(r, &request)
 
-	err := h.meetingsService.UpdateSettings(request.MeetingID, request.Settings)
+	err := h.meetingsService.UpdateSettings(request.MeetingId, request.Settings)
 	if err != nil {
 		panic(err)
 	}

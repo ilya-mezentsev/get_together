@@ -40,4 +40,15 @@ type (
 		GetUserSettings(userId uint) (models.FullUserInfo, error)
 		UpdateUserSettings(userId uint, info models.UserSettings) error
 	}
+
+	ChatAccessor interface {
+		GetMeetingChat(meetingId uint) (models.Chat, error)
+		GetUserChats(userId uint) ([]models.Chat, error)
+	}
+
+	Chat interface {
+		CreateMeetingChat(meetingId uint) error
+		CreateMeetingRequestChat(meetingId uint) error
+		CloseChat(chatId uint) error
+	}
 )

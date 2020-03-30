@@ -17,7 +17,7 @@ func NewUserSettingsServiceProxy(service interfaces.UsersSettings) UserSettingsS
 func (p UserSettingsServiceProxy) GetUserSettings(userId uint) (models.FullUserInfo, error) {
 	if !validation.ValidWholePositiveNumber(float64(userId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return models.FullUserInfo{}, validationResults
 	}
 
@@ -27,7 +27,7 @@ func (p UserSettingsServiceProxy) GetUserSettings(userId uint) (models.FullUserI
 func (p UserSettingsServiceProxy) UpdateUserSettings(userId uint, info models.UserSettings) error {
 	validationResults := validationResults{}
 	if !validation.ValidWholePositiveNumber(float64(userId)) {
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 	}
 	if !validation.ValidName(info.Name) {
 		validationResults.Add(InvalidUserName)

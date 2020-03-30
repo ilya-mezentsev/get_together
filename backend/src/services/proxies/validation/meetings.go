@@ -17,7 +17,7 @@ func NewMeetingsServiceProxy(service interfaces.Meetings) MeetingsServiceProxy {
 func (p MeetingsServiceProxy) CreateMeeting(adminId uint, settings models.AllSettings) error {
 	validationResults := p.validateAllSettings(settings)
 	if !validation.ValidWholePositiveNumber(float64(adminId)) {
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 	}
 
 	if validationResults.HasErrors() {
@@ -72,7 +72,7 @@ func (p MeetingsServiceProxy) validateAllSettings(settings models.AllSettings) v
 func (p MeetingsServiceProxy) DeleteMeeting(meetingId uint) error {
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return validationResults
 	}
 
@@ -82,7 +82,7 @@ func (p MeetingsServiceProxy) DeleteMeeting(meetingId uint) error {
 func (p MeetingsServiceProxy) UpdateSettings(meetingId uint, settings models.AllSettings) error {
 	validationResults := p.validateAllSettings(settings)
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) {
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return validationResults
 	}
 
@@ -93,7 +93,7 @@ func (p MeetingsServiceProxy) AddUserToMeeting(meetingId, userId uint) error {
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) ||
 		!validation.ValidWholePositiveNumber(float64(userId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return validationResults
 	}
 
@@ -104,7 +104,7 @@ func (p MeetingsServiceProxy) KickUserFromMeeting(meetingId, userId uint) error 
 	if !validation.ValidWholePositiveNumber(float64(meetingId)) ||
 		!validation.ValidWholePositiveNumber(float64(userId)) {
 		validationResults := validationResults{}
-		validationResults.Add(InvalidID)
+		validationResults.Add(InvalidId)
 		return validationResults
 	}
 

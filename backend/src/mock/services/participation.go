@@ -28,8 +28,8 @@ func (m *MeetingsSettingsRepositoryMock) ResetState() {
 func (m *MeetingsSettingsRepositoryMock) GetMeetingSettings(meetingId uint) (models.ParticipationMeetingSettings, error) {
 	if meetingId == BadMeetingId {
 		return models.ParticipationMeetingSettings{}, someInternalError
-	} else if meetingId == NotExistsMeetingId {
-		return models.ParticipationMeetingSettings{}, internal_errors.UnableToFindByMeetingId
+	} else if meetingId == repositories.GetNotExistsMeetingId() {
+		return models.ParticipationMeetingSettings{}, internal_errors.UnableToFindMeetingById
 	}
 
 	return m.meetings[meetingId], nil
@@ -38,9 +38,9 @@ func (m *MeetingsSettingsRepositoryMock) GetMeetingSettings(meetingId uint) (mod
 func (m *MeetingsSettingsRepositoryMock) GetNearMeetings(data models.UserTimeCheckData) ([]models.TimeMeetingParameters, error) {
 	if data.MeetingId == BadMeetingId {
 		return nil, someInternalError
-	} else if data.MeetingId == NotExistsMeetingId {
-		return nil, internal_errors.UnableToFindByMeetingId
-	} else if data.UserId == NotExistsUserId {
+	} else if data.MeetingId == repositories.GetNotExistsMeetingId() {
+		return nil, internal_errors.UnableToFindMeetingById
+	} else if data.UserId == repositories.GetNotExistsUserId() {
 		return nil, internal_errors.UnableToFindUserById
 	}
 
@@ -180,13 +180,13 @@ func InternalErrorBadMeetingIdRequest() models.ParticipationRequest {
 func NotExistsMeetingRequest() models.ParticipationRequest {
 	return models.ParticipationRequest{
 		UserId:    1,
-		MeetingId: NotExistsMeetingId,
+		MeetingId: repositories.GetNotExistsMeetingId(),
 	}
 }
 
 func NotExistsUserRequest() models.ParticipationRequest {
 	return models.ParticipationRequest{
-		UserId:    NotExistsUserId,
+		UserId:    repositories.GetNotExistsUserId(),
 		MeetingId: 1,
 	}
 }

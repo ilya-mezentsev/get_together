@@ -34,7 +34,7 @@ func (c Service) GetSession(r *http.Request) (map[string]interface{}, error) {
 
 func (c Service) SetSession(r *http.Request, session models.UserSession) error {
 	token, err := c.coder.Encrypt(map[string]interface{}{
-		"id": session.ID,
+		"id": session.Id,
 	})
 	if err != nil {
 		return errors.InternalError

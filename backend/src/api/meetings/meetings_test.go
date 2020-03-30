@@ -28,6 +28,7 @@ var (
 
 func init() {
 	utils.SkipInShortMode()
+
 	var err error
 	db, err = config.GetConfiguredConnection()
 	if err != nil {
@@ -111,7 +112,7 @@ func TestCreateMeeting_Success(t *testing.T) {
 	utils.AssertNil(response.Data, t)
 }
 
-func TestCreateMeeting_NotExistsAdminID(t *testing.T) {
+func TestCreateMeeting_NotExistsAdminId(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
@@ -124,7 +125,7 @@ func TestCreateMeeting_NotExistsAdminID(t *testing.T) {
 	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestCreateMeeting_InvalidAdminID(t *testing.T) {
+func TestCreateMeeting_InvalidAdminId(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
@@ -134,7 +135,7 @@ func TestCreateMeeting_InvalidAdminID(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestCreateMeeting_InvalidMeetingSettings(t *testing.T) {
@@ -170,30 +171,30 @@ func TestDeleteMeeting_Success(t *testing.T) {
 	utils.AssertNil(response.Data, t)
 }
 
-func TestDeleteMeeting_MeetingIDNotFound(t *testing.T) {
+func TestDeleteMeeting_MeetingIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.DeleteMeetingIDNotFoundRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.DeleteMeetingIdNotFoundRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
 	utils.AssertEqual(errors.MeetingIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestDeleteMeeting_InvalidMeetingIDError(t *testing.T) {
+func TestDeleteMeeting_InvalidMeetingIdError(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.DeleteMeetingByInvalidIDRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.DeleteMeetingByInvalidIdRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestDeleteMeeting_InternalError(t *testing.T) {
@@ -221,7 +222,7 @@ func TestUpdateMeetingSettings_Success(t *testing.T) {
 	utils.AssertNil(response.Data, t)
 }
 
-func TestUpdateMeetingSettings_MeetingIDNotFound(t *testing.T) {
+func TestUpdateMeetingSettings_MeetingIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
@@ -234,7 +235,7 @@ func TestUpdateMeetingSettings_MeetingIDNotFound(t *testing.T) {
 	utils.AssertEqual(errors.MeetingIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestUpdateMeetingSettings_InvalidMeetingID(t *testing.T) {
+func TestUpdateMeetingSettings_InvalidMeetingId(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
@@ -244,7 +245,7 @@ func TestUpdateMeetingSettings_InvalidMeetingID(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestUpdateMeetingSettings_InternalError(t *testing.T) {
@@ -272,43 +273,43 @@ func TestHandleParticipation_Success(t *testing.T) {
 	utils.AssertTrue(response.Data.HasNearMeeting, t)
 }
 
-func TestHandleParticipation_UserIDNotFound(t *testing.T) {
+func TestHandleParticipation_UserIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.UserIDNotFoundParticipationRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.UserIdNotFoundParticipationRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
 	utils.AssertEqual(errors.UserIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestHandleParticipation_MeetingIDNotFound(t *testing.T) {
+func TestHandleParticipation_MeetingIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.MeetingIDNotFoundParticipationRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.MeetingIdNotFoundParticipationRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
 	utils.AssertEqual(errors.MeetingIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestHandleParticipation_InvalidIDs(t *testing.T) {
+func TestHandleParticipation_InvalidIds(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.InvalidIDsParticipationRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.InvalidIdsParticipationRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestHandleParticipation_InternalError(t *testing.T) {
@@ -349,30 +350,30 @@ func TestInviteUser_UserAlreadyInMeeting(t *testing.T) {
 	utils.AssertEqual(errors.UserAlreadyInMeeting.Error(), response.ErrorDetail, t)
 }
 
-func TestInviteUser_MeetingIDNotFound(t *testing.T) {
+func TestInviteUser_MeetingIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.InviteUserMeetingIDNotFoundRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.InviteUserMeetingIdNotFoundRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
 	utils.AssertEqual(errors.MeetingIdNotFound.Error(), response.ErrorDetail, t)
 }
 
-func TestInviteUser_InvalidIDs(t *testing.T) {
+func TestInviteUser_InvalidIds(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.InviteUserMeetingInvalidIDsRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.InviteUserMeetingInvalidIdsRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestInviteUser_InternalError(t *testing.T) {
@@ -413,17 +414,17 @@ func TestKickUser_UserNotInMeeting(t *testing.T) {
 	utils.AssertEqual(errors.UserNotInMeeting.Error(), response.ErrorDetail, t)
 }
 
-func TestKickUser_InvalidIDs(t *testing.T) {
+func TestKickUser_InvalidIds(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(meetingsAPIMock.KickUserInvalidIDsRequest(router))).Decode(&response)
+		utils.MakeRequest(meetingsAPIMock.KickUserInvalidIdsRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestKickUser_InternalError(t *testing.T) {

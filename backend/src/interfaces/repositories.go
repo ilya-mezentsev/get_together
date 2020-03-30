@@ -22,9 +22,13 @@ type (
 	}
 
 	ChatRepository interface {
-		CreateMeetingChat(meetingId uint) error
-		CreateMeetingRequestChat(meetingId uint) error
-		CloseChat(chatId uint) error
+		CreateChat(meetingId uint, chatType string) error
+		SetChatStatus(chatId uint, status string) error
+	}
+
+	FullChatsRepository interface {
+		ChatAccessor
+		ChatRepository
 	}
 
 	FullMeetingsRepository interface {
