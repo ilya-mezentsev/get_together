@@ -40,18 +40,6 @@ func NotExistsUserSettingsRequest(r *mux.Router) utils.RequestData {
 	}
 }
 
-func InvalidIDUserSettingsRequest(r *mux.Router) utils.RequestData {
-	return utils.RequestData{
-		Router:   r,
-		Method:   http.MethodGet,
-		Endpoint: "user/settings/0",
-		Cookie: &http.Cookie{
-			Name:  "GT-Session-Token",
-			Value: TestToken,
-		},
-	}
-}
-
 func PatchFirstUserSettingsRequest(r *mux.Router) utils.RequestData {
 	userInfo := repositories.UsersInfo[0]
 	return utils.RequestData{

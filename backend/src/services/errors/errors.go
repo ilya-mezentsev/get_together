@@ -8,6 +8,7 @@ var (
 	UserAlreadyInMeeting = errors.New("user-already-in-meeting")
 	UserNotInMeeting     = errors.New("user-not-in-meeting")
 	MeetingIdNotFound    = errors.New("meeting-id-not-found")
+	ChatIdNotFound       = errors.New("chat-id-not-found")
 	EmailExists          = errors.New("email-exists")
 	CredentialsNotFound  = errors.New("credentials-not-found")
 	NoAuthCookie         = errors.New("no-auth-cookie")

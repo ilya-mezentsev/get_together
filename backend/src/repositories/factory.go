@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/jmoiron/sqlx"
 	"interfaces"
+	"repositories/chat"
 	"repositories/credentials"
 	"repositories/decorators/logging"
 	"repositories/meetings"
@@ -24,4 +25,8 @@ func MeetingsSettings(db *sqlx.DB) interfaces.MeetingsSettingsRepository {
 
 func UserSettings(db *sqlx.DB) interfaces.UsersSettings {
 	return logging.NewUserSettingsRepositoryDecorator(user_settings.New(db))
+}
+
+func Chat(db *sqlx.DB) interfaces.FullChatsRepository {
+	return logging.NewChatRepositoryDecorator(chat.New(db))
 }

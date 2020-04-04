@@ -345,7 +345,40 @@
 * invalid-user-age
 * invalid-user-avatar-url
 
-## Chatting
+## Chats
+
+### GET /api/chat/meeting/:id - returns chat for meeting
+#### Path parameters
+* `:id` - meeting id
+#### Response:
+```json5
+{
+  "status": "ok",
+  "data": {
+    "id": 1, // chat id
+  }
+}
+```
+#### Errors:
+* invalid-id
+* meeting-id-not-found
+
+### GET /api/chat/user/:id - returns user chats
+#### Path parameters
+* `:id` - user id
+#### Response:
+```json5
+{
+  "status": "ok",
+  "data": [
+    {"id": 1}, {"id": 2}
+  ]
+}
+```
+#### Errors:
+* invalid-id
+* user-id-not-found
+
 ### POST /api/chat/meeting - creates chat for meeting
 #### Body:
 ```json5
@@ -356,6 +389,7 @@
 #### Response - default
 #### Errors:
 * invalid-id
+* meeting-id-not-found
 
 ### POST /api/chat/meeting/request - creates chat with meeting admin
 #### Body:
@@ -368,7 +402,7 @@
 #### Errors:
 * invalid-id
 
-### PATCH /api/chat/meeting - closes chat
+### DELETE /api/chat/meeting - closes chat
 #### Body:
 ```json5
 {
@@ -378,3 +412,16 @@
 #### Response - default
 #### Errors:
 * invalid-id
+* chat-id-not-found
+
+### DELETE /api/chat/meeting/request - closes chat
+#### Body:
+```json5
+{
+  "chat_id": 1
+}
+```
+#### Response - default
+#### Errors:
+* invalid-id
+* chat-id-not-found

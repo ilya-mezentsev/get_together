@@ -1,6 +1,7 @@
 package meetings_accessor
 
 import (
+	repositoriesMock "mock/repositories"
 	mock "mock/services"
 	"models"
 	"services/errors"
@@ -61,7 +62,7 @@ func TestService_GetFullMeetingInfoSuccess(t *testing.T) {
 func TestService_GetFullMeetingInfoMeetingNotFoundError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	_, err := service.GetFullMeetingInfo(mock.NotExistsMeetingId)
+	_, err := service.GetFullMeetingInfo(repositoriesMock.GetNotExistsMeetingId())
 	utils.AssertErrorsEqual(errors.MeetingIdNotFound, err, t)
 }
 

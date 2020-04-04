@@ -2,6 +2,7 @@ package main
 
 import (
 	"api"
+	"api/chats"
 	"api/meetings"
 	"api/session"
 	"api/users"
@@ -30,6 +31,12 @@ func init() {
 	}
 
 	meetingsRepository := repositories.Meetings(db)
+	chatsRepository := repositories.Chat(db)
+
+	chats.InitRequestHandlers(
+		services.Chat(chatsRepository),
+		services.ChatAccessor(chatsRepository),
+	)
 	meetings.InitRequestHandlers(
 		services.Meetings(meetingsRepository),
 		services.Participation(repositories.UserSettings(db), repositories.MeetingsSettings(db)),

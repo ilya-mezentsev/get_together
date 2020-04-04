@@ -39,7 +39,7 @@ func (s Service) Login(credentials models.UserCredentials) (models.UserSession, 
 
 	switch err {
 	case nil:
-		return models.UserSession{ID: userId}, nil
+		return models.UserSession{Id: userId}, nil
 	case internal_errors.UnableToLoginUserNotFound:
 		return models.UserSession{}, errors.CredentialsNotFound
 	default:

@@ -1,6 +1,7 @@
 package meetings
 
 import (
+	repositoriesMock "mock/repositories"
 	mock "mock/services"
 	"services/errors"
 	"testing"
@@ -21,7 +22,7 @@ func TestService_DeleteMeetingSuccess(t *testing.T) {
 func TestService_DeleteMeetingNotFoundError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	err := service.DeleteMeeting(mock.NotExistsMeetingId)
+	err := service.DeleteMeeting(repositoriesMock.GetNotExistsMeetingId())
 	utils.AssertErrorsEqual(errors.MeetingIdNotFound, err, t)
 }
 
@@ -44,7 +45,7 @@ func TestService_CreateMeetingSuccess(t *testing.T) {
 func TestService_CreateMeetingUserIdNotFoundError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	err := service.CreateMeeting(mock.NotExistsUserId, mock.NewMeetingSettings)
+	err := service.CreateMeeting(repositoriesMock.GetNotExistsUserId(), mock.NewMeetingSettings)
 	utils.AssertErrorsEqual(errors.UserIdNotFound, err, t)
 }
 
@@ -67,7 +68,7 @@ func TestService_UpdateSettingsSuccess(t *testing.T) {
 func TestService_UpdateSettingsMeetingNotFoundError(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	err := service.UpdateSettings(mock.NotExistsMeetingId, mock.NewMeetingSettings)
+	err := service.UpdateSettings(repositoriesMock.GetNotExistsMeetingId(), mock.NewMeetingSettings)
 	utils.AssertErrorsEqual(errors.MeetingIdNotFound, err, t)
 }
 
@@ -96,7 +97,7 @@ func TestService_AddUserToMeetingAlreadyInMeetingError(t *testing.T) {
 func TestService_AddUserToMeetingNotFound(t *testing.T) {
 	defer mock.MeetingsMockRepository.ResetState()
 
-	err := service.AddUserToMeeting(mock.NotExistsMeetingId, 1)
+	err := service.AddUserToMeeting(repositoriesMock.GetNotExistsMeetingId(), 1)
 	utils.AssertErrorsEqual(errors.MeetingIdNotFound, err, t)
 }
 

@@ -69,7 +69,7 @@ func (s Service) getUserAndMeetingSettings(
 	switch err {
 	case nil:
 		break
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return userSettings, meetingSettings, errors.MeetingIdNotFound
 	default:
 		return userSettings, meetingSettings, errors.InternalError
@@ -97,7 +97,7 @@ func (s Service) hasNearMeeting(
 			}, meetings), nil
 	case internal_errors.UnableToFindUserById:
 		return false, errors.UserIdNotFound
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return false, errors.MeetingIdNotFound
 	default:
 		return false, errors.InternalError

@@ -47,8 +47,6 @@ var (
 	}
 	UserIdThatNotInFirstMeeting      = repositories.UserIdThatNotInFirstMeeting
 	BadMeetingId                uint = 0
-	NotExistsMeetingId          uint = 11
-	NotExistsUserId             uint = 11
 )
 
 func (m *MeetingsRepositoryMock) ResetState() {
@@ -63,7 +61,7 @@ func (m *MeetingsRepositoryMock) GetFullMeetingInfo(meetingId uint) (models.Priv
 
 	meetingInfo, found := m.Meetings[meetingId]
 	if !found {
-		return models.PrivateMeeting{}, internal_errors.UnableToFindByMeetingId
+		return models.PrivateMeeting{}, internal_errors.UnableToFindMeetingById
 	}
 
 	return meetingInfo, nil
@@ -109,13 +107,13 @@ func (m *MeetingsRepositoryMock) GetExtendedMeetings(
 func (m *MeetingsRepositoryMock) CreateMeeting(adminId uint, settings models.AllSettings) error {
 	if adminId == BadUserId {
 		return someInternalError
-	} else if adminId == NotExistsUserId {
+	} else if adminId == repositories.GetNotExistsUserId() {
 		return internal_errors.UnableToFindUserById
 	}
 
 	m.Meetings[2] = models.PrivateMeeting{
 		DefaultMeeting: models.DefaultMeeting{
-			ID:        2,
+			Id:        2,
 			AdminId:   adminId,
 			CreatedAt: time.Unix(0, 1),
 		},
@@ -127,8 +125,8 @@ func (m *MeetingsRepositoryMock) CreateMeeting(adminId uint, settings models.All
 func (m *MeetingsRepositoryMock) DeleteMeeting(meetingId uint) error {
 	if meetingId == BadMeetingId {
 		return someInternalError
-	} else if meetingId == NotExistsMeetingId {
-		return internal_errors.UnableToFindByMeetingId
+	} else if meetingId == repositories.GetNotExistsMeetingId() {
+		return internal_errors.UnableToFindMeetingById
 	}
 
 	delete(m.Meetings, meetingId)
@@ -138,8 +136,8 @@ func (m *MeetingsRepositoryMock) DeleteMeeting(meetingId uint) error {
 func (m *MeetingsRepositoryMock) UpdateSettings(meetingId uint, settings models.AllSettings) error {
 	if meetingId == BadMeetingId {
 		return someInternalError
-	} else if meetingId == NotExistsMeetingId {
-		return internal_errors.UnableToFindByMeetingId
+	} else if meetingId == repositories.GetNotExistsMeetingId() {
+		return internal_errors.UnableToFindMeetingById
 	}
 
 	meeting := m.Meetings[meetingId]
@@ -167,7 +165,7 @@ func (m *MeetingsRepositoryMock) AddUserToMeeting(meetingId, userId uint) error 
 		}
 	}
 
-	return internal_errors.UnableToFindByMeetingId
+	return internal_errors.UnableToFindMeetingById
 }
 
 func (m *MeetingsRepositoryMock) KickUserFromMeeting(meetingId, userId uint) error {
@@ -186,7 +184,7 @@ func (m *MeetingsRepositoryMock) KickUserFromMeeting(meetingId, userId uint) err
 		}
 	}
 
-	return internal_errors.UnableToFindByMeetingId
+	return internal_errors.UnableToFindMeetingById
 }
 
 func HasUser(userIds []uint, userId uint) bool {
@@ -227,7 +225,7 @@ func allMeetings() map[uint]models.PrivateMeeting {
 
 		meetings[meetingId] = models.PrivateMeeting{
 			DefaultMeeting: models.DefaultMeeting{
-				ID:        meetingId,
+				Id:        meetingId,
 				AdminId:   getAdminIdByMeetingId(meetingId),
 				CreatedAt: time.Unix(0, 0),
 			},

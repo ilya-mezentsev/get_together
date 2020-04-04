@@ -44,16 +44,20 @@ type (
 	}
 
 	CreateMeetingRequest struct {
-		AdminID  uint        `json:"admin_id"`
+		AdminId  uint        `json:"admin_id"`
 		Settings AllSettings `json:"settings"`
 	}
 
-	DeleteMeetingRequest struct {
-		MeetingID uint `json:"meeting_id"`
+	GeneralMeetingRequest struct {
+		MeetingId uint `json:"meeting_id"`
 	}
 
 	UpdateMeetingSettingsRequest struct {
-		MeetingID uint        `json:"meeting_id"`
+		MeetingId uint        `json:"meeting_id"`
 		Settings  AllSettings `json:"settings"`
+	}
+
+	CloseChatRequest struct {
+		ChatId uint `json:"chat_id"`
 	}
 )

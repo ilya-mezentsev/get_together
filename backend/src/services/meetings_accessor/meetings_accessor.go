@@ -27,7 +27,7 @@ func (s Service) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, erro
 	switch err {
 	case nil:
 		return meeting, nil
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return models.PrivateMeeting{}, errors.MeetingIdNotFound
 	default:
 		return models.PrivateMeeting{}, errors.InternalError

@@ -6,7 +6,6 @@ import (
 	_ "github.com/lib/pq"
 	"internal_errors"
 	mock "mock/repositories"
-	mock2 "mock/services"
 	"os"
 	"plugins/config"
 	"testing"
@@ -52,8 +51,8 @@ func TestRepository_GetMeetingSettingsMeetingNotFoundError(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	_, err := repository.GetMeetingSettings(mock2.NotExistsMeetingId)
-	utils.AssertErrorsEqual(internal_errors.UnableToFindByMeetingId, err, t)
+	_, err := repository.GetMeetingSettings(mock.GetNotExistsMeetingId())
+	utils.AssertErrorsEqual(internal_errors.UnableToFindMeetingById, err, t)
 }
 
 func TestRepository_GetMeetingSettingsTableNotFoundError(t *testing.T) {

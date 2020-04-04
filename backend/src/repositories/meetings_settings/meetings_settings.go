@@ -45,7 +45,7 @@ func (r Repository) GetMeetingSettings(meetingId uint) (models.ParticipationMeet
 			&settings.MaxUsers, pq.Array(&settings.Tags), &settings.DateTime, &settings.Duration,
 			&settings.MinAge, &settings.Gender, &settings.RequestDescriptionRequired, &settings.UsersCount)
 	} else {
-		return models.ParticipationMeetingSettings{}, internal_errors.UnableToFindByMeetingId
+		return models.ParticipationMeetingSettings{}, internal_errors.UnableToFindMeetingById
 	}
 
 	return settings, err

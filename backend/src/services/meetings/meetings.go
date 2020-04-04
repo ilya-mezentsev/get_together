@@ -30,7 +30,7 @@ func (s Service) DeleteMeeting(meetingId uint) error {
 	switch s.repository.DeleteMeeting(meetingId) {
 	case nil:
 		return nil
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return errors.MeetingIdNotFound
 	default:
 		return errors.InternalError
@@ -41,7 +41,7 @@ func (s Service) UpdateSettings(meetingId uint, settings models.AllSettings) err
 	switch s.repository.UpdateSettings(meetingId, settings) {
 	case nil:
 		return nil
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return errors.MeetingIdNotFound
 	default:
 		return errors.InternalError
@@ -54,7 +54,7 @@ func (s Service) AddUserToMeeting(meetingId, userId uint) error {
 		return nil
 	case internal_errors.UserAlreadyInMeeting:
 		return errors.UserAlreadyInMeeting
-	case internal_errors.UnableToFindByMeetingId:
+	case internal_errors.UnableToFindMeetingById:
 		return errors.MeetingIdNotFound
 	default:
 		return errors.InternalError

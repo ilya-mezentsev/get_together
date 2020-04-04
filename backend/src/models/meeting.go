@@ -57,7 +57,7 @@ type (
 	}
 
 	DefaultMeeting struct {
-		ID        uint      `db:"id"`
+		Id        uint      `db:"id"`
 		AdminId   uint      `db:"admin_id"`
 		CreatedAt time.Time `db:"created_at"`
 	}

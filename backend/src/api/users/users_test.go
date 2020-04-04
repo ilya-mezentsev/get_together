@@ -76,11 +76,11 @@ func TestUserSettingsGet_UserIdNotFoundError(t *testing.T) {
 func TestUserSettingsGet_InvalidIdError(t *testing.T) {
 	var response models.ErrorResponse
 	err := json.NewDecoder(
-		utils.MakeRequest(usersAPIMock.InvalidIDUserSettingsRequest(router))).Decode(&response)
+		utils.MakeRequest(usersAPIMock.InvalidIdUserSettingsRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestUserSettingsGet_InternalError(t *testing.T) {
@@ -128,7 +128,7 @@ func TestUserSettingsPatch_InvalidUserIdError(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusError, response.Status, t)
-	utils.AssertEqual(validation.InvalidID, response.ErrorDetail, t)
+	utils.AssertEqual(validation.InvalidId, response.ErrorDetail, t)
 }
 
 func TestUserSettingsPatch_InvalidAllSettingsUserIdError(t *testing.T) {

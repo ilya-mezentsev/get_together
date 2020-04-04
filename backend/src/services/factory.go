@@ -3,6 +3,8 @@ package services
 import (
 	"interfaces"
 	"services/authentication"
+	"services/chat"
+	"services/chat_accessor"
 	"services/meetings"
 	"services/meetings_accessor"
 	"services/participation"
@@ -37,4 +39,12 @@ func Session(key string) interfaces.SessionService {
 
 func UserSettings(repository interfaces.UsersSettings) interfaces.UsersSettings {
 	return validation.NewUserSettingsServiceProxy(user_settings.New(repository))
+}
+
+func ChatAccessor(repository interfaces.ChatAccessor) interfaces.ChatAccessor {
+	return validation.NewChatAccessorProxy(chat_accessor.New(repository))
+}
+
+func Chat(repository interfaces.ChatRepository) interfaces.Chat {
+	return validation.NewChatProxy(chat.New(repository))
 }

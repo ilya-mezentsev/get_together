@@ -78,14 +78,14 @@ func (r Repository) GetFullMeetingInfo(meetingId uint) (models.PrivateMeeting, e
 
 	if rows.Next() {
 		err = rows.Scan(
-			&info.ID, &info.AdminId, &info.CreatedAt, &info.Label, &info.Latitude, &info.Longitude,
+			&info.Id, &info.AdminId, &info.CreatedAt, &info.Label, &info.Latitude, &info.Longitude,
 			&info.Title, &info.Description, pq.Array(&info.Tags), &info.DateTime, &info.RequestDescriptionRequired,
 			&info.Duration, &info.MinAge, &info.Gender, &info.MaxUsers)
 		if err != nil {
 			return info, err
 		}
 	} else {
-		return info, internal_errors.UnableToFindByMeetingId
+		return info, internal_errors.UnableToFindMeetingById
 	}
 
 	return info, nil
@@ -103,7 +103,7 @@ func (r Repository) GetPublicMeetings() ([]models.PublicMeeting, error) {
 			PublicPlace: &models.PublicPlace{},
 		}
 		err = rows.Scan(
-			&meeting.ID, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
+			&meeting.Id, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
 			&meeting.Title, &meeting.Description, pq.Array(&meeting.Tags))
 		if err != nil {
 			return nil, err
@@ -128,7 +128,7 @@ func (r Repository) GetExtendedMeetings(
 			PublicPlace: &models.PublicPlace{},
 		}
 		err = rows.Scan(
-			&meeting.ID, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
+			&meeting.Id, &meeting.AdminId, &meeting.CreatedAt, &meeting.Latitude, &meeting.Longitude,
 			&meeting.Title, &meeting.Description, pq.Array(&meeting.Tags), &meeting.DateTime,
 			&meeting.RequestDescriptionRequired, &meeting.CurrentUserStatus)
 		if err != nil {
@@ -209,7 +209,7 @@ func (r Repository) DeleteMeeting(meetingId uint) error {
 	case err == nil:
 		return nil
 	case err.Error() == deleteMeetingIdNotFoundMessage:
-		return internal_errors.UnableToFindByMeetingId
+		return internal_errors.UnableToFindMeetingById
 	default:
 		return err
 	}
@@ -228,7 +228,7 @@ func (r Repository) UpdateSettings(meetingId uint, settings models.AllSettings) 
 	}
 
 	if affectedRows == 0 {
-		return internal_errors.UnableToFindByMeetingId
+		return internal_errors.UnableToFindMeetingById
 	}
 
 	return nil
@@ -273,7 +273,7 @@ func (r Repository) updateMeetingUserIds(query string, meetingId, userId uint) e
 		return err
 	}
 	if rowsAffected == 0 {
-		return internal_errors.UnableToFindByMeetingId
+		return internal_errors.UnableToFindMeetingById
 	}
 
 	return nil
