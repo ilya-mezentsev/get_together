@@ -15,8 +15,7 @@
 ### API default success response:
 ```json5
 {
-  "status": "ok",
-  "data": null
+  "status": "ok"
 }
 ```
 

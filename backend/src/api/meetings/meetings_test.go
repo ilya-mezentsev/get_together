@@ -103,13 +103,12 @@ func TestCreateMeeting_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(meetingsAPIMock.CreateMeetingRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestCreateMeeting_NotExistsAdminId(t *testing.T) {
@@ -162,13 +161,12 @@ func TestDeleteMeeting_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(meetingsAPIMock.DeleteMeetingRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestDeleteMeeting_MeetingIdNotFound(t *testing.T) {
@@ -213,13 +211,12 @@ func TestUpdateMeetingSettings_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(meetingsAPIMock.UpdateMeetingSettingsRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestUpdateMeetingSettings_MeetingIdNotFound(t *testing.T) {
@@ -328,13 +325,12 @@ func TestInviteUser_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(meetingsAPIMock.InviteUserRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestInviteUser_UserAlreadyInMeeting(t *testing.T) {
@@ -392,13 +388,12 @@ func TestKickUser_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(meetingsAPIMock.KickUserRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestKickUser_UserNotInMeeting(t *testing.T) {

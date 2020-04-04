@@ -10,11 +10,6 @@ import (
 )
 
 type (
-	DefaultSuccess struct {
-		Status string      `json:"status"`
-		Data   interface{} `json:"data"`
-	}
-
 	GetSessionSuccess struct {
 		Status string                 `json:"status"`
 		Data   map[string]interface{} `json:"data"`

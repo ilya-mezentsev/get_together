@@ -43,7 +43,7 @@ func (h Handler) getPublicMeetings(w http.ResponseWriter, r *http.Request) {
 
 	meetings, err := h.meetingsAccessorService.GetPublicMeetings()
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, meetings)
@@ -57,7 +57,7 @@ func (h Handler) getExtendedMeetings(w http.ResponseWriter, r *http.Request) {
 	userId, _ := strconv.Atoi(vars["id"])
 	meetings, err := h.meetingsAccessorService.GetExtendedMeetings(uint(userId))
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, meetings)
@@ -71,7 +71,7 @@ func (h Handler) createMeeting(w http.ResponseWriter, r *http.Request) {
 
 	err := h.meetingsService.CreateMeeting(request.AdminId, request.Settings)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -85,7 +85,7 @@ func (h Handler) deleteMeeting(w http.ResponseWriter, r *http.Request) {
 
 	err := h.meetingsService.DeleteMeeting(request.MeetingId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -99,7 +99,7 @@ func (h Handler) updateMeetingSettings(w http.ResponseWriter, r *http.Request) {
 
 	err := h.meetingsService.UpdateSettings(request.MeetingId, request.Settings)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -113,7 +113,7 @@ func (h Handler) handleParticipationRequest(w http.ResponseWriter, r *http.Reque
 
 	rejectInfo, err := h.participationService.HandleParticipationRequest(request)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, rejectInfo)
@@ -127,7 +127,7 @@ func (h Handler) inviteUser(w http.ResponseWriter, r *http.Request) {
 
 	err := h.meetingsService.AddUserToMeeting(request.MeetingId, request.UserId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -141,7 +141,7 @@ func (h Handler) kickUser(w http.ResponseWriter, r *http.Request) {
 
 	err := h.meetingsService.KickUserFromMeeting(request.MeetingId, request.UserId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)

@@ -37,7 +37,7 @@ func (h Handler) getMeetingChat(w http.ResponseWriter, r *http.Request) {
 	meetingId, _ := strconv.Atoi(vars["id"])
 	chat, err := h.chatAccessor.GetMeetingChat(uint(meetingId))
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, chat)
@@ -51,7 +51,7 @@ func (h Handler) getUserChats(w http.ResponseWriter, r *http.Request) {
 	userId, _ := strconv.Atoi(vars["id"])
 	chats, err := h.chatAccessor.GetUserChats(uint(userId))
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, chats)
@@ -65,7 +65,7 @@ func (h Handler) createMeetingChat(w http.ResponseWriter, r *http.Request) {
 
 	err := h.chat.CreateMeetingChat(request.MeetingId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -79,7 +79,7 @@ func (h Handler) createMeetingRequestChat(w http.ResponseWriter, r *http.Request
 
 	err := h.chat.CreateMeetingRequestChat(request.MeetingId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
@@ -93,7 +93,7 @@ func (h Handler) closeChat(w http.ResponseWriter, r *http.Request) {
 
 	err := h.chat.CloseChat(request.ChatId)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)
