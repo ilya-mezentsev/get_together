@@ -30,7 +30,7 @@ func (h Handler) getUserSettings(w http.ResponseWriter, r *http.Request) {
 	userId, _ := strconv.Atoi(vars["id"])
 	info, err := h.usersService.GetUserSettings(uint(userId))
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.EncodeAndSendResponse(w, info)
@@ -44,7 +44,7 @@ func (h Handler) updateUserSettings(w http.ResponseWriter, r *http.Request) {
 
 	err := h.usersService.UpdateUserSettings(updateSettingsRequest.UserId, updateSettingsRequest.Settings)
 	if err != nil {
-		panic(err)
+		panic(api.ApplicationError{OriginalError: err})
 	}
 
 	api.SendDefaultResponse(w)

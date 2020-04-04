@@ -99,13 +99,12 @@ func TestUserSettingsPatch_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(usersAPIMock.PatchFirstUserSettingsRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestUserSettingsPatch_UserIdNotFoundError(t *testing.T) {

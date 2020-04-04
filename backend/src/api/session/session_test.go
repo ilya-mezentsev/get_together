@@ -84,7 +84,7 @@ func TestSessionRegister_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response sessionAPIMock.DefaultSuccess
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(sessionAPIMock.SuccessRegistrationRequest(router))).Decode(&response)
 
@@ -141,13 +141,12 @@ func TestSessionLogin_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(sessionAPIMock.SuccessLoginRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestSessionLogin_CredentialsNotFoundError(t *testing.T) {
@@ -199,13 +198,12 @@ func TestSessionChangePassword_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(sessionAPIMock.SuccessChangePasswordRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestSessionChangePassword_UserIdNotFoundError(t *testing.T) {
@@ -257,11 +255,10 @@ func TestSessionLogout_Success(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(sessionAPIMock.SuccessLogoutRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }

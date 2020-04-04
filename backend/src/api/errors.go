@@ -2,8 +2,15 @@ package api
 
 import "errors"
 
+type ApplicationError struct {
+	OriginalError error
+}
+
 var (
-	ReadRequestBodyError    = errors.New("read-request-body-error")
-	CannotDecodeRequestBody = errors.New("decode-request-body-error")
-	CannotWriteResponse     = errors.New("write-response-error")
+	ReadRequestBodyError    = ApplicationError{errors.New("read-request-body-error")}
+	CannotDecodeRequestBody = ApplicationError{errors.New("decode-request-body-error")}
 )
+
+func (a ApplicationError) Error() string {
+	return a.OriginalError.Error()
+}

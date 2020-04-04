@@ -45,7 +45,10 @@ func DecodeRequestBody(r *http.Request, target interface{}) {
 }
 
 func SendDefaultResponse(w http.ResponseWriter) {
-	EncodeAndSendResponse(w, nil)
+	output, _ := json.Marshal(models.DefaultResponse{
+		Status: StatusOk,
+	})
+	makeResponse(w, output)
 }
 
 func EncodeAndSendResponse(w http.ResponseWriter, v interface{}) {
@@ -53,39 +56,41 @@ func EncodeAndSendResponse(w http.ResponseWriter, v interface{}) {
 		Status: StatusOk,
 		Data:   v,
 	})
-
-	w.Header().Set("content-type", "application/json")
-	if _, err := w.Write(output); err != nil {
-		logger.WithFields(logger.Fields{
-			MessageTemplate: "Error while trying to write response: %v",
-			Args: []interface{}{
-				err,
-			},
-		}, logger.Error)
-
-		panic(CannotWriteResponse)
-	}
+	makeResponse(w, output)
 }
 
 func SendErrorIfPanicked(w http.ResponseWriter) {
 	if err := recover(); err != nil {
 		logger.WarningF("Panicked: %v", err)
 
-		output, _ := json.Marshal(models.ErrorResponse{
-			Status:      StatusError,
-			ErrorDetail: err.(error).Error(),
-		})
-
-		w.Header().Set("content-type", "application/json")
-		if _, err = w.Write(output); err != nil {
-			logger.WithFields(logger.Fields{
-				MessageTemplate: "Error while trying to write response: %v",
-				Args: []interface{}{
-					err,
-				},
-			}, logger.Error)
-
-			http.Error(w, "internal server error", http.StatusInternalServerError)
+		err, isAppError := err.(ApplicationError)
+		if isAppError {
+			output, _ := json.Marshal(models.ErrorResponse{
+				Status:      StatusError,
+				ErrorDetail: err.Error(),
+			})
+			makeResponse(w, output)
+		} else {
+			sendInternalError(w, err)
 		}
 	}
+}
+
+func makeResponse(w http.ResponseWriter, data []byte) {
+	w.Header().Set("content-type", "application/json")
+
+	if _, err := w.Write(data); err != nil {
+		sendInternalError(w, err)
+	}
+}
+
+func sendInternalError(w http.ResponseWriter, err interface{}) {
+	logger.WithFields(logger.Fields{
+		MessageTemplate: "Error while trying to write response: %v",
+		Args: []interface{}{
+			err,
+		},
+	}, logger.Error)
+
+	http.Error(w, "internal server error", http.StatusInternalServerError)
 }

@@ -135,13 +135,12 @@ func TestCreateMeetingChat_Success(t *testing.T) {
 	repositoriesMock.InitTables(db)
 	defer repositoriesMock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(chatAPIMock.CreateMeetingChatRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestCreateMeetingChat_InvalidId(t *testing.T) {
@@ -170,13 +169,12 @@ func TestCreateMeetingRequestChat_Success(t *testing.T) {
 	repositoriesMock.InitTables(db)
 	defer repositoriesMock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(chatAPIMock.CreateMeetingRequestChatRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestCreateMeetingRequestChat_InvalidId(t *testing.T) {
@@ -205,13 +203,12 @@ func TestCloseMeetingChat_Success(t *testing.T) {
 	repositoriesMock.InitTables(db)
 	defer repositoriesMock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(chatAPIMock.CloseMeetingChatRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestCloseMeetingChat_IdNotFound(t *testing.T) {
@@ -253,13 +250,12 @@ func TestCloseMeetingRequestChat_Success(t *testing.T) {
 	repositoriesMock.InitTables(db)
 	defer repositoriesMock.DropTables(db)
 
-	var response models.SuccessResponse
+	var response models.DefaultResponse
 	err := json.NewDecoder(
 		utils.MakeRequest(chatAPIMock.CloseMeetingRequestChatRequest(router))).Decode(&response)
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertNil(response.Data, t)
 }
 
 func TestCloseMeetingRequestChat_IdNotFound(t *testing.T) {

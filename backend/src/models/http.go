@@ -6,6 +6,10 @@ type (
 		ErrorDetail string `json:"error_detail"`
 	}
 
+	DefaultResponse struct {
+		Status string `json:"status"`
+	}
+
 	SuccessResponse struct {
 		Status string      `json:"status"`
 		Data   interface{} `json:"data"`
