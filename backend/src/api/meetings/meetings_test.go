@@ -2,9 +2,11 @@ package meetings
 
 import (
 	"api"
+	"api/middlewares"
 	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"interfaces"
 	"io/ioutil"
 	"log"
 	meetingsAPIMock "mock/api"
@@ -22,8 +24,9 @@ import (
 )
 
 var (
-	db     *sqlx.DB
-	router = api.GetRouter()
+	db             *sqlx.DB
+	sessionService interfaces.SessionAccessorService
+	router         = api.GetRouter()
 )
 
 func init() {
@@ -36,10 +39,18 @@ func init() {
 		os.Exit(1)
 	}
 
+	coderKey, err := config.GetCoderKey()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	sessionService = services.Session(coderKey)
 	InitRequestHandlers(
 		services.Meetings(repositories.Meetings(db)),
 		services.Participation(repositories.UserSettings(db), repositories.MeetingsSettings(db)),
 		services.MeetingsAccessor(repositories.Meetings(db)),
+		middlewares.AuthSession{Service: sessionService}.HasValidSession,
 	)
 }
 
@@ -87,6 +98,19 @@ func TestGetExtendedMeetings_Success(t *testing.T) {
 	utils.AssertEqual(len(mock.MeetingsSettings), len(response.Data), t)
 }
 
+func TestGetExtendedMeetings_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.GetExtendedMeetingsRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestGetExtendedMeetings_InternalError(t *testing.T) {
 	mock.DropTables(db)
 
@@ -109,6 +133,19 @@ func TestCreateMeeting_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestCreateMeeting_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.CreateMeetingRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestCreateMeeting_NotExistsAdminId(t *testing.T) {
@@ -169,6 +206,19 @@ func TestDeleteMeeting_Success(t *testing.T) {
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
+func TestDeleteMeeting_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.DeleteMeetingRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestDeleteMeeting_MeetingIdNotFound(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
@@ -217,6 +267,19 @@ func TestUpdateMeetingSettings_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestUpdateMeetingSettings_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.UpdateMeetingSettingsRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestUpdateMeetingSettings_MeetingIdNotFound(t *testing.T) {
@@ -268,6 +331,19 @@ func TestHandleParticipation_Success(t *testing.T) {
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 	utils.AssertTrue(response.Data.HasNearMeeting, t)
+}
+
+func TestHandleParticipation_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.ParticipationRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestHandleParticipation_UserIdNotFound(t *testing.T) {
@@ -333,6 +409,19 @@ func TestInviteUser_Success(t *testing.T) {
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
+func TestInviteUser_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.InviteUserRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestInviteUser_UserAlreadyInMeeting(t *testing.T) {
 	mock.InitTables(db)
 	defer mock.DropTables(db)
@@ -394,6 +483,19 @@ func TestKickUser_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestKickUser_NoSession(t *testing.T) {
+	mock.InitTables(db)
+	defer mock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(meetingsAPIMock.KickUserRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestKickUser_UserNotInMeeting(t *testing.T) {

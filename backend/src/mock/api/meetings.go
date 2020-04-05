@@ -46,7 +46,7 @@ func GetPublicMeetingsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodGet,
 		Endpoint: "meetings",
-		Cookie:   &http.Cookie{},
+		Cookie:   emptyCookie,
 	}
 }
 
@@ -55,7 +55,16 @@ func GetExtendedMeetingsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodGet,
 		Endpoint: "meetings/1",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+	}
+}
+
+func GetExtendedMeetingsRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodGet,
+		Endpoint: "meetings/1",
+		Cookie:   emptyCookie,
 	}
 }
 
@@ -64,7 +73,17 @@ func CreateMeetingRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     getNewMeetingSettings(1),
+	}
+}
+
+func CreateMeetingRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPost,
+		Endpoint: "meeting/",
+		Cookie:   emptyCookie,
 		Data:     getNewMeetingSettings(1),
 	}
 }
@@ -81,7 +100,7 @@ func CreateMeetingInvalidAdminIdRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getNewMeetingSettings(0),
 	}
 }
@@ -91,7 +110,7 @@ func CreateMeetingNotExistsAdminIdRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getNewMeetingSettings(uint(len(repositories.UsersCredentials) + 1)),
 	}
 }
@@ -101,7 +120,7 @@ func CreateMeetingWithInvalidSettingsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     `{"admin_id": 1, "settings": {"latitude": 91, "longitude": -181}}`,
 	}
 }
@@ -111,7 +130,17 @@ func DeleteMeetingRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     `{"meeting_id": 1}`,
+	}
+}
+
+func DeleteMeetingRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodDelete,
+		Endpoint: "meeting/",
+		Cookie:   emptyCookie,
 		Data:     `{"meeting_id": 1}`,
 	}
 }
@@ -121,7 +150,7 @@ func DeleteMeetingIdNotFoundRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     fmt.Sprintf(`{"meeting_id": %d}`, len(repositories.Meetings)+1),
 	}
 }
@@ -131,7 +160,7 @@ func DeleteMeetingByInvalidIdRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     `{"meeting_id": 0}`,
 	}
 }
@@ -141,7 +170,17 @@ func UpdateMeetingSettingsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPatch,
 		Endpoint: "meeting/settings",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     getUpdateMeetingSettingsRequestData(1),
+	}
+}
+
+func UpdateMeetingSettingsRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPatch,
+		Endpoint: "meeting/settings",
+		Cookie:   emptyCookie,
 		Data:     getUpdateMeetingSettingsRequestData(1),
 	}
 }
@@ -155,7 +194,7 @@ func UpdateMeetingSettingsMeetingIdNotFoundRequest(r *mux.Router) utils.RequestD
 		Router:   r,
 		Method:   http.MethodPatch,
 		Endpoint: "meeting/settings",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getUpdateMeetingSettingsRequestData(uint(len(repositories.Meetings) + 1)),
 	}
 }
@@ -165,7 +204,7 @@ func UpdateMeetingSettingsByInvalidMeetingIdRequest(r *mux.Router) utils.Request
 		Router:   r,
 		Method:   http.MethodPatch,
 		Endpoint: "meeting/settings",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getUpdateMeetingSettingsRequestData(0),
 	}
 }
@@ -175,7 +214,17 @@ func ParticipationRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     getMeetingUserRequestData(2, 1),
+	}
+}
+
+func ParticipationRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPost,
+		Endpoint: "meeting/request-participation",
+		Cookie:   emptyCookie,
 		Data:     getMeetingUserRequestData(2, 1),
 	}
 }
@@ -185,7 +234,7 @@ func UserIdNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserRequestData(2, uint(len(repositories.UsersCredentials)+1)),
 	}
 }
@@ -195,7 +244,7 @@ func MeetingIdNotFoundParticipationRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingIdNotFoundUserRequestData(),
 	}
 }
@@ -205,7 +254,7 @@ func InvalidIdsParticipationRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/request-participation",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }
@@ -215,7 +264,17 @@ func InviteUserRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     getMeetingUserRequestData(1, 2),
+	}
+}
+
+func InviteUserRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPost,
+		Endpoint: "meeting/user",
+		Cookie:   emptyCookie,
 		Data:     getMeetingUserRequestData(1, 2),
 	}
 }
@@ -225,7 +284,7 @@ func InviteAlreadyInMeetingUserRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserRequestData(1, 1),
 	}
 }
@@ -235,7 +294,7 @@ func InviteUserMeetingIdNotFoundRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingIdNotFoundUserRequestData(),
 	}
 }
@@ -245,7 +304,7 @@ func InviteUserMeetingInvalidIdsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }
@@ -255,7 +314,17 @@ func KickUserRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+		Data:     getMeetingUserRequestData(1, 1),
+	}
+}
+
+func KickUserRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodDelete,
+		Endpoint: "meeting/user",
+		Cookie:   emptyCookie,
 		Data:     getMeetingUserRequestData(1, 1),
 	}
 }
@@ -265,7 +334,7 @@ func KickNotInMeetingUserRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserRequestData(1, 2),
 	}
 }
@@ -275,7 +344,7 @@ func KickUserInvalidIdsRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodDelete,
 		Endpoint: "meeting/user",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 		Data:     getMeetingUserInvalidIdsRequestData(),
 	}
 }

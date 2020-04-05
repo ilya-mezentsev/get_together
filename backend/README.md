@@ -355,6 +355,9 @@
   "status": "ok",
   "data": {
     "id": 1, // chat id
+    "type": "meeting",
+    "status": "chatting",
+    "created_at": "21-01-2020 10:00:00"
   }
 }
 ```
@@ -370,7 +373,18 @@
 {
   "status": "ok",
   "data": [
-    {"id": 1}, {"id": 2}
+    {
+      "id": 1,
+      "type": "meeting",
+      "status": "chatting",
+      "created_at": "21-01-2020 10:00:00"
+    },
+    {
+      "id": 2,
+      "type": "meeting_request",
+      "status": "chatting",
+      "created_at": "21-01-2020 10:00:00"
+    },
   ]
 }
 ```

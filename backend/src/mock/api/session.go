@@ -60,7 +60,7 @@ func SuccessRegistrationRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPost,
 		Endpoint: "session/register",
 		Data:     `{"email": "mather.fucker@gmail.com", "password": "mYStRoNg*PwD12"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -81,7 +81,7 @@ func InvalidEmailRegistrationRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPost,
 		Endpoint: "session/register",
 		Data:     `{"email": "hello@world", "password": "mYStRoNg*PwD12"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -124,7 +124,7 @@ func InvalidEmailLoginRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPost,
 		Endpoint: "session/login",
 		Data:     `{"email": "invalid@mail", "password": "not_exists"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -145,7 +145,17 @@ func SuccessChangePasswordRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPatch,
 		Endpoint: "session/user/password",
 		Data:     `{"user_id": 1, "password": "new_password"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+	}
+}
+
+func SuccessChangePasswordRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPatch,
+		Endpoint: "session/user/password",
+		Data:     `{"user_id": 1, "password": "new_password"}`,
+		Cookie:   emptyCookie,
 	}
 }
 
@@ -155,7 +165,7 @@ func UserIdNotFoundChangePasswordRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPatch,
 		Endpoint: "session/user/password",
 		Data:     fmt.Sprintf(`{"user_id": %d, "password": "new_password"}`, repositories.GetNextUserId()),
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -165,7 +175,7 @@ func InvalidUserIdChangePasswordRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPatch,
 		Endpoint: "session/user/password",
 		Data:     `{"user_id": 0, "password": "new_password"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -175,7 +185,7 @@ func InvalidPasswordChangePasswordRequest(r *mux.Router) utils.RequestData {
 		Method:   http.MethodPatch,
 		Endpoint: "session/user/password",
 		Data:     `{"user_id": 1, "password": "bad"}`,
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
 	}
 }
 
@@ -184,6 +194,15 @@ func SuccessLogoutRequest(r *mux.Router) utils.RequestData {
 		Router:   r,
 		Method:   http.MethodPost,
 		Endpoint: "session/logout",
-		Cookie:   &http.Cookie{},
+		Cookie:   cookie,
+	}
+}
+
+func SuccessLogoutRequestWithoutSession(r *mux.Router) utils.RequestData {
+	return utils.RequestData{
+		Router:   r,
+		Method:   http.MethodPost,
+		Endpoint: "session/logout",
+		Cookie:   emptyCookie,
 	}
 }

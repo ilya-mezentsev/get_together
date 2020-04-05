@@ -18,13 +18,13 @@ func New(key string) Service {
 	return Service{code.NewCoder(key)}
 }
 
-func (c Service) GetSession(r *http.Request) (map[string]interface{}, error) {
+func (s Service) GetSession(r *http.Request) (map[string]interface{}, error) {
 	cookie, err := r.Cookie(cookieSessionKey)
 	if err != nil {
 		return nil, errors.NoAuthCookie
 	}
 
-	decoded, err := c.coder.Decrypt(cookie.Value)
+	decoded, err := s.coder.Decrypt(cookie.Value)
 	if err != nil {
 		return nil, errors.InvalidAuthCookie
 	}
@@ -32,8 +32,8 @@ func (c Service) GetSession(r *http.Request) (map[string]interface{}, error) {
 	return decoded, nil
 }
 
-func (c Service) SetSession(r *http.Request, session models.UserSession) error {
-	token, err := c.coder.Encrypt(map[string]interface{}{
+func (s Service) SetSession(r *http.Request, session models.UserSession) error {
+	token, err := s.coder.Encrypt(map[string]interface{}{
 		"id": session.Id,
 	})
 	if err != nil {
@@ -50,7 +50,7 @@ func (c Service) SetSession(r *http.Request, session models.UserSession) error {
 	return nil
 }
 
-func (c Service) InvalidateSession(r *http.Request) {
+func (s Service) InvalidateSession(r *http.Request) {
 	r.AddCookie(&http.Cookie{
 		Name:     cookieSessionKey,
 		Value:    "",

@@ -15,8 +15,8 @@ func New(repository interfaces.UsersSettings) Service {
 	return Service{repository}
 }
 
-func (u Service) GetUserSettings(userId uint) (models.FullUserInfo, error) {
-	info, err := u.repository.GetUserSettings(userId)
+func (s Service) GetUserSettings(userId uint) (models.FullUserInfo, error) {
+	info, err := s.repository.GetUserSettings(userId)
 
 	switch err {
 	case nil:
@@ -28,8 +28,8 @@ func (u Service) GetUserSettings(userId uint) (models.FullUserInfo, error) {
 	}
 }
 
-func (u Service) UpdateUserSettings(userId uint, info models.UserSettings) error {
-	switch err := u.repository.UpdateUserSettings(userId, info); err {
+func (s Service) UpdateUserSettings(userId uint, info models.UserSettings) error {
+	switch err := s.repository.UpdateUserSettings(userId, info); err {
 	case nil:
 		return nil
 	case internal_errors.UnableToFindUserById:

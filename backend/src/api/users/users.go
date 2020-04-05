@@ -13,10 +13,15 @@ type Handler struct {
 	usersService interfaces.UsersSettings
 }
 
-func InitRequestHandlers(usersService interfaces.UsersSettings) {
+func InitRequestHandlers(
+	usersService interfaces.UsersSettings,
+	middlewares ...mux.MiddlewareFunc,
+) {
 	handler := Handler{usersService}
-
 	usersAPI := api.GetRouter().PathPrefix("/user").Subrouter()
+	for _, middleware := range middlewares {
+		usersAPI.Use(middleware)
+	}
 
 	usersAPI.HandleFunc("/settings/{id:[0-9]+}", handler.getUserSettings).Methods(http.MethodGet)
 	usersAPI.HandleFunc("/settings", handler.updateUserSettings).Methods(http.MethodPatch)

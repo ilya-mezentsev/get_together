@@ -2,6 +2,7 @@ package session
 
 import (
 	"api"
+	"github.com/gorilla/mux"
 	"interfaces"
 	"models"
 	"net/http"
@@ -12,16 +13,23 @@ type Handler struct {
 	sessionService interfaces.SessionService
 }
 
-func InitRequestHandlers(authService interfaces.AuthenticationService, sessionService interfaces.SessionService) {
+func InitRequestHandlers(
+	authService interfaces.AuthenticationService,
+	sessionService interfaces.SessionService,
+	middlewares ...mux.MiddlewareFunc,
+) {
 	handler := Handler{authService, sessionService}
+	publicSessionAPI := api.GetRouter().PathPrefix("/session").Subrouter()
+	privateSessionAPI := api.GetRouter().PathPrefix("/session").Subrouter()
+	for _, middleware := range middlewares {
+		privateSessionAPI.Use(middleware)
+	}
 
-	sessionAPI := api.GetRouter().PathPrefix("/session").Subrouter()
-
-	sessionAPI.HandleFunc("/", handler.getSession).Methods(http.MethodGet)
-	sessionAPI.HandleFunc("/register", handler.registerUser).Methods(http.MethodPost)
-	sessionAPI.HandleFunc("/login", handler.loginUser).Methods(http.MethodPost)
-	sessionAPI.HandleFunc("/user/password", handler.changeUserPassword).Methods(http.MethodPatch)
-	sessionAPI.HandleFunc("/logout", handler.logoutUser).Methods(http.MethodPost)
+	publicSessionAPI.HandleFunc("/", handler.getSession).Methods(http.MethodGet)
+	publicSessionAPI.HandleFunc("/register", handler.registerUser).Methods(http.MethodPost)
+	publicSessionAPI.HandleFunc("/login", handler.loginUser).Methods(http.MethodPost)
+	privateSessionAPI.HandleFunc("/user/password", handler.changeUserPassword).Methods(http.MethodPatch)
+	privateSessionAPI.HandleFunc("/logout", handler.logoutUser).Methods(http.MethodPost)
 }
 
 func (h Handler) getSession(w http.ResponseWriter, r *http.Request) {
