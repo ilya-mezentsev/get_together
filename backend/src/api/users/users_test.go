@@ -2,13 +2,15 @@ package users
 
 import (
 	"api"
+	"api/middlewares"
 	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"interfaces"
 	"io/ioutil"
 	"log"
 	usersAPIMock "mock/api"
-	mock "mock/repositories"
+	repositoriesMock "mock/repositories"
 	"models"
 	"os"
 	"plugins/config"
@@ -22,8 +24,9 @@ import (
 )
 
 var (
-	db     *sqlx.DB
-	router = api.GetRouter()
+	db             *sqlx.DB
+	sessionService interfaces.SessionAccessorService
+	router         = api.GetRouter()
 )
 
 func init() {
@@ -36,18 +39,28 @@ func init() {
 		os.Exit(1)
 	}
 
-	InitRequestHandlers(services.UserSettings(repositories.UserSettings(db)))
+	coderKey, err := config.GetCoderKey()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	sessionService = services.Session(coderKey)
+	InitRequestHandlers(
+		services.UserSettings(repositories.UserSettings(db)),
+		middlewares.AuthSession{Service: sessionService}.HasValidSession,
+	)
 }
 
 func TestMain(m *testing.M) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 	log.SetOutput(ioutil.Discard)
 	os.Exit(m.Run())
 }
 
 func TestUserSettingsGet_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response usersAPIMock.UserSettingsResponse
 	err := json.NewDecoder(
@@ -55,14 +68,27 @@ func TestUserSettingsGet_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
-	utils.AssertEqual(mock.UsersInfo[0]["name"], response.Data.Name, t)
-	utils.AssertEqual(mock.UsersInfo[0]["nickname"], response.Data.Nickname, t)
-	utils.AssertEqual(mock.UsersInfo[0]["gender"], response.Data.Gender, t)
+	utils.AssertEqual(repositoriesMock.UsersInfo[0]["name"], response.Data.Name, t)
+	utils.AssertEqual(repositoriesMock.UsersInfo[0]["nickname"], response.Data.Nickname, t)
+	utils.AssertEqual(repositoriesMock.UsersInfo[0]["gender"], response.Data.Gender, t)
+}
+
+func TestUserSettingsGet_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(usersAPIMock.FirstUserSettingsRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestUserSettingsGet_UserIdNotFoundError(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -84,7 +110,7 @@ func TestUserSettingsGet_InvalidIdError(t *testing.T) {
 }
 
 func TestUserSettingsGet_InternalError(t *testing.T) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -96,8 +122,8 @@ func TestUserSettingsGet_InternalError(t *testing.T) {
 }
 
 func TestUserSettingsPatch_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.DefaultResponse
 	err := json.NewDecoder(
@@ -107,9 +133,22 @@ func TestUserSettingsPatch_Success(t *testing.T) {
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
+func TestUserSettingsPatch_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(usersAPIMock.PatchFirstUserSettingsRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestUserSettingsPatch_UserIdNotFoundError(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -146,7 +185,7 @@ func TestUserSettingsPatch_InvalidAllSettingsUserIdError(t *testing.T) {
 }
 
 func TestUserSettingsPatch_InternalError(t *testing.T) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(

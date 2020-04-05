@@ -4,9 +4,11 @@ import (
 	"api"
 	"api/chats"
 	"api/meetings"
+	"api/middlewares"
 	"api/session"
 	"api/users"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
@@ -32,29 +34,40 @@ func init() {
 
 	meetingsRepository := repositories.Meetings(db)
 	chatsRepository := repositories.Chat(db)
+	sessionService := services.Session(coderKey)
+	middlewareFuncs := []mux.MiddlewareFunc{
+		middlewares.AuthSession{Service: sessionService}.HasValidSession,
+	}
 
 	chats.InitRequestHandlers(
 		services.Chat(chatsRepository),
 		services.ChatAccessor(chatsRepository),
+		middlewareFuncs...,
 	)
 	meetings.InitRequestHandlers(
 		services.Meetings(meetingsRepository),
 		services.Participation(repositories.UserSettings(db), repositories.MeetingsSettings(db)),
 		services.MeetingsAccessor(meetingsRepository),
+		middlewareFuncs...,
 	)
 	session.InitRequestHandlers(
 		services.Authentication(repositories.Credentials(db)),
-		services.Session(coderKey),
+		sessionService,
+		middlewareFuncs...,
 	)
-	users.InitRequestHandlers(services.UserSettings(repositories.UserSettings(db)))
+	users.InitRequestHandlers(
+		services.UserSettings(repositories.UserSettings(db)),
+		middlewareFuncs...,
+	)
 }
 
 func main() {
-	logger.Info("Starting application")
+	addr := fmt.Sprintf("0.0.0.0:%s", config.GetAPIPort())
+	logger.Info("Starting application on address " + addr)
 
 	log.Fatal((&http.Server{
 		Handler:      api.GetRouter(),
-		Addr:         fmt.Sprintf("0.0.0.0:%s", config.GetAPIPort()),
+		Addr:         addr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}).ListenAndServe())

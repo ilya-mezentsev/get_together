@@ -18,6 +18,7 @@ services:
       args:
         API_SRC: ${CONTAINER_API_SRC}
     environment:
+      API_PORT: ${API_PORT}
       GOPATH: ${CONTAINER_API_SRC}
       CODER_KEY: ${CODER_KEY}
       CONN_STR: "host=db port=5432 user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable"
@@ -45,5 +46,8 @@ services:
       - 80:80
     volumes:
       - ${STATIC_DIR}:/var/www/html
+    links:
+      - api
     depends_on:
       - frontend
+      - api

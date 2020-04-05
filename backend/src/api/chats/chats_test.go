@@ -2,9 +2,11 @@ package chats
 
 import (
 	"api"
+	"api/middlewares"
 	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"interfaces"
 	"io/ioutil"
 	"log"
 	chatAPIMock "mock/api"
@@ -21,8 +23,9 @@ import (
 )
 
 var (
-	db     *sqlx.DB
-	router = api.GetRouter()
+	db             *sqlx.DB
+	sessionService interfaces.SessionAccessorService
+	router         = api.GetRouter()
 )
 
 func init() {
@@ -35,10 +38,18 @@ func init() {
 		os.Exit(1)
 	}
 
+	coderKey, err := config.GetCoderKey()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	sessionService = services.Session(coderKey)
 	chatRepository := repositories.Chat(db)
 	InitRequestHandlers(
 		services.Chat(chatRepository),
 		services.ChatAccessor(chatRepository),
+		middlewares.AuthSession{Service: sessionService}.HasValidSession,
 	)
 }
 
@@ -59,6 +70,19 @@ func TestGetMeetingChat_Success(t *testing.T) {
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 	utils.AssertEqual(repositoriesMock.MeetingType, response.Data.Type, t)
+}
+
+func TestGetMeetingChat_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.GetMeetingChatRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestGetMeetingChat_ChatNotFound(t *testing.T) {
@@ -109,6 +133,19 @@ func TestGetUserChats_Success(t *testing.T) {
 	utils.AssertNotNil(response.Data, t)
 }
 
+func TestGetUserChats_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.GetUserChatsWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestGetUserChats_InvalidId(t *testing.T) {
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -141,6 +178,19 @@ func TestCreateMeetingChat_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestCreateMeetingChat_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.CreateMeetingChatRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestCreateMeetingChat_InvalidId(t *testing.T) {
@@ -177,6 +227,19 @@ func TestCreateMeetingRequestChat_Success(t *testing.T) {
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
+func TestCreateMeetingRequestChat_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.CreateMeetingRequestChatRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestCreateMeetingRequestChat_InvalidId(t *testing.T) {
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -209,6 +272,19 @@ func TestCloseMeetingChat_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestCloseMeetingChat_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.CloseMeetingChatRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestCloseMeetingChat_IdNotFound(t *testing.T) {
@@ -256,6 +332,19 @@ func TestCloseMeetingRequestChat_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestCloseMeetingRequestChat_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(chatAPIMock.CloseMeetingRequestChatRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
 
 func TestCloseMeetingRequestChat_IdNotFound(t *testing.T) {

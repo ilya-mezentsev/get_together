@@ -17,9 +17,13 @@ type Handler struct {
 func InitRequestHandlers(
 	chat interfaces.Chat,
 	chatAccessor interfaces.ChatAccessor,
+	middlewares ...mux.MiddlewareFunc,
 ) {
 	handler := Handler{chat, chatAccessor}
 	chatsAPI := api.GetRouter().PathPrefix("/chat").Subrouter()
+	for _, middleware := range middlewares {
+		chatsAPI.Use(middleware)
+	}
 
 	chatsAPI.HandleFunc("/meeting/{id:[0-9]+}", handler.getMeetingChat).Methods(http.MethodGet)
 	chatsAPI.HandleFunc("/user/{id:[0-9]+}", handler.getUserChats).Methods(http.MethodGet)

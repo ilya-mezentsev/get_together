@@ -19,23 +19,28 @@ func InitRequestHandlers(
 	meetingsService interfaces.Meetings,
 	participationService interfaces.ParticipationService,
 	meetingsAccessorService interfaces.MeetingsAccessorService,
+	middlewares ...mux.MiddlewareFunc,
 ) {
 	handler := Handler{
 		meetingsService,
 		participationService,
 		meetingsAccessorService,
 	}
-
-	meetingsAPI := api.GetRouter().PathPrefix("/meeting").Subrouter()
+	meetingAPI := api.GetRouter().PathPrefix("/meeting").Subrouter()
+	meetingsAPI := api.GetRouter().PathPrefix("/meetings").Subrouter()
+	for _, middleware := range middlewares {
+		meetingAPI.Use(middleware)
+		meetingsAPI.Use(middleware)
+	}
 
 	api.GetRouter().HandleFunc("/meetings", handler.getPublicMeetings).Methods(http.MethodGet)
-	api.GetRouter().HandleFunc("/meetings/{id:[0-9]+}", handler.getExtendedMeetings).Methods(http.MethodGet)
-	meetingsAPI.HandleFunc("/", handler.createMeeting).Methods(http.MethodPost)
-	meetingsAPI.HandleFunc("/", handler.deleteMeeting).Methods(http.MethodDelete)
-	meetingsAPI.HandleFunc("/settings", handler.updateMeetingSettings).Methods(http.MethodPatch)
-	meetingsAPI.HandleFunc("/request-participation", handler.handleParticipationRequest).Methods(http.MethodPost)
-	meetingsAPI.HandleFunc("/user", handler.inviteUser).Methods(http.MethodPost)
-	meetingsAPI.HandleFunc("/user", handler.kickUser).Methods(http.MethodDelete)
+	meetingsAPI.HandleFunc("/{id:[0-9]+}", handler.getExtendedMeetings).Methods(http.MethodGet)
+	meetingAPI.HandleFunc("/", handler.createMeeting).Methods(http.MethodPost)
+	meetingAPI.HandleFunc("/", handler.deleteMeeting).Methods(http.MethodDelete)
+	meetingAPI.HandleFunc("/settings", handler.updateMeetingSettings).Methods(http.MethodPatch)
+	meetingAPI.HandleFunc("/request-participation", handler.handleParticipationRequest).Methods(http.MethodPost)
+	meetingAPI.HandleFunc("/user", handler.inviteUser).Methods(http.MethodPost)
+	meetingAPI.HandleFunc("/user", handler.kickUser).Methods(http.MethodDelete)
 }
 
 func (h Handler) getPublicMeetings(w http.ResponseWriter, r *http.Request) {

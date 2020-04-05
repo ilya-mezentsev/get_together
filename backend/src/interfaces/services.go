@@ -12,8 +12,12 @@ type (
 		ChangePassword(userId uint, password string) error
 	}
 
-	SessionService interface {
+	SessionAccessorService interface {
 		GetSession(r *http.Request) (map[string]interface{}, error)
+	}
+
+	SessionService interface {
+		SessionAccessorService
 		SetSession(r *http.Request, session models.UserSession) error
 		InvalidateSession(r *http.Request)
 	}

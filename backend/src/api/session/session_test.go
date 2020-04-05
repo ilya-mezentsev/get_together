@@ -2,13 +2,14 @@ package session
 
 import (
 	"api"
+	"api/middlewares"
 	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"io/ioutil"
 	"log"
 	sessionAPIMock "mock/api"
-	mock "mock/repositories"
+	repositoriesMock "mock/repositories"
 	"models"
 	"os"
 	"plugins/config"
@@ -40,12 +41,16 @@ func init() {
 		os.Exit(1)
 	}
 
+	sessionService := services.Session(coderKey)
 	InitRequestHandlers(
-		services.Authentication(repositories.Credentials(db)), services.Session(coderKey))
+		services.Authentication(repositories.Credentials(db)),
+		sessionService,
+		middlewares.AuthSession{Service: sessionService}.HasValidSession,
+	)
 }
 
 func TestMain(m *testing.M) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 	log.SetOutput(ioutil.Discard)
 	os.Exit(m.Run())
 }
@@ -81,8 +86,8 @@ func TestSessionGet_InvalidSessionError(t *testing.T) {
 }
 
 func TestSessionRegister_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.DefaultResponse
 	err := json.NewDecoder(
@@ -93,8 +98,8 @@ func TestSessionRegister_Success(t *testing.T) {
 }
 
 func TestSessionRegister_EmailExistsError(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -126,7 +131,7 @@ func TestSessionRegister_InvalidPasswordError(t *testing.T) {
 }
 
 func TestSessionRegister_InternalError(t *testing.T) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -138,8 +143,8 @@ func TestSessionRegister_InternalError(t *testing.T) {
 }
 
 func TestSessionLogin_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.DefaultResponse
 	err := json.NewDecoder(
@@ -150,8 +155,8 @@ func TestSessionLogin_Success(t *testing.T) {
 }
 
 func TestSessionLogin_CredentialsNotFoundError(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -183,7 +188,7 @@ func TestSessionLogin_InvalidPasswordError(t *testing.T) {
 }
 
 func TestSessionLogin_InternalError(t *testing.T) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -195,8 +200,8 @@ func TestSessionLogin_InternalError(t *testing.T) {
 }
 
 func TestSessionChangePassword_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.DefaultResponse
 	err := json.NewDecoder(
@@ -206,9 +211,22 @@ func TestSessionChangePassword_Success(t *testing.T) {
 	utils.AssertEqual(api.StatusOk, response.Status, t)
 }
 
+func TestSessionChangePassword_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(sessionAPIMock.SuccessChangePasswordRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
+}
+
 func TestSessionChangePassword_UserIdNotFoundError(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -240,7 +258,7 @@ func TestSessionChangePassword_InvalidPasswordError(t *testing.T) {
 }
 
 func TestSessionChangePassword_InternalError(t *testing.T) {
-	mock.DropTables(db)
+	repositoriesMock.DropTables(db)
 
 	var response models.ErrorResponse
 	err := json.NewDecoder(
@@ -252,8 +270,8 @@ func TestSessionChangePassword_InternalError(t *testing.T) {
 }
 
 func TestSessionLogout_Success(t *testing.T) {
-	mock.InitTables(db)
-	defer mock.DropTables(db)
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
 
 	var response models.DefaultResponse
 	err := json.NewDecoder(
@@ -261,4 +279,17 @@ func TestSessionLogout_Success(t *testing.T) {
 
 	utils.AssertNil(err, t)
 	utils.AssertEqual(api.StatusOk, response.Status, t)
+}
+
+func TestSessionLogout_NoSession(t *testing.T) {
+	repositoriesMock.InitTables(db)
+	defer repositoriesMock.DropTables(db)
+
+	var response models.ErrorResponse
+	err := json.NewDecoder(
+		utils.MakeRequest(sessionAPIMock.SuccessLogoutRequestWithoutSession(router))).Decode(&response)
+
+	utils.AssertNil(err, t)
+	utils.AssertEqual(api.StatusError, response.Status, t)
+	utils.AssertEqual(middlewares.NoSession.Error(), response.ErrorDetail, t)
 }
