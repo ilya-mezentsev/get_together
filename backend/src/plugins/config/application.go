@@ -15,6 +15,34 @@ const (
 	connMaxLifetime = time.Hour
 )
 
+type AllConfigs struct {
+	DB             *sqlx.DB
+	CoderKey       string
+	CsrfPrivateKey string
+	Port           string
+}
+
+func GetAll() (configs AllConfigs, err error) {
+	configs.DB, err = GetConfiguredConnection()
+	if err != nil {
+		return AllConfigs{}, err
+	}
+
+	configs.CoderKey, err = GetCoderKey()
+	if err != nil {
+		return AllConfigs{}, err
+	}
+
+	configs.CsrfPrivateKey, err = GetCSRFPrivateKey()
+	if err != nil {
+		return AllConfigs{}, err
+	}
+
+	configs.Port = GetAPIPort()
+
+	return configs, nil
+}
+
 func GetConfiguredConnection() (*sqlx.DB, error) {
 	connStr := os.Getenv("CONN_STR")
 	if connStr == "" {
@@ -41,6 +69,15 @@ func GetCoderKey() (string, error) {
 	}
 
 	return coderKey, nil
+}
+
+func GetCSRFPrivateKey() (string, error) {
+	csrfPrivateKey := os.Getenv("CSRF_PRIVATE_KEY")
+	if csrfPrivateKey == "" {
+		return "", noCSRFPrivateKey
+	}
+
+	return csrfPrivateKey, nil
 }
 
 func GetAPIPort() string {

@@ -21,6 +21,7 @@ services:
       API_PORT: ${API_PORT}
       GOPATH: ${CONTAINER_API_SRC}
       CODER_KEY: ${CODER_KEY}
+      CSRF_PRIVATE_KEY: ${CSRF_PRIVATE_KEY}
       CONN_STR: "host=db port=5432 user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable"
     command: /bin/sh -c "$RUN_GO_COMMAND"
     ports:
@@ -36,6 +37,8 @@ services:
     ports:
       - 8081:4200
       - 49153:49153
+    volumes:
+      - ${FRONTEND_DIR}:${CONTAINER_FRONTEND_SRC}
     command: /bin/sh -c "$RUN_FRONTEND_COMMAND"
 
   nginx:
