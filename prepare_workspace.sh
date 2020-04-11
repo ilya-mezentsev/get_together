@@ -40,6 +40,7 @@ declare -A env=(
   ['STATIC_DIR']="${rootFolder}/frontend/dist/get-together"
   ['CONN_STR']="\"host=localhost port=5432 user=gt_admin password=root dbname=gt_db sslmode=disable\""
   ['CODER_KEY']="123456789012345678901234"
+  ['CSRF_PRIVATE_KEY']="128827115121288271151281"
   ['SHORT_MODE']="1"
   ['COMPOSE_PROJECT_NAME']='gt'
   ['API_PORT']="8080"
