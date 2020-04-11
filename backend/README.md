@@ -9,8 +9,17 @@
   "error_detail": "some error description"
 }
 ```
+
 #### General errors (can be returned on each request):
 * internal-error
+
+#### CSRF-token check errors (can be returned on POST, PATH or DELETE method):
+* no-csrf-cookie
+* invalid-csrf-cookie
+* no-csrf-header
+* invalid-csrf-header
+* invalid-csrf-token
+* csrf-internal-error
 
 ### API default success response:
 ```json5
