@@ -1,16 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-
-import { CsrfService } from './csrf.service';
+import { CsrfService } from './csrf';
 import {Md5} from 'ts-md5';
-import {environment} from '../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 import {InvalidCSRFHeader, NoPublicKey} from './types';
 
 describe('CsrfService', () => {
   let service: CsrfService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(CsrfService);
+    service = new CsrfService();
   });
 
   it('should be created', () => {

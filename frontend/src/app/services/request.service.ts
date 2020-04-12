@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import {CsrfService} from '../../services/csrf/csrf.service';
+import {CsrfService} from './classes/csrf/csrf';
 import {HttpClient, HttpRequest, HttpResponse} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequestService {
+  private readonly csrf: CsrfService = new CsrfService();
+
   constructor(
-    private readonly csrf: CsrfService,
     private readonly http: HttpClient
   ) { }
 
