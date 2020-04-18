@@ -154,7 +154,7 @@ func (s Service) parseUserAndMeetingSettings(
 		})
 	}
 
-	if userSettings.Gender != meetingSettings.Gender {
+	if meetingSettings.Gender != "" && userSettings.Gender != meetingSettings.Gender {
 		inappropriateInfoFields = append(inappropriateInfoFields, models.InappropriateInfoField{
 			ErrorCode:   wrongGender,
 			Description: fmt.Sprintf("actual: %s, wanted: %s", userSettings.Gender, meetingSettings.Gender),

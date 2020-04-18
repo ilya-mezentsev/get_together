@@ -172,7 +172,7 @@ var (
 			"duration":                     4,
 			"max_users":                    6,
 			"min_age":                      12,
-			"gender":                       "male",
+			"gender":                       "",
 			"request_description_required": true,
 		},
 	}

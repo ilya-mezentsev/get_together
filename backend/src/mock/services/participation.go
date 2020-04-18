@@ -149,6 +149,13 @@ func WrongGenderRequest() (models.ParticipationRequest, models.InappropriateInfo
 	}, wantedFemaleGender()
 }
 
+func MeetingWithoutGenderRequest() (models.ParticipationRequest, models.InappropriateInfoField) {
+	return models.ParticipationRequest{
+		UserId:    1,
+		MeetingId: 3,
+	}, wantedFemaleGender()
+}
+
 func wantedFemaleGender() models.InappropriateInfoField {
 	return models.InappropriateInfoField{
 		ErrorCode:   "wrong-gender",

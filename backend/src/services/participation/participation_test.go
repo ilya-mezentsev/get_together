@@ -44,6 +44,14 @@ func TestService_HandleParticipationRequestWrongGender(t *testing.T) {
 	utils.AssertTrue(mock.HasField(info.InappropriateInfoFields, inappropriateGenderField), t)
 }
 
+func TestService_HandleParticipationRequestMeetingWithoutGender(t *testing.T) {
+	request, inappropriateGenderField := mock.MeetingWithoutGenderRequest()
+	info, err := service.HandleParticipationRequest(request)
+
+	utils.AssertNil(err, t)
+	utils.AssertFalse(mock.HasField(info.InappropriateInfoFields, inappropriateGenderField), t)
+}
+
 func TestService_HandleParticipationRequestMaxUsersCountReached(t *testing.T) {
 	request, maxUsersCountReachedField := mock.MaxUsersCountReachedRequest()
 	info, err := service.HandleParticipationRequest(request)
