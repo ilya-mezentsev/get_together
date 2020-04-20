@@ -9,6 +9,7 @@ import (
 const (
 	DropTablesQuery = `
   DROP TABLE IF EXISTS users CASCADE;
+	DROP TABLE IF EXISTS users_credentials;
   DROP TABLE IF EXISTS users_info;
   DROP TABLE IF EXISTS users_rating;
   DROP TABLE IF EXISTS meetings CASCADE;
@@ -28,6 +29,12 @@ const (
 
 	CREATE TABLE IF NOT EXISTS users(
 		id SERIAL PRIMARY KEY,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+
+	CREATE TABLE IF NOT EXISTS users_credentials(
+		id SERIAL PRIMARY KEY,
+		user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 		email VARCHAR(255) UNIQUE NOT NULL,
 		password VARCHAR(32) NOT NULL
 	);
@@ -41,7 +48,7 @@ const (
 		age INTEGER DEFAULT 0,
 		avatar_url VARCHAR DEFAULT ''
 	);
-	
+
 	CREATE TABLE IF NOT EXISTS users_rating(
 		id SERIAL PRIMARY KEY,
 		user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -49,7 +56,7 @@ const (
 		tag VARCHAR(100) NOT NULL,
 		UNIQUE (user_id, tag)
 	);
-	
+
 	CREATE TABLE IF NOT EXISTS meetings(
 		id SERIAL PRIMARY KEY,
 		admin_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -58,7 +65,7 @@ const (
 		archived_at TIMESTAMP DEFAULT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
-	
+
 	CREATE TABLE IF NOT EXISTS meetings_settings(
 		id SERIAL PRIMARY KEY,
 		meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
@@ -97,7 +104,10 @@ const (
 		text TEXT NOT NULL,
 		sending_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);`
-	CreateUserQuery     = `INSERT INTO users(email, password) VALUES(:email, :password);`
+	CreateUserQuery            = `INSERT INTO users DEFAULT VALUES;`
+	CreateUserCredentialsQuery = `
+	INSERT INTO users_credentials(user_id, email, password)
+	VALUES(:user_id, :email, :password)`
 	CreateUserInfoQuery = `
   INSERT INTO users_info(user_id, name, nickname, age, gender)
   VALUES(:user_id, :name, :nickname, :age, :gender);`
@@ -115,10 +125,13 @@ const (
 )
 
 var (
-	TestingPassword  = "mYStRoNg*PwD12"
+	TestingPassword = "mYStRoNg*PwD12"
+	Users           = []map[string]interface{}{
+		{}, {}, {}, {}, // using default values in query, so no need data here
+	}
 	UsersCredentials = []map[string]interface{}{
-		{"email": "mail@ya.ru"}, {"email": "me@gmail.com"},
-		{"email": "hello.world@mail.ru"}, {"email": "world@hello.ru"},
+		{"user_id": 1, "email": "mail@ya.ru"}, {"user_id": 2, "email": "me@gmail.com"},
+		{"user_id": 3, "email": "hello.world@mail.ru"}, {"user_id": 4, "email": "world@hello.ru"},
 	}
 	UsersInfo = []map[string]interface{}{
 		{"user_id": 1, "name": "J. Smith", "nickname": "mather_fucker", "age": 12, "gender": "male"},
@@ -195,6 +208,7 @@ var (
 		{"chat_id": 5, "sender_id": 3, "text": "hello world 9"},
 	}
 	QueryToSubData = map[string][]map[string]interface{}{
+		CreateUserCredentialsQuery: UsersCredentials,
 		CreateUserInfoQuery:        UsersInfo,
 		CreateUserRatingQuery:      UsersRating,
 		CreateMeetingSettingsQuery: MeetingsSettings,
@@ -236,7 +250,7 @@ func insertData(db *sqlx.DB) {
 		})
 	}
 
-	addDataFromSource(tx, CreateUserQuery, UsersCredentials)
+	addDataFromSource(tx, CreateUserQuery, Users)
 	addDataFromSource(tx, CreateMeetingQuery, meetings)
 	addDataFromSource(tx, CreateChatQuery, MeetingChats)
 	if err := tx.Commit(); err != nil {

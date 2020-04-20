@@ -1,20 +1,26 @@
 package credentials
 
 import (
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"internal_errors"
 	"models"
 )
 
 const (
-	AddUserQuery             = `INSERT INTO users(email, password) VALUES(:email, :password)`
-	UserIdByCredentialsQuery = `SELECT id FROM users WHERE email = :email AND password = :password`
-	UserEmailByIdQuery       = `SELECT email FROM users WHERE id = $1`
-	UpdateUserPasswordQuery  = `UPDATE users SET password = :password WHERE email = :email`
-)
-
-var (
-	emailExistsError = `pq: duplicate key value violates unique constraint "users_email_key"`
+	AddUserQuery = `
+	INSERT INTO users(created_at)
+	SELECT CURRENT_TIMESTAMP
+	WHERE NOT EXISTS(
+		SELECT 1 FROM users_credentials WHERE email = $1
+	) RETURNING id`
+	AddUserCredentialsQuery = `
+	INSERT INTO users_credentials(user_id, email, password)
+	VALUES(:user_id, :email, :password)`
+	UserIdByCredentialsQuery = `
+		SELECT user_id FROM users_credentials WHERE email = :email AND password = :password`
+	UserEmailByIdQuery      = `SELECT email FROM users_credentials WHERE user_id = $1`
+	UpdateUserPasswordQuery = `UPDATE users_credentials SET password = :password WHERE email = :email`
 )
 
 type Repository struct {
@@ -26,12 +32,21 @@ func New(db *sqlx.DB) Repository {
 }
 
 func (r Repository) CreateUser(user models.UserCredentials) error {
-	_, err := r.db.NamedExec(AddUserQuery, user)
+	var insertedUserId uint
+	err := r.db.Get(&insertedUserId, AddUserQuery, user.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = internal_errors.UnableToRegisterUserEmailExists
+		}
 
-	if err != nil && err.Error() == emailExistsError {
-		err = internal_errors.UnableToRegisterUserEmailExists
+		return err
 	}
 
+	_, err = r.db.NamedExec(AddUserCredentialsQuery, map[string]interface{}{
+		"user_id":  insertedUserId,
+		"email":    user.Email,
+		"password": user.Password,
+	})
 	return err
 }
 
