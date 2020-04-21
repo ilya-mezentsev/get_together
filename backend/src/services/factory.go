@@ -7,6 +7,7 @@ import (
 	"services/chat_accessor"
 	"services/meetings"
 	"services/meetings_accessor"
+	"services/messages"
 	"services/participation"
 	"services/proxies/validation"
 	"services/session"
@@ -23,6 +24,10 @@ func Meetings(repository interfaces.Meetings) interfaces.Meetings {
 
 func MeetingsAccessor(repository interfaces.MeetingsAccessorRepository) interfaces.MeetingsAccessorService {
 	return validation.NewMeetingsAccessorServiceProxy(meetings_accessor.New(repository))
+}
+
+func Messages(repository interfaces.Messages) interfaces.Messages {
+	return validation.NewMessagesProxy(messages.New(repository))
 }
 
 func Participation(

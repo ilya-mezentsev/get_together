@@ -1,6 +1,8 @@
 package interfaces
 
-import "models"
+import (
+	"models"
+)
 
 type (
 	MeetingsAccessorRepository interface {

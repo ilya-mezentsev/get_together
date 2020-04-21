@@ -186,7 +186,7 @@
 * user-id-not-found
 * invalid-id
 * invalid-meeting-title
-* invalid-meeting-date
+* invalid-date
 * invalid-meeting-label
 * invalid-meeting-latitude
 * invalid-meeting-longitude
@@ -235,7 +235,7 @@
 * meeting-id-not-found
 * invalid-id
 * invalid-meeting-title
-* invalid-meeting-date
+* invalid-date
 * invalid-meeting-label
 * invalid-meeting-latitude
 * invalid-meeting-longitude
@@ -446,4 +446,79 @@
 #### Response - default
 #### Errors:
 * invalid-id
+* chat-id-not-found
+
+## Messages
+
+### GET /api/messages/:chat_id/:count
+#### Path parameters
+* `:chat_id` - chat id
+* `:count` - count of messages
+#### Response:
+```json5
+{
+  "status": "ok",
+  "data": [
+    {
+      "chat_id": 1,
+      "sender_id": 1,
+      "text": "Hello!",
+      "sending_time": "21-01-2020 10:00:00",
+    },
+    {
+      "chat_id": 1,
+      "sender_id": 2,
+      "text": "Hey!",
+      "sending_time": "21-01-2020 10:00:05",
+    },
+  ]
+}
+```
+#### Errors:
+* invalid-id
+* invalid-count
+
+### POST /api/messages/:chat_id/:message_id/:count
+#### Path parameters
+* `:chat_id` - chat id
+* `:message_id` - id of message after which messages will be returned
+* `:count` - count of messages
+#### Response:
+```json5
+{
+  "status": "ok",
+  "data": [
+    {
+      "chat_id": 1,
+      "sender_id": 1,
+      "text": "Hello!",
+      "sending_time": "21-01-2020 10:00:00",
+    },
+    {
+      "chat_id": 1,
+      "sender_id": 2,
+      "text": "Hey!",
+      "sending_time": "21-01-2020 10:00:05",
+    },
+  ]
+}
+```
+#### Errors:
+* invalid-id
+* invalid-count
+
+### Sending messages through websocket
+#### Path: /api/ws
+#### Body:
+```json5
+{
+  "chat_id": 1,
+  "sender_id": 2,
+  "text": "Hey!",
+}
+```
+#### Errors:
+* invalid-id
+* invalid-message-text
+* user-id-not-found
 * chat-id-not-found

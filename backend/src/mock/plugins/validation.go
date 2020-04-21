@@ -60,6 +60,12 @@ var (
 	InvalidDescriptions = []string{
 		"too short", strings.Repeat("very long", 200), "here we are<",
 	}
+	ValidMessages = []string{
+		".", "hello", "привет, мир", "тест", "how r u?",
+	}
+	InvalidMessages = []string{
+		"", strings.Repeat("very long", 200), "here we are<",
+	}
 	ValidNames = []string{
 		"Иван Иванов", "John Doe", "Илья М.", "tag1", "тег встречи",
 	}

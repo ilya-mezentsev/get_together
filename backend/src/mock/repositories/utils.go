@@ -121,7 +121,8 @@ const (
   VALUES(:meeting_id, :label, :latitude, :longitude);`
 	CreateChatQuery    = `INSERT INTO chats(meeting_id, type) VALUES(:meeting_id, :type)`
 	CreateMessageQuery = `
-	INSERT INTO messages(chat_id, sender_id, text) VALUES(:chat_id, :sender_id, :text)`
+	INSERT INTO messages(chat_id, sender_id, text, sending_time)
+	VALUES(:chat_id, :sender_id, :text, :sending_time)`
 )
 
 var (
@@ -200,12 +201,12 @@ var (
 		{"meeting_id": 3, "type": "meeting_request"},
 	}
 	ChatsMessages = []map[string]interface{}{
-		{"chat_id": 1, "sender_id": 1, "text": "hello world 1"},
-		{"chat_id": 5, "sender_id": 1, "text": "hello world 3"},
-		{"chat_id": 1, "sender_id": 2, "text": "hello world 4"},
-		{"chat_id": 5, "sender_id": 2, "text": "hello world 6"},
-		{"chat_id": 1, "sender_id": 3, "text": "hello world 7"},
-		{"chat_id": 5, "sender_id": 3, "text": "hello world 9"},
+		{"chat_id": 1, "sender_id": 1, "text": "hello world 1", "sending_time": "02-15-2020 12:58:44"},
+		{"chat_id": 5, "sender_id": 1, "text": "hello world 3", "sending_time": "02-15-2020 12:58:45"},
+		{"chat_id": 1, "sender_id": 2, "text": "hello world 4", "sending_time": "02-15-2020 12:58:46"},
+		{"chat_id": 5, "sender_id": 2, "text": "hello world 6", "sending_time": "02-15-2020 12:58:47"},
+		{"chat_id": 1, "sender_id": 3, "text": "hello world 7", "sending_time": "02-15-2020 12:58:48"},
+		{"chat_id": 5, "sender_id": 3, "text": "hello world 9", "sending_time": "02-15-2020 12:58:44"},
 	}
 	QueryToSubData = map[string][]map[string]interface{}{
 		CreateUserCredentialsQuery: UsersCredentials,

@@ -25,7 +25,6 @@ const (
 	InvalidMeetingTitle                    = "invalid-meeting-title"
 	InvalidMeetingDescription              = "invalid-meeting-description"
 	InvalidMeetingTag                      = "invalid-meeting-tag"
-	InvalidMeetingDate                     = "invalid-meeting-date"
 	InvalidMeetingMaxUsers                 = "invalid-meeting-max-users"
 	InvalidMeetingDuration                 = "invalid-meeting-duration"
 	InvalidMeetingMinAge                   = "invalid-meeting-min-age"
@@ -39,4 +38,7 @@ const (
 	InvalidUserGender                      = "invalid-user-gender"
 	InvalidUserAge                         = "invalid-user-age"
 	InvalidUserAvatarURL                   = "invalid-user-avatar-url"
+	InvalidCount                           = "invalid-count"
+	InvalidDate                            = "invalid-date"
+	InvalidMessageText                     = "invalid-message-text"
 )

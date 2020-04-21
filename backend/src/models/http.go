@@ -64,4 +64,15 @@ type (
 	CloseChatRequest struct {
 		ChatId uint `json:"chat_id"`
 	}
+
+	MessagesRequest struct {
+		ChatId uint `json:"chat_id"`
+		Count  uint `json:"count"`
+	}
+
+	MessagesAfterMessageRequest struct {
+		ChatId    uint `json:"chat_id"`
+		MessageId uint `json:"message_id"`
+		Count     uint `json:"count"`
+	}
 )

@@ -14,7 +14,7 @@ const (
 
 	shortTextMinLength, shortTextMaxLength = 3, 255
 	longTextMinLength, longTextMaxLength   = 15, 1024
-	DateFormat                             = `02-01-2006 15:04:05`
+	DateFormat                             = `02-15-2006 15:04:05`
 )
 
 var (
@@ -54,6 +54,11 @@ func ValidTitle(t string) bool {
 
 func ValidDescription(d string) bool {
 	return textReg.MatchString(trim(d)) && govalidator.InRange(len(d), longTextMinLength, longTextMaxLength)
+}
+
+func ValidMessage(m string) bool {
+	// TODO must be improved
+	return textReg.MatchString(trim(m)) && len(m) < longTextMaxLength
 }
 
 func ValidName(n string) bool {

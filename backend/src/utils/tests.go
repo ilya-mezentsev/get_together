@@ -21,8 +21,12 @@ type RequestData struct {
 	Cookie                 *http.Cookie
 }
 
+func GetTestServer(r *mux.Router) *httptest.Server {
+	return httptest.NewServer(r)
+}
+
 func MakeRequest(rd RequestData) io.ReadCloser {
-	srv := httptest.NewServer(rd.Router)
+	srv := GetTestServer(rd.Router)
 	defer srv.Close()
 
 	req := getHttpRequest(rd.Method, fmt.Sprintf("%s/%s", srv.URL, rd.Endpoint), rd.Data)
