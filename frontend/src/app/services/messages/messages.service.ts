@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {IMessagesObservable, IMessagesObserver, Message} from './types';
+import {IMessagesObservable, IMessagesObserver, Message, ConnectionIsNotEstablished} from './types';
 import {environment} from '../../../environments/environment';
 import {ErrorServerResponse} from '../../types/models';
 
@@ -34,6 +34,10 @@ export class MessagesService implements IMessagesObservable {
   }
 
   send(message: Message): void {
+    if (!this.connectionEstablished) {
+      throw new ConnectionIsNotEstablished();
+    }
+
     this.ws.send(MessagesService.stringify(message));
   }
 
