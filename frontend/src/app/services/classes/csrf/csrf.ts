@@ -3,8 +3,8 @@ import {environment} from '../../../../environments/environment';
 import {Md5} from 'ts-md5';
 
 export class CsrfService {
-  private publicKey: string;
   public readonly csrfHeaderName: CSRFHeaderName = 'X-CSRF-Token';
+  private publicKey: string;
 
   public setPublicKey(value: EncodedHeader) {
     try {

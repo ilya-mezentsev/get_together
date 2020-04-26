@@ -55,4 +55,10 @@ type (
 		CreateMeetingRequestChat(meetingId uint) error
 		CloseChat(chatId uint) error
 	}
+
+	Messages interface {
+		Save(message models.Message) error
+		GetLastMessages(chatId, count uint) ([]models.Message, error)
+		GetLastMessagesAfter(chatId, messageId, count uint) ([]models.Message, error)
+	}
 )

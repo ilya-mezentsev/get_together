@@ -42,7 +42,7 @@ func (p MeetingsServiceProxy) validateAllSettings(settings models.AllSettings) v
 		}
 	}
 	if !validation.ValidDate(settings.DateTime.Format(validation.DateFormat)) {
-		validationResults.Add(InvalidMeetingDate)
+		validationResults.Add(InvalidDate)
 	}
 	if !validation.ValidWholePositiveNumber(float64(settings.MaxUsers)) {
 		validationResults.Add(InvalidMeetingMaxUsers)

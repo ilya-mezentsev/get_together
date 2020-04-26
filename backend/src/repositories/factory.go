@@ -8,6 +8,7 @@ import (
 	"repositories/decorators/logging"
 	"repositories/meetings"
 	"repositories/meetings_settings"
+	"repositories/messages"
 	"repositories/user_settings"
 )
 
@@ -29,4 +30,8 @@ func UserSettings(db *sqlx.DB) interfaces.UsersSettings {
 
 func Chat(db *sqlx.DB) interfaces.FullChatsRepository {
 	return logging.NewChatRepositoryDecorator(chat.New(db))
+}
+
+func Messages(db *sqlx.DB) interfaces.Messages {
+	return logging.NewMessagesRepositoryDecorator(messages.New(db))
 }

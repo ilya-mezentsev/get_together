@@ -102,6 +102,18 @@ func TestValidDescription_False(t *testing.T) {
 	}
 }
 
+func TestValidMessage_True(t *testing.T) {
+	for _, m := range plugins.ValidMessages {
+		utils.AssertTrue(ValidMessage(m), t)
+	}
+}
+
+func TestValidMessage_False(t *testing.T) {
+	for _, n := range plugins.InvalidMessages {
+		utils.AssertFalse(ValidName(n), t)
+	}
+}
+
 func TestValidName_True(t *testing.T) {
 	for _, n := range plugins.ValidNames {
 		utils.AssertTrue(ValidName(n), t)

@@ -4,6 +4,7 @@ import (
 	"api"
 	"api/chats"
 	"api/meetings"
+	"api/messages"
 	"api/middlewares"
 	"api/session"
 	"api/users"
@@ -45,6 +46,10 @@ func init() {
 		services.Meetings(meetingsRepository),
 		services.Participation(repositories.UserSettings(configs.DB), repositories.MeetingsSettings(configs.DB)),
 		services.MeetingsAccessor(meetingsRepository),
+		checkSessionMiddleware,
+	)
+	messages.InitRequestHandlers(
+		services.Messages(repositories.Messages(configs.DB)),
 		checkSessionMiddleware,
 	)
 	session.InitRequestHandlers(
